@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terê Verde Online - Guia de Parques</title>
+    <link rel="icon" href="img/identidade_visual/Icone-TereVerde2.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/syleLogin.css">
+    <link rel="stylesheet" href="css/styleGuia.css">
+    <link rel="stylesheet" href="css/styleSobre.css">
+    <link rel="stylesheet" href="css/styleEventos.css">
+
+</head>
+
+<body>
+
+    <header>
+        <img src="img/identidade_visual/Logo-TereVerde2.svg" alt="Logo Terê Verde" class="logo">
+        <div class="row">
+            <h1>Bem-vindo ao TerêVerde</h1>
+            <!--<p>Seu guia atualizado para os parques, montanhas, cachoeiras e tudo de melhor que existe em Teresópolis</p>-->
+            <p>Descubra trilhas, parques e aventuras em Teresópolis!</p>
+        </div>
+
+        <div class="login-fixed-wrapper desktop-only">
+            <button class="btn loginbtn" onclick="abrirModalLogin()">Login</button>
+            <button class="btn acessobtn" onclick="abrirModalCadastro()">Cadastro</button>
+        </div>
+            <div id="id_auth" class="modal">
+
+                <div class="modal-content animate">
+                    <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
+
+                    <div class="form-slider" id="sliderAuth">
+
+                        <div class="form-section login-section">
+                            <form action="/login_action.php" method="post">
+                                <div class="imgcontainer" style="text-align:center; margin-bottom:15px;">
+                                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
+                                    <h2>Bem-vindo de volta!</h2>
+                                </div>
+
+                                <div class="container">
+                                    <label for="uname"><b>Usuário </b></label>
+                                    <input type="text" placeholder="Digite seu usuário" name="uname" required>
+                                    <br>
+                                    <label for="psw"><b>Senha </b></label>
+                                    <input type="password" placeholder="Digite sua senha" name="psw" required>
+                                    <br>
+                                    <button type="submit" class="btn acessobtn">Entrar</button>
+                                    <button type="button"
+                                        onclick="document.getElementById('id_auth').style.display='none'"
+                                        class="btn cancelbtn">Cancel</button>
+                                    <br>
+                                    <label>
+                                        <input type="checkbox" checked="checked" name="remember"> Lembre-me
+                                    </label>
+                                </div>
+
+                                <div
+                                    style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                                    <span class="psw">Esqueceu a <a href="#" class="toggle-link">senha?</a></span>
+                                    <p>Ainda não tem conta? <a onclick="animarParaCadastro()"
+                                            class="toggle-link">Cadastre-se</a></p>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="form-section cadastro-section">
+                            <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
+                            
+                            <div class="form-wrapper"> 
+                                <div style="text-align:center; margin-bottom:15px;">
+                                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
+                                    <h2>Fala guia, crie sua conta!</h2>
+                                    <p>O cadastro no <strong>TerêVerde</strong> é restrito a guias profissionais credenciados.</p>
+                                </div>
+                        
+                                <label for="nome"><b>Nome</b></label>
+                                <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required>
+                                <br>
+                                
+                                <label for="email"><b>Email</b></label>
+                                <input id="guia-email" type="text" placeholder="Seu melhor email" name="email" required>
+                                <br>
+                                
+                                <label for="tel"><b>Telefone </b></label>
+                                <input id="guia-telefone" type="tel" placeholder="(XX) 9 9999-9999" name="tel" required>
+                                <br>
+                                
+                                <label for="psw-new"><b>Senha </b></label>
+                                <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required>
+                                <br>
+                                
+                                <label for="psw-repeat"><b>Confirme</b></label>
+                                <input type="password" placeholder="Repita a senha" name="psw-repeat">
+                                <br>
+                                
+                                <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()"
+                                    style="background-color: var(--button-1);">Enviar Solicitação</button>
+                                    
+                                <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancel</button>
+                        
+                                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                                    <p>Já possui conta? <a onclick="animarParaLogin()" class="toggle-link">Faça Login</a></p>
+                                </div>
+                            </div> 
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <a href="javascript:void(0);" class="hamburger-icon mobile-only" onclick="toggleMenuMobile()">
+            <i class="fa fa-bars"></i>
+        </a>
+        
+        <div id="mobileMenu" class="mobile-menu-content">
+            <a href="#" onclick="abrirModalLogin(); toggleMenuMobile()">Login</a>
+            <a href="#" onclick="abrirModalCadastro(); toggleMenuMobile()">Cadastro</a>
+        </div>
+
+    </header>
+    <section class="area-previsao-do-tempo">
+        <div class="previsao-barra">
+            <div class="previsao-container">
+                <div class="previsao-esquerda row">
+                    <img class="weather-icon" src="" alt="Ícone do clima">
+                    <div class="previsao-temp">
+                        <span class="temp-max">--° Máx.</span>
+                        <span class="temp-min">--° Mín.</span>
+                    </div>
+                </div>
+                <div class="previsao-direita">
+                    <div class="cidade"><strong>Teresópolis</strong></div>
+                    <div class="descricao">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <button class="tablink" onclick="openPage('PaginaInicial', this, '#293B14')" id="defaultOpen">Página inicial</button>
+        <button class="tablink" onclick="openPage('Parques', this, '#344D0E')">Parques</button>
+        <button class="tablink" onclick="openPage('Eventos', this, 'var(--primary)')">Eventos</button>
+        <button class="tablink" onclick="openPage('Guias', this, '#4d7019')">Guias</button>        
+        <button class="tablink" onclick="openPage('Sobre', this, '#76993D')">Sobre</button>        
+
+        <div id="PaginaInicial" class="tabcontent">
+
+            <section class="slider">
+                <div class="slideshow-container">
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/MOZART_CARTÃO.png" alt="Mirante do Mozart - Cartão Postal">
+                        <div class="banner-caption">Mirante do Mozart - Cartão Postal</div>
+                    </div>
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/PEDRA_DO_SINO.png" alt="Pedra do Sino - PARNASO">
+                        <div class="banner-caption">Pedra do Sino - PARNASO</div>
+                    </div>
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/PEDRA_DO_AÇU.png" alt="Pedra do Açu - PARNASO">
+                        <div class="banner-caption">Pedra do Açu - PARNASO</div>
+                    </div>
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/PARQUE_TRÊS_PICOS.png" alt="Parque dos Três Picos">
+                        <div class="banner-caption">Parque dos Três Picos</div>
+                    </div>
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/PARQUE_MONTANHAS.png" alt="Parque Montanhas de Teresópolis">
+                        <div class="banner-caption">Parque Montanhas de Teresópolis</div>
+                    </div>
+            
+                    <div class="banner-slide fade">
+                        <img src="img/banner-principal/AGULHINHA DO BEIJA-FLOR.png" alt="Agulhinha do Beija-Flor - PARNASO">
+                        <div class="banner-caption">Agulhinha do Beija-Flor - PARNASO</div>
+                    </div>
+            
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                </div>
+            </section>
+            
+            <section>
+                <br>
+                <div style="text-align:center">
+                    <span class="banner-indicadores" onclick="currentSlide(1)"></span>
+                    <span class="banner-indicadores" onclick="currentSlide(2)"></span>
+                    <span class="banner-indicadores" onclick="currentSlide(3)"></span>
+                    <span class="banner-indicadores" onclick="currentSlide(4)"></span>
+                    <span class="banner-indicadores" onclick="currentSlide(5)"></span>
+                    <span class="banner-indicadores" onclick="currentSlide(6)"></span>
+                </div><br>
+            </section>
+        </div>
+
+        <div id="Parques" class="tabcontent">
+            <section class="parques-container">
+                <h2 style="color:var(--secundery);">Explore os Parques</h2>
+                <div class="park-card"></div>
+                    <div id="container-parques-dinamico"></div>
+            </section>
+        </div>
+
+        <div id="Guias" class="tabcontent">
+            <div class="guia-container" id="guia-cards-container">
+            </div>
+        </div>
+
+        <div id="Eventos" class="tabcontent">
+            <div class="eventos-wrapper">
+                <h2>Calendário de Eventos</h2>
+                <p>Festivais, feiras e o que há de melhor rolando em Teresópolis.</p>
+                
+                <div id="eventos-container" class="eventos-container"></div>
+            </div>
+        </div>
+
+        <div id="Sobre" class="tabcontent">
+            <div class="equipe-container" id="equipe-cards-container">
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="logo" width="10%"
+            height="10%">
+        <p>Terê Verde Online © 2025 - Um projeto MVP</p>
+    </footer>
+
+    <div id="modal-contato" class="modal">
+        <form class="modal-content animate" onsubmit="enviarWhatsapp(event)">
+
+            <div class="imgcontainer">
+                <span onclick="document.getElementById('modal-contato').style.display='none'" class="close"
+                    title="Fechar">&times;</span>
+                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="avatar"
+                    style="width: 30%; height: auto;">
+                <h2 style="color: var(--primary); text-align: center;">Agendar com Guia</h2>
+            </div>
+
+            <div class="container-form">
+                <div class="row">
+                    <div class="col-25">
+                        <label for="nome">Seu Nome</label>
+                    </div>
+                    <div class="col-75">
+                        <input type="text" id="form-nome" name="firstname" placeholder="Digite seu nome.." required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-25">
+                        <label for="parque">Parque de Interesse</label>
+                    </div>
+                    <div class="col-75">
+                        <select id="form-parque" name="parque">
+                            <option value="Parque Nacional da Serra dos Órgãos (PARNASO)">PARNASO</option>
+                            <option value="Parque Estadual dos Três Picos">Parque dos Três Picos</option>
+                            <option value="Parque Montanhas de Teresópolis">Montanhas de Teresópolis</option>
+                            <option value="Outro">Outro / Não sei ainda</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-25">
+                        <label for="mensagem">Mensagem</label>
+                    </div>
+                    <div class="col-75">
+                        <textarea id="form-mensagem" name="subject"
+                            placeholder="Gostaria de saber a disponibilidade para..." style="height:150px"
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <input type="submit" value="Enviar via WhatsApp">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="modal-imagem" class="modal-imagem">
+        <span class="fechar-imagem" onclick="fecharModalImagem()">&times;</span>
+        <img class="conteudo-modal-imagem" id="img01">
+        <div id="legenda" class="legenda-modal"></div>
+    </div>
+
+    <script src="js/colorirTela.js"></script> 
+    <script src="js/script.js"></script> 
+    <script src="js/animacaoBanner.js"></script> 
+    <script src="js/parqueSlider.js"></script> 
+    <script src="js/previsaoTempo.js"></script>
+    <script src="js/horarioFuncionamento.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/guiaCards.js"></script>
+    <script src="js/carouselGuias.js"></script>
+    <script src="js/sobreCards.js"></script>
+    <script src="js/eventosCards.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,553 @@
+/* ============================================================
+   VARIÁVEIS DE COR
+   ============================================================ */
+   :root {
+    --primary: #012c18;
+    --primary-60: rgba(34, 48, 11, 0.637);
+    --primary-hover: #87B344;
+    --secundary: #f3f3f3;
+
+    /* Status */
+    --status-green: #28a745;
+    --status-red: #dc3545;
+    --status-yellow: #ffc107;
+
+    /* Textos */
+    --text-black: #0d2721;
+
+    /* Botões */
+    --button-1: #22300B;
+    --button-2: #293B14;
+    --button-3: #344D0E;
+    --button-4: #4d7019;
+    --button-5: #76993D;
+}
+
+/* ============================================================
+   RESET BÁSICO
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--secundary);
+    color: #333;
+    line-height: 1.6;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+    background-color: var(--primary);
+    color: var(--secundary);
+    padding: 2rem 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+header .logo {
+    height: 110px;
+    width: auto;
+    margin-right: 1.5rem;
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* ============================================================
+   ALERTAS
+   ============================================================ */
+.alertas {
+    background-color: #faf4bb;
+    border: 1px solid #ddd;
+    border-left: 5px solid var(--status-yellow);
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.alertas h2 {
+    font-size: 1.2rem;
+    color: var(--text-black);
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   PARQUES — CARDS
+   ============================================================ */
+.parques-container h2 {
+    text-align: center;
+    color: var(--secundary);
+    margin-bottom: 1.5rem;
+}
+
+.park-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+/* Área escondida por padrão */
+.park-card .trail-list,
+.park-card .park-slider {
+    display: none;
+}
+
+/* Mostrar quando ativo */
+.park-card.open .trail-list,
+.park-card.open .park-slider {
+    display: block;
+}
+
+/* Transição suave */
+.park-card .trail-list,
+.park-card .park-slider {
+    transition: opacity .3s ease;
+}
+
+.park-card.open .trail-list,
+.park-card.open .park-slider {
+    opacity: 1;
+}
+
+/* Cabeçalho do card */
+.park-header {
+    background-color: #f9f9f9;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.park-header:hover {
+    background-color: var(--primary-hover);
+}
+
+.park-header h3 {
+    color: var(--text-black);
+}
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+.status {
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.status-aberta {
+    background-color: var(--status-green);
+}
+
+.status-fechada {
+    background-color: var(--status-red);
+}
+
+.status-manutencao {
+    background-color: var(--status-yellow);
+    color: #333;
+}
+
+/* Status das trilhas */
+.status-trilha {
+    margin: 10px 36px;
+    font-weight: bold;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+/* Horários */
+.horario-trilha {
+    margin: 15px 36px;
+    padding: 12px 18px;
+    border-left: 6px solid var(--primary);
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.horario-trilha p strong {
+    color: var(--primary);
+}
+
+/* ============================================================
+   LISTA DE TRILHAS
+   ============================================================ */
+.trail-list {
+    list-style: none;
+    padding: 1rem 1.5rem;
+}
+
+.trail-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.trail-list li:last-child {
+    border-bottom: none;
+}
+
+/* ============================================================
+   BANNER PRINCIPAL
+   ============================================================ */
+section.slider {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    width: 100%;
+    display: flex;
+    transition-duration: .6s;
+    transition-property: opacity;
+}
+
+.banner-slide {
+    width: 25%;
+    position: relative;
+}
+
+.banner-slide img {
+    width: 100vw;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.banner-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.1em;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-align: left;
+}
+
+/* Exibe no hover */
+.banner-slide:hover .banner-caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Botões de navegação */
+.prev,
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 80%;
+    padding: 16px;
+    color: white;
+    font-size: 18px;
+    border-radius: 3px;
+    z-index: 10;
+}
+
+.next {
+    right: 20px;
+}
+
+.prev:hover,
+.next:hover {
+    background-color: rgba(2, 31, 6, 0.8);
+}
+
+/* Indicadores */
+.banner-indicadores {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: var(--primary-60);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.active,
+.banner-indicadores:hover {
+    background-color: rgba(2, 31, 6, 0.8);
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from { opacity: .4 }
+    to   { opacity: 1 }
+}
+
+/* ============================================================
+   TABS (Pagina Inicial, Parques, Guias, Sobre)
+   ============================================================ */
+.tablink {
+    background-color: var(--button-1);
+    color: white;
+    float: left;
+    border: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 20%;
+}
+
+.tablink:hover {
+    background-color: var(--primary-hover);
+}
+
+.tabcontent {
+    color: white;
+    display: none;
+    padding: 100px 20px;
+    height: 100%;
+}
+
+#PaginaInicial { background-color: var(--button-2); }
+#Parques       { background-color: var(--button-3); }
+#Guias         { background-color: var(--button-4); }
+#Sobre         { background-color: var(--button-5); }
+
+/* ============================================================
+   SLIDERS DOS PARQUES (internos)
+   ============================================================ */
+.park-slider {
+    margin: 1rem 0;
+    overflow: hidden;
+    border-radius: 6px;
+    position: relative;
+}
+
+.park-slider .slideshow-container {
+    display: flex;
+    width: 100%;
+}
+
+.park-slide {
+    flex: 0 0 50%;
+    position: relative;
+    aspect-ratio: 16/9;
+}
+
+.park-slide img {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    object-fit: cover;
+}
+
+/* Botões do slider interno */
+.park-slider .prev,
+.park-slider .next {
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 12px;
+    font-size: 22px;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+/* Indicadores internos */
+.park-slider .park-indicador {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: var(--primary-60);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.park-slider .park-indicador.active,
+.park-slider .park-indicador:hover {
+    background-color: rgba(2,31,6,.8);
+}
+
+/* ============================================================
+   PREVISÃO DO TEMPO
+   ============================================================ */
+.area-previsao-do-tempo {
+    display: flex;
+    justify-content: center;
+    background-color: #f5f5f5;
+    padding: 8px 36px;
+}
+
+.previsao-barra {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.previsao-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.weather-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.temp-max { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
+.temp-min { font-size: .9rem; color:#666; }
+
+.cidade { color: var(--primary); }
+.descricao { color:#444; text-transform: capitalize; }
+
+/* ============================================================
+   MENU HAMBÚRGUER MOBILE
+   ============================================================ */
+
+/* Esconde elementos mobile por padrão (no desktop) */
+.mobile-only, .mobile-menu-content {
+    display: none;
+}
+
+/* Ícone do menu (3 risquinhos) */
+.hamburger-icon {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    font-size: 30px;
+    color: var(--secundary); /* Cor do ícone */
+    z-index: 1001;
+}
+
+/* O menu suspenso (caixa que abre) */
+.mobile-menu-content {
+    display: none; /* Começa fechado */
+    position: absolute;
+    top: 70px; /* Logo abaixo do header */
+    right: 20px;
+    background-color: var(--secundary);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1002;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Links dentro do menu */
+.mobile-menu-content a {
+    color: var(--text-black);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+.mobile-menu-content a:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        gap: .5rem;
+        padding: 1rem;
+    }
+
+    header .logo {
+        margin-right: 0;
+        margin-bottom: .5rem;
+        height: 80px;
+    }
+
+    header .row p { display: none; }
+
+    .tablink {
+        width: 50%;
+        font-size: 15px;
+        padding: 12px 10px;
+    }
+
+    .area-previsao-do-tempo {
+        justify-content: center;
+        padding: 8px 10px;
+    }
+
+    .previsao-barra {
+        width: 95%;
+    }
+
+    .weather-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .temp-max {
+        font-size: 1.3rem;
+    }
+    /* Mostra o ícone no celular */
+    .mobile-only {
+        display: block;
+    }
+
+    /* Esconde os botões normais de login no celular */
+    .desktop-only {
+        display: none;
+    }
+    
+    /* Ajuste para o header não ficar bagunçado */
+    header {
+        position: relative; /* Necessário para o absolute funcionar */
+    }
+}

@@ -1,0 +1,113 @@
+/* Container Principal */
+.equipe-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1400px;     
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+/* O Card Individual - Cópia visual do .cardguia */
+.sobre-card {
+    background-color: #ffffff;
+    width: 300px; 
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+    border-radius: 0; 
+    margin: 0;
+    font-family: arial;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* Efeito Hover leve (opcional, para dar interatividade) */
+.sobre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Área da Foto - Cópia da proporção .img-container-guia */
+.sobre-img-box {
+    width: 100%;
+    aspect-ratio: 1824 / 1212; /* A proporção mágica dos guias */
+    overflow: hidden;
+    background-color: #ddd;
+    position: relative;
+}
+
+/* A Foto em si */
+.sobre-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+}
+
+.sobre-img:hover {
+    transform: scale(1.05); /* Um zoom sutil */
+}
+
+/* Área de Texto */
+.sobre-info {
+    padding: 0 10px 20px 10px; /* Padding similar ao .card-content */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+/* Tipografia - Ajustada para bater com os Guias */
+.sobre-nome {
+    font-size: 1.5em; /* Tamanho próximo ao h1 dos guias */
+    color: #000;      /* Cor padrão */
+    margin: 15px 0 10px 0;
+    font-weight: bold;
+}
+
+.sobre-cargo {
+    color: var(--primary-hover); /* A mesma cor verde dos guias (.tipoguia) */
+    font-size: 18px;             /* Mesmo tamanho da .tipoguia */
+    margin-bottom: 15px;
+}
+
+/* Área de Contato */
+.sobre-contato {
+    margin-top: auto;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.sobre-contato p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sobre-contato i {
+    color: var(--button-1); /* Ícones na cor do tema */
+    font-size: 1.1rem;
+}
+
+/* Responsividade Mobile */
+@media screen and (max-width: 600px) {
+    .equipe-container {
+        padding: 10px 0;
+        gap: 15px;
+    }
+
+    .sobre-card {
+        width: 90vw;
+        max-width: 300px;
+    }
+}
