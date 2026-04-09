@@ -37,7 +37,7 @@
                     <div class="form-slider" id="sliderAuth">
 
                         <div class="form-section login-section">
-                            <form action="/login_action.php" method="post">
+                            <form onsubmit="fazerLogin(event)" method="post">
                                 <div class="imgcontainer" style="text-align:center; margin-bottom:15px;">
                                     <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
                                     <h2>Bem-vindo de volta!</h2>
@@ -52,8 +52,8 @@
                                     <br>
                                     <button type="submit" class="btn acessobtn">Entrar</button>
                                     <button type="button"
-                                        onclick="document.getElementById('id_auth').style.display='none'"
-                                        class="btn cancelbtn">Cancel</button>
+                                        onclick="fecharModalAuth()"
+                                        class="btn cancelbtn">Cancelar</button>
                                     <br>
                                     <label>
                                         <input type="checkbox" checked="checked" name="remember"> Lembre-me
@@ -79,35 +79,35 @@
                                     <p>O cadastro no <strong>TerêVerde</strong> é restrito a guias profissionais credenciados.</p>
                                 </div>
                         
-                                <label for="nome"><b>Nome</b></label>
-                                <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required>
-                                <br>
-                                
-                                <label for="email"><b>Email</b></label>
-                                <input id="guia-email" type="text" placeholder="Seu melhor email" name="email" required>
-                                <br>
-                                
-                                <label for="tel"><b>Telefone </b></label>
-                                <input id="guia-telefone" type="tel" placeholder="(XX) 9 9999-9999" name="tel" required>
-                                <br>
-                                
-                                <label for="psw-new"><b>Senha </b></label>
-                                <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required>
-                                <br>
-                                
-                                <label for="psw-repeat"><b>Confirme</b></label>
-                                <input type="password" placeholder="Repita a senha" name="psw-repeat">
-                                <br>
+                                <div style="width: 100%; text-align: left;">
+                                    <label for="nome"><b>Nome</b></label>
+                                    <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required style="width: 100%; box-sizing: border-box;">
+                                    
+                                    <label for="username" style="margin-top: 15px; display: block;"><b>Usuário</b></label>
+                                    <input id="guia-username" type="text" placeholder="Escolha um nome de usuário" name="username" required style="width: 100%; box-sizing: border-box;">
+                                    
+                                    <label for="email" style="margin-top: 15px; display: block;"><b>Email</b></label>
+                                    <input id="guia-email" type="email" placeholder="Seu melhor email" name="email" required style="width: 100%; box-sizing: border-box;">
+                                    
+                                    <label for="tel" style="margin-top: 15px; display: block;"><b>Telefone</b></label>
+                                    <input id="guia-telefone" type="tel" placeholder="(XX) 9 9999-9999" name="tel" required style="width: 100%; box-sizing: border-box;">
+                                    
+                                    <label for="psw-new" style="margin-top: 15px; display: block;"><b>Senha</b></label>
+                                    <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required style="width: 100%; box-sizing: border-box;">
+                                    
+                                    <label for="psw-repeat" style="margin-top: 15px; display: block;"><b>Confirme a Senha</b></label>
+                                    <input id="guia-confirmar-senha" type="password" placeholder="Repita a senha" name="psw-repeat" required style="width: 100%; box-sizing: border-box;">
+                                </div>
                                 
                                 <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()"
-                                    style="background-color: var(--button-1);">Enviar Solicitação</button>
+                                    style="background-color: var(--button-1);">Cadastrar</button>
                                     
-                                <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancel</button>
+                                <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancelar</button>
                         
                                 <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
                                     <p>Já possui conta? <a onclick="animarParaLogin()" class="toggle-link">Faça Login</a></p>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
 
                     </div>

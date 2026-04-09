@@ -3,12 +3,14 @@ input[type=text],
 input[type=password],
 input[type=email],
 input[type=tel] { 
-    width: 50%;
+    width: 100%;
     padding: 12px;
     margin: 8px 0;
-    display: inline-block;
+    display: block;
     border: 1px solid #ccc;
     box-sizing: border-box;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 /* Define um estilo para todos os botões */
@@ -111,9 +113,15 @@ span.psw {
 
 .modal-content label {
     color: var(--primary); /* Verde escuro do tema */
-    display: inline-block;
-    margin-bottom: 5px;
+    display: block;
+    margin-bottom: 8px;
+    margin-top: 15px;
     text-align: left;
+    font-weight: 600;
+}
+
+.modal-content label:first-child {
+    margin-top: 0;
 }
 
 .container-form {
