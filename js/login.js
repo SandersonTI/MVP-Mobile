@@ -1,6 +1,7 @@
 // Variáveis
 var modalAuth = document.getElementById('id_auth');
 var slider = document.getElementById('sliderAuth');
+const API_URL = 'http://localhost:5000/api';
 
 // --- Funções de Abertura ---
 
@@ -19,6 +20,7 @@ function abrirModalCadastro() {
 // Fecha o modal
 function fecharModalAuth() {
     modalAuth.style.display = "none";
+    limparFormularios();
 }
 
 // --- Funções de Animação (Slide) ---
@@ -31,6 +33,12 @@ function animarParaCadastro() {
 // Desliza para a Direita (Mostra Login)
 function animarParaLogin() {
     slider.classList.remove("slide-active");
+}
+
+// Limpar formulários
+function limparFormularios() {
+    const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="email"]');
+    inputs.forEach(input => input.value = '');
 }
 
 // --- Fechar ao clicar fora ---
@@ -67,40 +75,153 @@ window.onclick = function(event) {
     }
 }
 
-function enviarDadosGuia() {
+// --- FUNÇÕES DE CADASTRO (BD) ---
+
+async function enviarDadosGuia() {
     // 1. Pega os valores que o usuário digitou
     const nome = document.getElementById("guia-nome").value;
+    const username = document.getElementById("guia-username").value;
     const email = document.getElementById("guia-email").value;
     const telefone = document.getElementById("guia-telefone").value;
     const senha = document.getElementById("guia-senha").value;
+    const confirmar_senha = document.getElementById("guia-confirmar-senha").value;
 
     // 2. Validação simples (impede envio se faltar dados)
-    if (nome === "" || email === "" || telefone === "") {
-        alert("Por favor, preencha Nome, E-mail e Telefone para continuarmos.");
+    if (nome === "" || username === "" || email === "" || telefone === "" || senha === "") {
+        alert("Por favor, preencha todos os campos obrigatórios.");
         return;
     }
 
-    // 3. Monta o corpo da mensagem do e-mail
-    // O %0D%0A é o código para pular linha em links de e-mail
-    const assunto = "Solicitação de Novo Guia - " + nome;
-    
-    const mensagem = `Olá, gostaria de me cadastrar como guia no TerêVerde.%0D%0A%0D%0A` +
-        `--- MEUS DADOS ---%0D%0A` +
-        `Nome: ${nome}%0D%0A` +
-        `E-mail: ${email}%0D%0A` +
-        `WhatsApp: ${telefone}%0D%0A` +
-        `Senha: ${senha || "Não informado"}%0D%0A%0D%0A` +
-        `Aguardo o retorno para finalizar meu cadastro.`;
+    // 3. Validação de senhas
+    if (senha !== confirmar_senha) {
+        alert("As senhas não coincidem!");
+        return;
+    }
 
-    // 4. Seu e-mail de destino
-    const emailDestino = "phillipmiranda@outlook.com"; // <--- COLOQUE SEU E-MAIL AQUI
+    if (senha.length < 6) {
+        alert("A senha deve ter no mínimo 6 caracteres!");
+        return;
+    }
 
-    // 5. Abre o cliente de e-mail
-    window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${mensagem}`;
+    if (username.length < 3) {
+        alert("O usuário deve ter no mínimo 3 caracteres!");
+        return;
+    }
 
-    // 6. Feedback para o usuário (Aviso visual)
-    alert("Pronto Guia! Recebemos sua solicitação e em breve entraremos em contato pelo WhatsApp!");
-    
-    // Opcional: Limpar os campos e fechar o modal
-    fecharModalAuth();
+    if (!email.includes('@')) {
+        alert("Email inválido!");
+        return;
+    }
+
+    try {
+        // 4. Enviar dados para o servidor
+        const response = await fetch(`${API_URL}/cadastro`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                username: username,
+                senha: senha,
+                confirmar_senha: confirmar_senha
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.sucesso) {
+            alert("✓ " + data.mensagem);
+            fecharModalAuth();
+            // Alternar para login automático
+            setTimeout(() => {
+                abrirModalLogin();
+            }, 500);
+        } else {
+            alert("✗ " + data.mensagem);
+        }
+    } catch (error) {
+        alert("Erro ao conectar com o servidor: " + error.message);
+        console.error("Erro:", error);
+    }
 }
+
+// --- FUNÇÕES DE LOGIN (BD) ---
+
+async function fazerLogin(event) {
+    event.preventDefault(); // Previne recarga da página
+
+    // 1. Pega os valores do formulário de login
+    const username = document.querySelector('.login-section input[name="uname"]').value;
+    const senha = document.querySelector('.login-section input[name="psw"]').value;
+
+    if (username === "" || senha === "") {
+        alert("Por favor, preencha usuário e senha!");
+        return;
+    }
+
+    try {
+        // 2. Enviar dados para o servidor
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                senha: senha
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.sucesso) {
+            // 3. Salvar dados do usuário localmente
+            localStorage.setItem('usuario', JSON.stringify(data.usuario));
+            localStorage.setItem('logado', 'true');
+            
+            alert("✓ " + data.mensagem);
+            fecharModalAuth();
+            
+            // Atualizar UI para mostrar que o usuário está logado
+            atualizarUILogin(data.usuario);
+        } else {
+            alert("✗ " + data.mensagem);
+        }
+    } catch (error) {
+        alert("Erro ao conectar com o servidor: " + error.message);
+        console.error("Erro:", error);
+    }
+}
+
+// Atualizar interface quando usuário faz login
+function atualizarUILogin(usuario) {
+    const loginBtn = document.querySelector('.loginbtn');
+    const cadastroBtn = document.querySelector('.acessobtn');
+    
+    if (loginBtn && cadastroBtn) {
+        loginBtn.textContent = `${usuario.nome} (Sair)`;
+        loginBtn.onclick = function() {
+            // Logout
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('logado');
+            loginBtn.textContent = 'Login';
+            loginBtn.onclick = abrirModalLogin;
+            cadastroBtn.style.display = 'inline-block';
+        };
+        cadastroBtn.style.display = 'none';
+    }
+}
+
+// Verificar se usuário já está logado ao carregar página
+function verificarLoginAoCarregar() {
+    if (localStorage.getItem('logado') === 'true') {
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        atualizarUILogin(usuario);
+    }
+}
+
+// Chamar função ao carregar página
+document.addEventListener('DOMContentLoaded', verificarLoginAoCarregar);
