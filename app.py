@@ -43,6 +43,7 @@ def get_db_connection():
 
 @app.route('/api/cadastro', methods=['POST'])
 def cadastro():
+    conn = None
     try:
         data = request.get_json()
         
@@ -70,36 +71,40 @@ def cadastro():
         # Criptografar senha
         senha_criptografada = hash_password(senha)
         
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO users (nome, email, telefone, username, senha)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (nome, email, telefone, username, senha_criptografada))
+        
+        conn.commit()
+        
+        return jsonify({
+            'sucesso': True, 
+            'mensagem': 'Cadastro realizado com sucesso! Agora faça login.'
+        }), 201
             
-            cursor.execute('''
-                INSERT INTO users (nome, email, telefone, username, senha)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (nome, email, telefone, username, senha_criptografada))
+    except sqlite3.IntegrityError as e:
+        if 'email' in str(e):
+            return jsonify({'sucesso': False, 'mensagem': 'Este email já está cadastrado'}), 400
+        elif 'username' in str(e):
+            return jsonify({'sucesso': False, 'mensagem': 'Este usuário já existe'}), 400
+        else:
+            return jsonify({'sucesso': False, 'mensagem': 'Erro ao cadastrar usuário'}), 400
             
-            conn.commit()
-            conn.close()
-            
-            return jsonify({
-                'sucesso': True, 
-                'mensagem': 'Cadastro realizado com sucesso! Agora faça login.'
-            }), 201
-            
-        except sqlite3.IntegrityError as e:
-            if 'email' in str(e):
-                return jsonify({'sucesso': False, 'mensagem': 'Este email já está cadastrado'}), 400
-            elif 'username' in str(e):
-                return jsonify({'sucesso': False, 'mensagem': 'Este usuário já existe'}), 400
-            else:
-                return jsonify({'sucesso': False, 'mensagem': 'Erro ao cadastrar usuário'}), 400
-                
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro no servidor: {str(e)}'}), 500
+        
+    finally:
+        # Fecha a conexão aconteça o que acontecer
+        if conn:
+            conn.close()
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    conn = None
     try:
         data = request.get_json()
         
@@ -120,7 +125,6 @@ def login():
         ''', (username, senha_criptografada))
         
         user = cursor.fetchone()
-        conn.close()
         
         if user:
             return jsonify({
@@ -138,6 +142,10 @@ def login():
             
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro no servidor: {str(e)}'}), 500
+        
+    finally:
+        if conn:
+            conn.close()
 
 @app.route('/api/usuarios', methods=['GET'])
 def listar_usuarios():
@@ -163,9 +171,9 @@ def health():
 
 if __name__ == '__main__':
     init_db()
-    print("\n🚀 Iniciando servidor Flask...")
-    print("📍 Acesse: http://localhost:5000")
-    print("🔗 API de Cadastro: POST /api/cadastro")
-    print("🔗 API de Login: POST /api/login")
-    print("🔗 Listar Usuários: GET /api/usuarios\n")
+    print("\nIniciando servidor Flask...")
+    print("Acesse: http://localhost:5000")
+    print(" API de Cadastro: POST /api/cadastro")
+    print(" API de Login: POST /api/login")
+    print(" Listar Usuários: GET /api/usuarios\n")
     app.run(debug=True, port=5000, host='0.0.0.0')
