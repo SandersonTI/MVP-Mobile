@@ -202,15 +202,28 @@ function atualizarUILogin(usuario) {
     const cadastroBtn = document.querySelector('.acessobtn');
     
     if (loginBtn && cadastroBtn) {
+        // Muda o botão para mostrar o nome e a opção de sair
         loginBtn.textContent = `${usuario.nome} (Sair)`;
+        
+        // Lógica do Logout
         loginBtn.onclick = function() {
-            // Logout
             localStorage.removeItem('usuario');
             localStorage.removeItem('logado');
+            
+            // Retorna os botões ao estado original
             loginBtn.textContent = 'Login';
             loginBtn.onclick = abrirModalLogin;
             cadastroBtn.style.display = 'inline-block';
+
+            // --- NOVIDADE: VERIFICA SE ELE ESTÁ NA ABA RESTRITA ---
+            const abaGuias = document.getElementById('Guias');
+            if (abaGuias && abaGuias.style.display === 'block') {
+                // Se ele estiver nos guias ao sair, "chuta" ele de volta pra Página Inicial
+                document.getElementById('defaultOpen').click();
+            }
         };
+        
+        // Esconde o botão de cadastro pois já está logado
         cadastroBtn.style.display = 'none';
     }
 }

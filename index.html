@@ -13,6 +13,34 @@
     <link rel="stylesheet" href="css/styleSobre.css">
     <link rel="stylesheet" href="css/styleEventos.css">
 
+    <style>
+        /* --- CORREÇÃO RESPONSIVA E ALINHAMENTO DO BANNER --- */
+        .slideshow-container {
+            width: 100%;
+            max-width: 1200px; /* Limite para não ficar gigante em monitores ultrawide */
+            margin: 0 auto; /* O segredo para centralizar a caixa na tela */
+            position: relative; /* Mantém as legendas e setas presas ao banner */
+        }
+
+        .banner-slide {
+            width: 100%;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 450px; /* Altura ideal para o computador */
+            object-fit: cover; /* Recorta as sobras sem achatar a imagem */
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Responsividade: deixa a imagem mais baixa no celular */
+        @media screen and (max-width: 768px) {
+            .banner-slide img {
+                height: 250px; 
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +49,6 @@
         <img src="img/identidade_visual/Logo-TereVerde2.svg" alt="Logo Terê Verde" class="logo">
         <div class="row">
             <h1>Bem-vindo ao TerêVerde</h1>
-            <!--<p>Seu guia atualizado para os parques, montanhas, cachoeiras e tudo de melhor que existe em Teresópolis</p>-->
             <p>Descubra trilhas, parques e aventuras em Teresópolis!</p>
         </div>
 
@@ -29,92 +56,85 @@
             <button class="btn loginbtn" onclick="abrirModalLogin()">Login</button>
             <button class="btn acessobtn" onclick="abrirModalCadastro()">Cadastro</button>
         </div>
-            <div id="id_auth" class="modal">
+            
+        <div id="id_auth" class="modal">
+            <div class="modal-content animate">
+                <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
 
-                <div class="modal-content animate">
-                    <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
+                <div class="form-slider" id="sliderAuth">
 
-                    <div class="form-slider" id="sliderAuth">
+                    <div class="form-section login-section">
+                        <form onsubmit="fazerLogin(event)" method="post">
+                            <div class="imgcontainer" style="text-align:center; margin-bottom:15px;">
+                                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
+                                <h2>Bem-vindo de volta!</h2>
+                            </div>
 
-                        <div class="form-section login-section">
-                            <form onsubmit="fazerLogin(event)" method="post">
-                                <div class="imgcontainer" style="text-align:center; margin-bottom:15px;">
-                                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
-                                    <h2>Bem-vindo de volta!</h2>
-                                </div>
-
-                                <div class="container">
-                                    <label for="uname"><b>Usuário </b></label>
-                                    <input type="text" placeholder="Digite seu usuário" name="uname" required>
-                                    <br>
-                                    <label for="psw"><b>Senha </b></label>
-                                    <input type="password" placeholder="Digite sua senha" name="psw" required>
-                                    <br>
-                                    <button type="submit" class="btn acessobtn">Entrar</button>
-                                    <button type="button"
-                                        onclick="fecharModalAuth()"
-                                        class="btn cancelbtn">Cancelar</button>
-                                    <br>
-                                    <label>
-                                        <input type="checkbox" checked="checked" name="remember"> Lembre-me
-                                    </label>
-                                </div>
-
-                                <div
-                                    style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-                                    <span class="psw">Esqueceu a <a href="#" class="toggle-link">senha?</a></span>
-                                    <p>Ainda não tem conta? <a onclick="animarParaCadastro()"
-                                            class="toggle-link">Cadastre-se</a></p>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="form-section cadastro-section">
-                            <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
-                            
-                            <div class="form-wrapper"> 
-                                <div style="text-align:center; margin-bottom:15px;">
-                                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
-                                    <h2>Fala guia, crie sua conta!</h2>
-                                    <p>O cadastro no <strong>TerêVerde</strong> é restrito a guias profissionais credenciados.</p>
-                                </div>
-                        
-                                <div style="width: 100%; text-align: left;">
-                                    <label for="nome"><b>Nome</b></label>
-                                    <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required style="width: 100%; box-sizing: border-box;">
+                            <div class="container">
+                                <label for="uname"><b>Usuário </b></label>
+                                <input type="text" placeholder="Digite seu usuário" name="uname" required>
                                     
-                                    <label for="username" style="margin-top: 15px; display: block;"><b>Usuário</b></label>
-                                    <input id="guia-username" type="text" placeholder="Escolha um nome de usuário" name="username" required style="width: 100%; box-sizing: border-box;">
+                                <label for="psw"><b>Senha </b></label>
+                                <input type="password" placeholder="Digite sua senha" name="psw" required>
                                     
-                                    <label for="email" style="margin-top: 15px; display: block;"><b>Email</b></label>
-                                    <input id="guia-email" type="email" placeholder="Seu melhor email" name="email" required style="width: 100%; box-sizing: border-box;">
-                                    
-                                    <label for="tel" style="margin-top: 15px; display: block;"><b>Telefone</b></label>
-                                    <input id="guia-telefone" type="tel" placeholder="(XX) 9 9999-9999" name="tel" required style="width: 100%; box-sizing: border-box;">
-                                    
-                                    <label for="psw-new" style="margin-top: 15px; display: block;"><b>Senha</b></label>
-                                    <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required style="width: 100%; box-sizing: border-box;">
-                                    
-                                    <label for="psw-repeat" style="margin-top: 15px; display: block;"><b>Confirme a Senha</b></label>
-                                    <input id="guia-confirmar-senha" type="password" placeholder="Repita a senha" name="psw-repeat" required style="width: 100%; box-sizing: border-box;">
-                                </div>
-                                
-                                <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()"
-                                    style="background-color: var(--button-1);">Cadastrar</button>
-                                    
+                                <button type="submit" class="btn acessobtn">Entrar</button>
                                 <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancelar</button>
+                                    
+                                <label>
+                                    <input type="checkbox" checked="checked" name="remember"> Lembre-me
+                                </label>
+                            </div>
+
+                            <div style="margin-top: 2px; text-align: center; border-top: 1px solid #eee; padding-top: 2px;">
+                                <span class="psw">Esqueceu a <a href="#" class="toggle-link">senha?</a></span>
+                                <p>Ainda não tem conta? <a onclick="animarParaCadastro()" class="toggle-link">Cadastre-se</a></p>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="form-section cadastro-section">
+                        <span onclick="fecharModalAuth()" class="close" title="Fechar">&times;</span>
                         
-                                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-                                    <p>Já possui conta? <a onclick="animarParaLogin()" class="toggle-link">Faça Login</a></p>
-                                </div>
+                        <div class="form-wrapper"> 
+                            <div style="text-align:center; margin-bottom:15px;">
+                                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
+                                <h2>Fala guia, crie sua conta!</h2>
+                                <p>O cadastro no <strong>TerêVerde</strong> é restrito a guias profissionais credenciados.</p>
+                            </div>
+                    
+                            <div style="width: 100%; text-align: left;">
+                                <label for="nome"><b>Nome</b></label>
+                                <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required style="width: 100%; box-sizing: border-box;">
+                                
+                                <label for="username" style="margin-top: 15px; display: block;"><b>Usuário</b></label>
+                                <input id="guia-username" type="text" placeholder="Escolha um nome de usuário" name="username" required style="width: 100%; box-sizing: border-box;">
+                                
+                                <label for="email" style="margin-top: 15px; display: block;"><b>Email</b></label>
+                                <input id="guia-email" type="email" placeholder="Seu melhor email" name="email" required style="width: 100%; box-sizing: border-box;">
+                                
+                                <label for="tel" style="margin-top: 15px; display: block;"><b>Telefone</b></label>
+                                <input id="guia-telefone" type="tel" placeholder="(XX) 9 9999-9999" name="tel" required style="width: 100%; box-sizing: border-box;">
+                                
+                                <label for="psw-new" style="margin-top: 15px; display: block;"><b>Senha</b></label>
+                                <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required style="width: 100%; box-sizing: border-box;">
+                                
+                                <label for="psw-repeat" style="margin-top: 15px; display: block;"><b>Confirme a Senha</b></label>
+                                <input id="guia-confirmar-senha" type="password" placeholder="Repita a senha" name="psw-repeat" required style="width: 100%; box-sizing: border-box;">
+                            </div>
+                            
+                            <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()" style="background-color: var(--button-1);">Cadastrar</button>
+                            <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancelar</button>
+                    
+                            <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                                <p>Já possui conta? <a onclick="animarParaLogin()" class="toggle-link">Faça Login</a></p>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
             </div>
+        </div>
         
-
         <a href="javascript:void(0);" class="hamburger-icon mobile-only" onclick="toggleMenuMobile()">
             <i class="fa fa-bars"></i>
         </a>
@@ -125,6 +145,7 @@
         </div>
 
     </header>
+    
     <section class="area-previsao-do-tempo">
         <div class="previsao-barra">
             <div class="previsao-container">
@@ -232,8 +253,7 @@
     </section>
 
     <footer>
-        <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="logo" width="10%"
-            height="10%">
+        <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="logo" width="10%" height="10%">
         <p>Terê Verde Online © 2025 - Um projeto MVP</p>
     </footer>
 
@@ -241,10 +261,8 @@
         <form class="modal-content animate" onsubmit="enviarWhatsapp(event)">
 
             <div class="imgcontainer">
-                <span onclick="document.getElementById('modal-contato').style.display='none'" class="close"
-                    title="Fechar">&times;</span>
-                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="avatar"
-                    style="width: 30%; height: auto;">
+                <span onclick="document.getElementById('modal-contato').style.display='none'" class="close" title="Fechar">&times;</span>
+                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Logo Terê Verde" class="avatar" style="width: 30%; height: auto;">
                 <h2 style="color: var(--primary); text-align: center;">Agendar com Guia</h2>
             </div>
 
@@ -277,9 +295,7 @@
                         <label for="mensagem">Mensagem</label>
                     </div>
                     <div class="col-75">
-                        <textarea id="form-mensagem" name="subject"
-                            placeholder="Gostaria de saber a disponibilidade para..." style="height:150px"
-                            required></textarea>
+                        <textarea id="form-mensagem" name="subject" placeholder="Gostaria de saber a disponibilidade para..." style="height:150px" required></textarea>
                     </div>
                 </div>
 

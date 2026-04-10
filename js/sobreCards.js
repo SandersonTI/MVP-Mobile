@@ -3,20 +3,12 @@
 // 1. Dados da equipe
 const dadosEquipe = [
     {
-        nome: "Phillip Miranda",
-        cargo: "Programador Front-end",
-        especialista: "Designer UI",
-        foto: "img/quem_somos/phill.png", 
-        contato: "phillipmiranda@outlook.com",
-        telefone: "21 98716-1707"
-    },
-    {
-        nome: "Pedro Ventura",
+        nome: "Sanderson",
         cargo: "Analista de requisitos",
         especialista: "Designer UX",
-        foto: "img/quem_somos/pedro.png",
-        contato: "pedro@gmail.com",
-        telefone: "21 98719-0607"
+        foto: "img/quem_somos/sanderson.png", 
+        contato: "sanderson@gmail.com",
+        telefone: "22 99282-7969"
     },
     {
         nome: "Gustavo Toledo",
@@ -25,14 +17,6 @@ const dadosEquipe = [
         foto: "img/quem_somos/gustavo.png",
         contato: "gustavo@gmail.com",
         telefone: "21 97690-8729"
-    },
-    {
-        nome: "Rodolpho Macario",
-        cargo: "QA",
-        especialista: "Testes Automatizados",
-        foto: "img/quem_somos/rodolpho.png",
-        contato: "rodolpho@gmail.com",
-        telefone: "21 99238-1692"
     }    
 ];
 

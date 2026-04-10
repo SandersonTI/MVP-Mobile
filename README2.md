@@ -1,4 +1,4 @@
-No terminal
+venNo terminal
 
 python -m venv venv
 venv\Scripts\activate
