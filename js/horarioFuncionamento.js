@@ -198,7 +198,7 @@ function renderizarParques() {
       if (parque.temSlider && parque.imagens && parque.imagens.length > 0) {
           const slides = parque.imagens.map(img => `
               <div class="park-slide fade">
-                  <img src="${img}" alt="Imagem do parque">
+                  <img src="${img}" loading="lazy" alt="Imagem do parque">
               </div>
           `).join("");
           htmlSlider = `

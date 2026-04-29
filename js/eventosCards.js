@@ -42,7 +42,7 @@ function criarCardEvento(evento) {
     return `
         <div class="evento-card">
             <div class="evento-img-box">
-                <img src="${imagem}" alt="${evento.titulo}">
+                <img src="${imagem} loading="lazy " alt="${evento.titulo}">
                 <div class="evento-data-badge">${evento.data}</div>
             </div>
             

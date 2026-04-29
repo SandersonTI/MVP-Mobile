@@ -26,7 +26,7 @@ function criarCardEquipe(membro) {
     return `
         <div class="sobre-card">
             <div class="sobre-img-box">
-                <img src="${membro.foto}" class="sobre-img" alt="${membro.nome}" onclick="abrirModalEquipe(event, '${membro.foto}')">
+                <img src="${membro.foto}" class="sobre-img" loading="lazy" alt="${membro.nome}" onclick="abrirModalEquipe(event, '${membro.foto}')">
             </div>
 
             <div class="sobre-info">

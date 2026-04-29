@@ -105,7 +105,9 @@ span.psw {
     max-width: 400px; /* Impede de ficar gigante no PC */
     overflow: hidden;
     position: relative;
-    border-radius: 20px;    
+    border-radius: 20px;
+    max-width: 90vh;
+    overflow: auto;    
 }
 
 .modal-content hr {

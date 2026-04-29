@@ -92,7 +92,7 @@ function criarCardGuia(guia, index) {
     const imagensHTML = guia.imagens.map((imgSrc, i) => {
         // A primeira imagem ganha a classe 'ativa' para aparecer por padrão
         const classe = i === 0 ? 'guia-img ativa' : 'guia-img';
-        return `<img src="${imgSrc}" class="${classe}" alt="${guia.nome}">`;
+        return `<img src="${imgSrc}" class="${classe}" loading="lazy" alt="${guia.nome}">`;
     }).join('');
 
     return `
