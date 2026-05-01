@@ -3,7 +3,7 @@
 // 1. Dados da equipe
 const dadosEquipe = [
     {
-        nome: "Sanderson",
+        nome: "Sanderson Santos",
         cargo: "Analista de requisitos",
         especialista: "Designer UX",
         foto: "img/quem_somos/sanderson.png", 

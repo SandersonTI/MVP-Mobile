@@ -328,11 +328,13 @@ section.slider {
 /* ============================================================
    TABS (Pagina Inicial, Parques, Guias, Sobre)
    ============================================================ */
-section:has(.tablink){
+.tab-bar {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: nowrap;
+    width: 100%;
     overflow: hidden;
 }
+
 .tablink {
     background-color: var(--button-1);
     color: white;
@@ -340,8 +342,11 @@ section:has(.tablink){
     cursor: pointer;
     padding: 14px 16px;
     font-size: 17px;
-    flex: 1 1 auto;
-    width: 80px;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tablink:hover {
@@ -353,6 +358,7 @@ section:has(.tablink){
     display: none;
     padding: 30px 20px;
     height: 100%;
+    width: 100%;
 }
 
 #PaginaInicial { background-color: var(--button-2); }
@@ -518,9 +524,15 @@ section:has(.tablink){
     }
 
     header .row p { display: none; }
+    header .row h1 { font-size: 1.1rem; }
+
+    .tab-bar {
+        flex-wrap: wrap;
+    }
 
     .tablink {
         width: 50%;
+        flex: 0 0 50%;
         font-size: 14px;
         padding: 12px 8px;
         min-height: 44px;
