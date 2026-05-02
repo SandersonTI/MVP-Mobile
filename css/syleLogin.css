@@ -99,15 +99,16 @@ span.psw {
 /* Conteúdo/Caixa do Modal */
 .modal-content {
     background-color: var(--secundary); 
-    margin: 5% auto; /* Centraliza horizontalmente e dá uma margem no topo */
+    margin: 4% auto; /* Centraliza horizontalmente e dá uma margem no topo */
     border: 1px solid #888;
     width: 90%;
     max-width: 400px; /* Impede de ficar gigante no PC */
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
     border-radius: 20px;
     max-width: 90vh;
-    overflow: auto;    
+    box-sizing: border-box;    
 }
 
 .modal-content hr {
@@ -137,7 +138,7 @@ span.psw {
     display: flex; 
     width: 200%;   
     transition: transform 0.6s ease-in-out; 
-    align-items: stretch; /* Garante que os dois lados tenham a mesma altura base */
+    align-items: flex-start; /* alinha do topo — permite logo aparecer */
 }
 
 /* Configuração de cada "tela" (Login ou Cadastro) */
@@ -147,9 +148,9 @@ span.psw {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center; 
-    max-height: 90vh; /* Aumentamos de 75vh para 90vh (90% da tela) */
-    overflow-y: auto; 
+    justify-content: flex-start; /* conteúdo do topo — logo sempre visível */
+    overflow-y: auto;
+    overflow-x: hidden;  
 }
 
 .form-section form {
@@ -184,10 +185,13 @@ span.psw {
 .close {
     position: absolute;
     right: 25px;
-    top: 0;
+    top: 8px;
     color: #000;
     font-size: 35px;
     font-weight: bold;
+    z-index: 10;
+    line-height: 1;
+    display: block;
 }
 
 .close:hover,

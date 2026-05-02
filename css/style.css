@@ -382,7 +382,7 @@ section.slider {
 }
 
 .park-slide {
-    flex: 0 0 50%;
+    flex: 0 0 100%;
     position: relative;
     aspect-ratio: 16/9;
 }
@@ -512,10 +512,12 @@ section.slider {
 
     header {
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 0.8rem;
         position: relative;
+        gap: 0.6rem;
+        flex-wrap: nowrap;
     }
 
     header .logo {

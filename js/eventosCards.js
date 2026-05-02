@@ -42,7 +42,7 @@ function criarCardEvento(evento) {
     return `
         <div class="evento-card">
             <div class="evento-img-box">
-                <img src="${imagem} loading="lazy " alt="${evento.titulo}">
+                <img src="${imagem}" loading="lazy" alt="${evento.titulo}">
                 <div class="evento-data-badge">${evento.data}</div>
             </div>
             
@@ -51,7 +51,7 @@ function criarCardEvento(evento) {
                 <p class="evento-local"><i class="fa fa-map-marker"></i> ${evento.local}</p>
                 <p class="evento-desc">${evento.descricao}</p>
                 
-                <a href="${evento.link}" class="btn-evento">Saiba Mais</a>
+                <a href="${evento.link}" class="btn-evento" target="_blank" rel="noopener noreferrer">Saiba Mais</a>
             </div>
         </div>
     `;

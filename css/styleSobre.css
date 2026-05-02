@@ -111,3 +111,48 @@
         max-width: 300px;
     }
 }
+/* ============================================================
+   BLOCO DE PROPOSTA — Aba Sobre
+   ============================================================ */
+.sobre-proposta {
+    max-width: 780px;
+    margin: 0 auto 2rem auto;
+    padding: 1.5rem 2rem;
+    background-color: rgba(255, 255, 255, 0.12);   /* fundo sutil sobre o verde da aba */
+    border-left: 4px solid var(--primary-hover);
+    border-radius: 8px;
+    color: #fff;                                    /* texto branco — aba Sobre é verde */
+}
+ 
+.sobre-proposta h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #f0f0f0;
+}
+ 
+.sobre-proposta p {
+    font-size: 0.97rem;
+    line-height: 1.75;
+    margin-bottom: 0.85rem;
+    color: #f0f0f0;
+}
+ 
+.sobre-proposta p:last-child {
+    margin-bottom: 0;
+}
+ 
+.sobre-proposta strong {
+    color: #fff;
+}
+ 
+/* Mobile */
+@media screen and (max-width: 600px) {
+    .sobre-proposta {
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+ 
+    .sobre-proposta h2 {
+        font-size: 1.3rem;
+    }
+}
