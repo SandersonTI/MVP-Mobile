@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terê Verde Online - Guia de Parques</title>
+    <title>Terê Verde Online - Passeios em Teresópolis</title>
     <link rel="icon" href="img/identidade_visual/Icone-TereVerde2.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -98,11 +98,24 @@
                         <div class="form-wrapper"> 
                             <div class="imgcontainer" style="text-align: center; margin-bottom:15px;">
                                 <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar">
-                                <h2>Fala guia, crie sua conta!</h2>
-                                <p>O cadastro no <strong>TerêVerde</strong> é restrito a guias profissionais credenciados.</p>
+                                <h2>Crie sua conta!</h2>
                             </div>
                     
                             <div style="width: 100%; text-align: left;">
+                                <!-- Tipo de conta: Turista ou Guia -->
+
+                                <label><b>Tipo de conta</b></label>
+
+                                <div style="display:flex; gap:1.5rem; margin:8px 0 14px;">
+                                    <label style="font-weight:normal; cursor:pointer;">
+                                        <input type="radio" name="tipo-cadastro" value="turista" checked> 🧳 Turista
+                                    </label>
+
+                                    <label style="font-weight:normal; cursor:pointer;">
+                                        <input type="radio" name="tipo-cadastro" value="guia"> 🧭 Guia
+                                    </label>
+                                </div>
+
                                 <label for="nome"><b>Nome</b></label>
                                 <input id="guia-nome" type="text" placeholder="Seu nome completo" name="nome" required style="width: 100%; box-sizing: border-box;">
                                 
@@ -167,10 +180,14 @@
     <section>
         <div class="tab-bar">
         <button class="tablink" onclick="openPage('PaginaInicial', this, '#293B14')" id="defaultOpen">Página inicial</button>
-        <button class="tablink" onclick="openPage('Parques', this, '#344D0E')">Parques</button>
+        <button class="tablink" onclick="openPage('Passeios', this, '#344D0E')">Passeios</button>
         <button class="tablink" onclick="openPage('Eventos', this, 'var(--primary)')">Eventos</button>
-        <button class="tablink" onclick="openPage('Guias', this, '#4d7019')">Guias</button>        
+        <button class="tablink" onclick="openPage('Guias', this, '#4d7019')">Guias</button>
+        <button class="tablink" onclick="openPage('Sugestoes', this, '#3d6b1a')">Sugestões</button>        
         <button class="tablink" onclick="openPage('Sobre', this, '#76993D')">Sobre</button> 
+        <button class="tablink" id="btn-admin" style="display:none; background:#4a0e0e;"
++
+                onclick="openPage('Admin', this, '#6b1010')">⚙️ Admin</button>
         </div>       
 
         <div id="PaginaInicial" class="tabcontent">
@@ -226,17 +243,20 @@
             </section>
         </div>
 
-        <div id="Parques" class="tabcontent">
+        <div id="Passeios" class="tabcontent">
             <section class="parques-container">
-                <h2 style="color:var(--secundery);">Explore os Parques</h2>
-                <div class="park-card"></div>
-                    <div id="container-parques-dinamico"></div>
+                <h2 style="color:var(--secundery);">Explore os Passeios</h2>
+                <div id="container-parques-dinamico"></div>
             </section>
         </div>
 
         <div id="Guias" class="tabcontent">
             <div class="guia-container" id="guia-cards-container">
             </div>
+        </div>
+
+        <div id="Sugestoes" class="tabcontent">
+            <div id="sugestoes-container" style="padding:1rem;"></div>
         </div>
 
         <div id="Eventos" class="tabcontent">
@@ -271,6 +291,9 @@
             </div>
             <div class="equipe-container" id="equipe-cards-container">
             </div>
+        </div>
+        <div id="Admin" class="tabcontent" style="background:var(--primary); min-height:100vh;">
+            <div id="admin-container"></div>
         </div>
     </section>
 
@@ -345,6 +368,8 @@
     <script src="js/carouselGuias.js"></script>
     <script src="js/sobreCards.js"></script>
     <script src="js/eventosCards.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/sugestaoCards.js"></script>
 </body>
 
 </html>
