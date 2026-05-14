@@ -196,38 +196,56 @@ async function fazerLogin(event) {
     }
 }
 
-// Atualizar interface quando usuário faz login
+// Adapta a interface após login (botões, aba admin, tipo do usuário)
 function atualizarUILogin(usuario) {
-    const loginBtn = document.querySelector('.loginbtn');
+    const loginBtn    = document.querySelector('.loginbtn');
     const cadastroBtn = document.querySelector('.acessobtn');
-    
     if (loginBtn && cadastroBtn) {
-        // Muda o botão para mostrar o nome e a opção de sair
         loginBtn.textContent = `${usuario.nome} (Sair)`;
-        
-        // Lógica do Logout
-        loginBtn.onclick = function() {
-            localStorage.removeItem('usuario');
-            localStorage.removeItem('logado');
-            
-            // Retorna os botões ao estado original
-            loginBtn.textContent = 'Login';
-            loginBtn.onclick = abrirModalLogin;
-            cadastroBtn.style.display = 'inline-block';
-
-            // --- NOVIDADE: VERIFICA SE ELE ESTÁ NA ABA RESTRITA ---
-            const abaGuias = document.getElementById('Guias');
-            if (abaGuias && abaGuias.style.display === 'block') {
-                // Se ele estiver nos guias ao sair, "chuta" ele de volta pra Página Inicial
-                document.getElementById('defaultOpen').click();
-            }
-        };
-        
-        // Esconde o botão de cadastro pois já está logado
+        loginBtn.onclick = fazerLogout; // função definida abaixo
         cadastroBtn.style.display = 'none';
+    }
+    // Exibe aba Admin somente para o administrador
+    const abaAdminBtn = document.getElementById('btn-admin');
+    if (abaAdminBtn) {
+        abaAdminBtn.style.display = (usuario.tipo === 'admin') ? 'inline-block' : 'none';
+    }
+    // Guarda tipo no body para outros scripts consultarem
+    document.body.dataset.tipoUsuario = usuario.tipo;
+    document.body.dataset.userId      = usuario.id;
+    // Se for guia, carrega inscrições dele para marcar botões corretos
+    if (usuario.tipo === 'guia' && typeof carregarInscricoesDoGuia === 'function') {
+        carregarInscricoesDoGuia(usuario.id);
     }
 }
 
+// Efetua logout e restaura estado inicial da UI
+function fazerLogout() {
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('logado');
+    const loginBtn    = document.querySelector('.loginbtn');
+    const cadastroBtn = document.querySelector('.acessobtn');
+    if (loginBtn)    { loginBtn.textContent = 'Login'; loginBtn.onclick = abrirModalLogin; }
+    if (cadastroBtn) cadastroBtn.style.display = 'inline-block';
+    const abaAdminBtn = document.getElementById('btn-admin');
+    if (abaAdminBtn) abaAdminBtn.style.display = 'none';
+    delete document.body.dataset.tipoUsuario;
+    delete document.body.dataset.userId;
+    document.getElementById('defaultOpen').click(); // volta à página inicial
+}
+// ── Helpers exportados ────────────────────────────────────────────
+
+/** Retorna objeto do usuário logado ou null se não estiver logado. */
+function getUsuarioLogado() {
+    if (localStorage.getItem('logado') !== 'true') return null;
+    return JSON.parse(localStorage.getItem('usuario'));
+}
+
+/** Retorna true se o usuário logado for do tipo informado. */
+function isUsuarioTipo(tipo) {
+    const u = getUsuarioLogado();
+    return u && u.tipo === tipo;
+}
 // Verificar se usuário já está logado ao carregar página
 function verificarLoginAoCarregar() {
     if (localStorage.getItem('logado') === 'true') {

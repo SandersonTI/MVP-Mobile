@@ -26,51 +26,47 @@ const dadosParques = [
       ],
       trilhas: [
           {
-              nome: "Trilha da Pedra do Sino",
-              dificuldade: "Alta",
-              regraHorarios: [
-                  { nome: "Entrada permitida (bate e volta)", inicio: "07:00", fim: "10:00", cor: "#27ae60", corLetra: "#fff" },
-                  { nome: "Aguardando saída", inicio: "10:00", fim: "18:30", cor: "#f1c40f", corLetra: "#000" },
-                  { nome: "Permitido apenas para pernoite", inicio: "07:00", fim: "22:00", cor: "#2980b9", corLetra: "#fff" }
-              ],
-              textoExtra: "Entrada (07h às 10h), Saída (até 18h30)"
+              id: 'parnaso_trilha_1',       // ← ID único para buscar guias
+              nome: 'Trilha da Pedra do Sino',
+              dificuldade: 'Alta',
+              localizacao: 'PARNASO - Sede Teresópolis'
           },
           {
-              nome: "Trilha Cartão Postal",
-              dificuldade: "Média",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "07:00", fim: "16:00", cor: "#27ae60", corLetra: "#fff" }],
-              localizacao: "PARNASO - Sede Teresópolis",
+              id: 'parnaso_trilha_2',       // ← ID único para buscar guias
+              nome: 'Trilha Cartão Postal',
+              dificuldade: 'Média',
+              localizacao: 'PARNASO - Sede Teresópolis'
           },
           {
-              nome: "Caminho das Orquídeas",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Em manutenção", inicio: "07:00", fim: "16:59", cor: "#e67e22", corLetra: "#fff" }],
-              localizacao: "PARNASO - Sede Teresópolis",
+              id: 'parnaso_trilha_3',       // ← ID único para buscar guias
+              nome: 'Caminho das Orquídeas',
+              dificuldade: 'Baixa',
+              localizacao: 'PARNASO - Sede Teresópolis'
           },
           {
-              nome: "Trilha suspensa",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Em manutenção", inicio: "07:00", fim: "23:59", cor: "#e67e22", corLetra: "#fff" }],
-              localizacao: "PARNASO - Sede Teresópolis"
+              id: 'parnaso_trilha_4',       // ← ID único para buscar guias
+              nome: 'Trilha suspensa',
+              dificuldade: 'Baixa',
+              localizacao: 'PARNASO - Sede Teresópolis'
           },
           {
-              nome: "Trilha Poço Paraíso",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "07:00", fim: "16:59", cor: "#27ae60", corLetra: "#fff" }],
-              localizacao: "PARNASO - Sede Teresópolis"
+              id: 'parnaso_trilha_5',       // ← ID único para buscar guias
+              nome: 'Trilha Poço Paraíso',
+              dificuldade: 'Baixa',
+              localizacao: 'PARNASO - Sede Teresópolis'
           },
           {
-            nome: "Trilha Cachoeira Véu da Noiva",
-            dificuldade: "Média",
-            regraHorarios: [{ nome: "Aberta para visitação", inicio: "07:00", fim: "16:00", cor: "#27ae60", corLetra: "#fff" }],
-            localizacao: "PARNASO - Sede Teresópolis"
-        },
+              id: 'parnaso_trilha_6',       // ← ID único para buscar guias
+              nome: 'Trilha Cachoeira Véu da Noiva',
+              dificuldade: 'Média',
+              localizacao: 'PARNASO - Sede Teresópolis'
+          },
         {
-            nome: "Trilha Poço Verde",
-            dificuldade: "Média",
-            regraHorarios: [{ nome: "Aberta para visitação", inicio: "07:00", fim: "16:00", cor: "#27ae60", corLetra: "#fff" }],
-            localizacao: "PARNASO - Sede Guapimirim"
-        }
+              id: 'parnaso_trilha_7',       // ← ID único para buscar guias
+              nome: 'Trilha Poço Verde',
+              dificuldade: 'Média',
+              localizacao: 'PARNASO - Sede Guapimirim'
+          },
 
       ]
   },
@@ -99,30 +95,29 @@ const dadosParques = [
   ],
       trilhas: [
           {
-              nome: "Trilha da Caixa de Fósforo",
-              dificuldade: "Média",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#e67e22", corLetra: "#fff" }],
-              localizacao: "PETP - Vale dos Deuses"
+              id: 'tres_picos_1',       // ← ID único para buscar guias
+              nome: 'Trilha da Caixa de Fósforo',
+              dificuldade: 'Média',
+              localizacao: 'PETP - Vale dos Deuses'
           },
           {
-              nome: "Trilha Capacete",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localizacao: "PETP - Vale do Toledo"
+              id: 'tres_picos_2',       // ← ID único para buscar guias
+              nome: 'Trilha Capacete',
+              dificuldade: 'Baixa',
+              localizacao: 'PETP - Vale do Toledo'
           },
           {
-              nome: "Trilha da Cabeça do Dragão",
-              dificuldade: "Alta",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localizacao: "PETP - Vale dos Deuses"
+              id: 'tres_picos_3',       // ← ID único para buscar guias
+              nome: 'Trilha da Cabeça do Dragão',
+              dificuldade: 'Alta',
+              localizacao: 'PETP - Vale dos Deuses'
           },
           {
-              nome: "Trilha Pico dos Três Municípios",
-              dificuldade: "Média",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localizacao: "PETP - Vale do Toledo"
-            
-          }
+              id: 'tres_picos_4',       // ← ID único para buscar guias
+              nome: 'Trilha Pico dos Três Municípios',
+              dificuldade: 'Média',
+              localizacao: 'PETP - Vale do Toledo'
+          },
       ]
   },
   {
@@ -147,29 +142,29 @@ const dadosParques = [
       ],
       trilhas: [
           {
-              nome: "Trilha Pedra Alpina",
-              dificuldade: "Alta",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#e67e22", corLetra: "#fff" }],
-              localização: "Sede Santa Rita"
+              id: 'montanhas_1',       // ← ID único para buscar guias
+              nome: 'Trilha Pedra Alpina',
+              dificuldade: 'Alta',
+              localizacao: 'Sede Santa Rita'
           },
           {
-              nome: "Trilha Jacu",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localização: "Sede Santa Rita"
+              id: 'montanhas_2',       // ← ID único para buscar guias
+              nome: 'Trilha Jacu',
+              dificuldade: 'Baixa',
+              localizacao: 'Sede Santa Rita'
           },
           {
-              nome: "Trilha Tangará",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "08:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localização: "Sede Santa Rita"
+              id: 'montanhas_3',       // ← ID único para buscar guias
+              nome: 'Trilha Tangará',
+              dificuldade: 'Baixa',
+              localizacao: 'Sede Santa Rita'
           },
           {
-              nome: "Trilha Pedra da Tartaruga",
-              dificuldade: "Baixa",
-              regraHorarios: [{ nome: "Aberta para visitação", inicio: "05:00", fim: "17:00", cor: "#27ae60", corLetra: "#fff" }],
-              localização: "Entrada pela Granja Florestal"
-          }
+              id: 'montanhas_4',       // ← ID único para buscar guias
+              nome: 'Trilha Pedra da Tartaruga',
+              dificuldade: 'Baixa',
+              localizacao: 'Entrada pela Granja Florestal'
+          },
       ]
   }
 ];
@@ -233,18 +228,20 @@ function renderizarParques() {
                 : "";
         
             return `
-                <li data-trilha-nome="${trilha.nome}">
-                    <span>
-                        <strong>${trilha.nome}</strong>${infoDificuldade}
-                        ${extra}
-                        ${infoLocal}
-                    </span>
-                    <div class="status-trilha">
-                        <span class="textoTrilha">Carregando...</span>
+                <li data-trilha-id="${trilha.id}">
+                    <strong>${trilha.nome}</strong>
+                    <span class="badge-dificuldade" style="background:${corDif}">${trilha.dificuldade}</span>
+                    ${trilha.localizacao ? `<br><small>${trilha.localizacao}</small>` : ''}
+                    <!-- Container de guias: preenchido por renderizarGuiasDaTrilha() -->
+                    <div class="guias-trilha-container" data-guias-trilha="${trilha.id}"></div>
+                    <!-- Botão de inscrição: visível apenas para guias (controlado por JS) -->
+                    <div class="btn-inscricao-container" style="display:none;">
+                        <button class="btn-inscricao-guia" data-trilha-id="${trilha.id}"
+                                onclick="toggleInscricaoGuia('${trilha.id}', this)">
+                            + Inscrever-se neste passeio
+                        </button>
                     </div>
-                </li>
-            `;
-        }).join("");
+                </li>`;
       }
 
       // Card
@@ -276,54 +273,3 @@ function toggleAccordion(idParque) {
   const card = document.getElementById(`card-${idParque}`);
   if (card) card.classList.toggle("open");
 }
-
-// === 5. Atualização de Status (TORNADA GLOBAL) ===
-window.atualizarStatusTrilhas = function() {
-  dadosParques.forEach(parque => {
-      const parqueAberto = dentroDoHorario(parque.horario.inicio, parque.horario.fim);
-
-      if (parque.trilhas) {
-          parque.trilhas.forEach(trilha => {
-              const li = document.querySelector(`li[data-trilha-nome="${trilha.nome}"]`);
-              if (!li) return;
-
-              const elTexto = li.querySelector(".textoTrilha");
-              const elStatus = li.querySelector(".status-trilha");
-
-              let mensagem = "Fechada";
-              let cor = "#c0392b";
-              let corLetra = "#fff";
-
-              // Verifica a variável global vinda do previsaoTempo.js
-              if (window.trilhaStatus === "fechada") {
-                  mensagem = "Fechada (Chuva)";
-                  cor = "#c0392b";
-              } 
-              else if (!parqueAberto) {
-                  mensagem = "Fechado (Horário)";
-                  cor = "#c0392b";
-              } 
-              else {
-                  const regra = trilha.regraHorarios.find(h => dentroDoHorario(h.inicio, h.fim));
-                  if (regra) {
-                      mensagem = regra.nome;
-                      cor = regra.cor;
-                      corLetra = regra.corLetra;
-                  }
-              }
-
-              if (elTexto) {
-                  elTexto.textContent = mensagem.charAt(0).toUpperCase() + mensagem.slice(1);
-                  elTexto.style.color = corLetra;
-              }
-              if (elStatus) {
-                  elStatus.style.backgroundColor = cor;
-              }
-          });
-      }
-  });
-};
-
-// Inicialização
-document.addEventListener("DOMContentLoaded", renderizarParques);
-setInterval(window.atualizarStatusTrilhas, 60 * 1000);

@@ -26,50 +26,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- FUNÇÃO DE CONTROLE DAS ABAS (COM TRAVA DE SEGURANÇA) ---
 function openPage(pageName, elmnt, color) {
-    
-    // 1. A NOSSA CATRACA: Trava de segurança para a aba de Guias
-    if (pageName === 'Guias') {
-        // Verifica na memória do navegador se a pessoa está logada
-        const usuarioLogado = localStorage.getItem('logado') === 'true';
-        
-        // Se NÃO estiver logada, bloqueia e abre o login
-        if (!usuarioLogado) {
-            alert('Área restrita! Faça login ou cadastre-se para acessar nossos guias exclusivos.');
-            
-            // Chama a sua função que abre o modal de login
-            if (typeof abrirModalLogin === "function") {
-                abrirModalLogin(); 
-            }
-            
-            return; // O 'return' mata a função aqui, impedindo a aba de abrir
-        }
+    // Obtém o usuário logado (definido em login.js)
+    const usuario = getUsuarioLogado();
+    const tipo    = usuario ? usuario.tipo : null;
+
+    // Trava: Guias → só logados
+    if (pageName === 'Guias' && !usuario) {
+        alert('🔒 Faça login para ver os guias exclusivos.');
+        if (typeof abrirModalLogin === 'function') abrirModalLogin();
+        return;
+    }
+    // Trava: Sugestões → turistas e guias logados
+    if (pageName === 'Sugestoes' && (!usuario || tipo === 'admin')) {
+        alert('🔒 Sugestões são exclusivas para turistas e guias cadastrados.');
+        if (!usuario && typeof abrirModalLogin === 'function') abrirModalLogin();
+        return;
+    }
+    // Trava: Admin → somente admin
+    if (pageName === 'Admin' && tipo !== 'admin') {
+        alert('🔒 Área exclusiva do administrador.'); return;
     }
 
-    // 2. LÓGICA PADRÃO: Esconde todas as abas
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
+    // Esconde todas as abas e remove destaque dos botões
+    Array.from(document.getElementsByClassName('tabcontent'))
+         .forEach(t => t.style.display = 'none');
+    Array.from(document.getElementsByClassName('tablink'))
+         .forEach(b => b.style.backgroundColor = '');
 
-    // 3. Tira a cor de fundo de todos os botões do menu
-    tablinks = document.getElementsByClassName("tablink");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].style.backgroundColor = "";
-    }
-
-    // 4. Mostra a aba que o usuário clicou e pinta o botão
-    const abaAlvo = document.getElementById(pageName);
-    if (abaAlvo) {
-        abaAlvo.style.display = "block";
-    }
-    
-    if (elmnt) {
-        elmnt.style.backgroundColor = color;
-    }
+    // Exibe a aba solicitada
+    const alvo = document.getElementById(pageName);
+    if (alvo)  alvo.style.display = 'block';
+    if (elmnt) elmnt.style.backgroundColor = color;
+    // Ações ao abrir cada aba
+    if (pageName === 'Admin'     && typeof renderizarPainelAdmin === 'function') renderizarPainelAdmin();
+    if (pageName === 'Sugestoes' && typeof renderizarSugestoes   === 'function') renderizarSugestoes();
+    if (pageName === 'Passeios'  && typeof controlarVisibilidadeBotoesInscricao === 'function')
+        controlarVisibilidadeBotoesInscricao();
 }
 
-// 5. Garante que a Página Inicial abra sozinha quando o site carregar
+// Garante que a Página Inicial abra sozinha quando o site carregar
 document.addEventListener("DOMContentLoaded", function() {
     var defaultTab = document.getElementById("defaultOpen");
     if(defaultTab) {

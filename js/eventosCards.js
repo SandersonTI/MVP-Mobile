@@ -37,7 +37,7 @@ const dadosEventos = [
 // 2. Função para criar o Card HTML
 function criarCardEvento(evento) {
     // Se não tiver imagem, usa uma cinza padrão
-    const imagem = evento.imagem || "https://via.placeholder.com/400x250?text=Evento+TereVerde";
+    const imagem = evento.imagem_url || "https://via.placeholder.com/400x250?text=Evento+TereVerde";
 
     return `
         <div class="evento-card">
@@ -57,13 +57,20 @@ function criarCardEvento(evento) {
     `;
 }
 
-// 3. Renderização
-function renderizarEventos() {
+// 3. Renderização dinâmica (busca do BD, fallback para array estático)
+async function carregarEventosDinamicos() {
     const container = document.getElementById('eventos-container');
-    if (container) {
-        const html = dadosEventos.map(ev => criarCardEvento(ev)).join('');
-        container.innerHTML = html;
+    if (!container) return;
+    try {
+        const res  = await fetch(`${API_URL}/eventos`);
+        const data = await res.json();
+        // Usa eventos do BD se houver; senão usa os estáticos
+        const lista = (data.sucesso && data.eventos.length > 0) ? data.eventos : dadosEventos;
+        container.innerHTML = lista.map(criarCardEvento).join('');
+    } catch (e) {
+        console.warn('Servidor offline. Usando eventos estáticos.');
+        container.innerHTML = dadosEventos.map(criarCardEvento).join('');
     }
 }
 
-document.addEventListener('DOMContentLoaded', renderizarEventos);
+document.addEventListener('DOMContentLoaded', carregarEventosDinamicos);
