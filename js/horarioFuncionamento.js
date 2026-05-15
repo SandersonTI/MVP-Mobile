@@ -221,12 +221,24 @@ function renderizarParques() {
       let listaTrilhasHtml = "";
       if (parque.trilhas) {
         listaTrilhasHtml = parque.trilhas.map(trilha => {
+            const coresDificuldade = {
+                Baixa: "#27ae60",
+                "MÃ©dia": "#f1c40f",
+                "MÃƒÂ©dia": "#f1c40f",
+                Alta: "#c0392b"
+            };
+            let corDif = coresDificuldade[trilha.dificuldade] || "#777";
+            if ((trilha.dificuldade || "").toLowerCase().includes("dia")) {
+                corDif = "#f1c40f";
+            }
+            /*
             const extra = trilha.textoExtra ? `<br><small>${trilha.textoExtra}</small>` : "";
             const infoDificuldade = trilha.dificuldade ? ` <span style="font-weight:normal; font-size:0.9em">(Nível: ${trilha.dificuldade})</span>` : "";
             const infoLocal = trilha.localizacao || trilha.localização
                 ? `<br><small><strong>Localização:</strong> ${trilha.localizacao || trilha.localização}</small>`
                 : "";
         
+            */
             return `
                 <li data-trilha-id="${trilha.id}">
                     <strong>${trilha.nome}</strong>
@@ -242,6 +254,7 @@ function renderizarParques() {
                         </button>
                     </div>
                 </li>`;
+        }).join("");
       }
 
       // Card

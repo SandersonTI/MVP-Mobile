@@ -27,6 +27,10 @@ def init_db():
         senha TEXT NOT NULL,
         tipo TEXT NOT NULL DEFAULT 'turista',  -- turista|guia|admin
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
+    colunas_users = [coluna[1] for coluna in c.execute("PRAGMA table_info(users)").fetchall()]
+    if 'tipo' not in colunas_users:
+        c.execute("ALTER TABLE users ADD COLUMN tipo TEXT NOT NULL DEFAULT 'turista'")
         
     # Sugestões de passeios enviadas por turistas/guias
     c.execute('''CREATE TABLE IF NOT EXISTS sugestoes (
@@ -61,6 +65,9 @@ def init_db():
                  VALUES(?,?,?,?,?,?)''',
               ('Administrador','admin@tereverde.com','(00) 00000-0000',
                ADMIN_USER, hash_password(ADMIN_PASS), 'admin'))
+
+    c.execute("UPDATE users SET tipo = 'admin' WHERE username = ?", (ADMIN_USER,))
+
     conn.commit()
     conn.close()
     print('Banco inicializado. Admin: usuario="Administrador" / senha="adminadmin"')    
