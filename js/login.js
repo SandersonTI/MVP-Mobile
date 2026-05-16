@@ -84,6 +84,9 @@ async function enviarDadosGuia() {
     const email = document.getElementById("guia-email").value;
     const telefone = document.getElementById("guia-telefone").value;
     const senha = document.getElementById("guia-senha").value;
+    // Captura o tipo selecionado (turista ou guia)
+    const tipoRadio = document.querySelector('input[name="tipo-cadastro"]:checked');
+    const tipo = tipoRadio ? tipoRadio.value : 'turista';
     const confirmar_senha = document.getElementById("guia-confirmar-senha").value;
 
     // 2. Validação simples (impede envio se faltar dados)
@@ -126,7 +129,8 @@ async function enviarDadosGuia() {
                 telefone: telefone,
                 username: username,
                 senha: senha,
-                confirmar_senha: confirmar_senha
+                confirmar_senha: confirmar_senha,
+                tipo: tipo
             })
         });
 
@@ -202,13 +206,26 @@ function atualizarUILogin(usuario) {
     const cadastroBtn = document.querySelector('.acessobtn');
     if (loginBtn && cadastroBtn) {
         loginBtn.textContent = `${usuario.nome} (Sair)`;
-        loginBtn.onclick = fazerLogout; // função definida abaixo
+        loginBtn.onclick = fazerLogout;
         cadastroBtn.style.display = 'none';
     }
+    // ── NOVO: atualiza o menu mobile ──
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu) {
+        mobileMenu.innerHTML = `
+            <a href="#" onclick="fazerLogout(); toggleMenuMobile()">
+                👤 ${usuario.nome} (Sair)
+            </a>`;
+    }
     // Exibe aba Admin somente para o administrador
-    const abaAdminBtn = document.getElementById('btn-admin');
+    const abaAdminBtn    = document.getElementById('btn-admin');
+    const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
     if (abaAdminBtn) {
         abaAdminBtn.style.display = (usuario.tipo === 'admin') ? 'inline-block' : 'none';
+    }
+    // Oculta Sugestões para admin; mostra para os demais
+    if (abaSugestaoBtn) {
+        abaSugestaoBtn.style.display = (usuario.tipo === 'admin') ? 'none' : 'inline-block';
     }
     // Guarda tipo no body para outros scripts consultarem
     document.body.dataset.tipoUsuario = usuario.tipo;
@@ -227,8 +244,10 @@ function fazerLogout() {
     const cadastroBtn = document.querySelector('.acessobtn');
     if (loginBtn)    { loginBtn.textContent = 'Login'; loginBtn.onclick = abrirModalLogin; }
     if (cadastroBtn) cadastroBtn.style.display = 'inline-block';
-    const abaAdminBtn = document.getElementById('btn-admin');
-    if (abaAdminBtn) abaAdminBtn.style.display = 'none';
+    const abaAdminBtn    = document.getElementById('btn-admin');
+    const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
+    if (abaAdminBtn)    abaAdminBtn.style.display = 'none';
+    if (abaSugestaoBtn) abaSugestaoBtn.style.display = 'inline-block';
     delete document.body.dataset.tipoUsuario;
     delete document.body.dataset.userId;
     document.getElementById('defaultOpen').click(); // volta à página inicial
@@ -240,7 +259,23 @@ function getUsuarioLogado() {
     if (localStorage.getItem('logado') !== 'true') return null;
     return JSON.parse(localStorage.getItem('usuario'));
 }
-
+/** Destaca visualmente o cashbox selecionado no cadastro */
+function selecionarTipo(tipo) {
+    const boxes = document.querySelectorAll('.tipo-cashbox');
+    boxes.forEach(b => {
+        b.style.borderColor = '#ccc';
+        b.style.background  = 'transparent';
+    });
+    const escolhido = document.getElementById(`box-${tipo}`);
+    if (escolhido) {
+        escolhido.style.borderColor = 'var(--button-3)';
+        escolhido.style.background  = 'rgba(52,77,14,.08)';
+    }
+    const radio = document.getElementById(`radio-${tipo}`);
+    if (radio) radio.checked = true;
+}
+// Inicia com Turista selecionado visualmente
+document.addEventListener('DOMContentLoaded', () => selecionarTipo('turista'));
 /** Retorna true se o usuário logado for do tipo informado. */
 function isUsuarioTipo(tipo) {
     const u = getUsuarioLogado();

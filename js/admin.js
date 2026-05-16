@@ -1,3 +1,8 @@
+// Base64 da foto de evento carregada via input file
+let fotoBase64Evento = '';
+
+/**
+ * admin.js — TerêVerde Online
 /**
  * admin.js — TerêVerde Online
  * Painel exclusivo do Administrador.
@@ -33,6 +38,10 @@ function renderizarPainelAdmin() {
                 📅 Eventos
             </button>
             <button class="admin-tab-btn"
+                    onclick="mostrarSecaoAdmin('passeios', this)">
+                🥾 Passeios
+            </button>
+            <button class="admin-tab-btn"
                     onclick="mostrarSecaoAdmin('sugestoes', this)">
                 💡 Sugestões
             </button>
@@ -40,25 +49,38 @@ function renderizarPainelAdmin() {
         <!-- Seção Eventos (visível por padrão) -->
         <div id="admin-sec-eventos" class="admin-secao">
             <div class="admin-card-form">
-                <h3>Adicionar Novo Evento</h3>
-                <div class="admin-form-grid">
-                    <input id="ev-titulo" type="text"
-                           placeholder="Título do evento *" class="admin-input">
-                    <input id="ev-data" type="text"
-                           placeholder="Data (ex: 12 a 28 de Julho) *" class="admin-input">
-                    <input id="ev-local" type="text"
-                           placeholder="Local *" class="admin-input">
-                    <input id="ev-imagem" type="text"
-                           placeholder="URL da imagem (opcional)" class="admin-input">
-                    <input id="ev-link" type="text"
-                           placeholder="Link externo (opcional)" class="admin-input">
-                    <textarea id="ev-descricao"
-                              placeholder="Descrição do evento *"
-                              class="admin-input admin-textarea"></textarea>
-                </div>
-                <button class="btn-admin-acao"
-                        onclick="criarEvento()">✚ Criar Evento</button>
+            <!-- Cabeçalho com logo — igual ao modal de login -->
+            <div style="text-align:center; margin-bottom:1.2rem;">
+                <img src="img/identidade_visual/Icone-TereVerde2.svg"
+                     alt="Logo" style="width:60px; height:60px;">
+                <h3 style="color:var(--secundary); margin-top:.5rem;">Adicionar Novo Evento</h3>
             </div>
+            <div class="admin-form-grid">
+                <input id="ev-titulo" type="text"
+                       placeholder="Título do evento *" class="admin-input">
+                <input id="ev-data" type="text"
+                       placeholder="Data (ex: 12 a 28 de Julho) *" class="admin-input">
+                <input id="ev-local" type="text"
+                       placeholder="Local *" class="admin-input">
+                <!-- Opção de URL OU upload de foto -->
+                <label style="color:#ccc; font-size:.85rem;">Imagem — URL ou carregue um arquivo:</label>
+                <input id="ev-imagem" type="text"
+                       placeholder="URL da imagem (opcional)" class="admin-input"
+                       oninput="document.getElementById('ev-foto').value=''">
+                <input id="ev-foto" type="file" accept="image/*" class="admin-input"
+                       onchange="processarFotoEvento(this)">
+                <div id="ev-foto-preview" class="foto-preview"></div>
+                <input id="ev-link" type="text"
+                       placeholder="Link externo (opcional)" class="admin-input">
+                <!-- Descrição maior -->
+                <textarea id="ev-descricao"
+                          placeholder="Descrição do evento *"
+                          class="admin-input admin-textarea"
+                          style="min-height:120px; resize:vertical;"></textarea>
+            </div>
+            <button class="btn-admin-acao"
+                    onclick="criarEvento()">✚ Criar Evento</button>
+        </div>
             <h3 style="margin:1.5rem 0 0.75rem; color:var(--secundary);">
                 Eventos Cadastrados
             </h3>
@@ -67,6 +89,41 @@ function renderizarPainelAdmin() {
                 <p style="color:#ccc;">Carregando eventos...</p>
             </div>
         </div>
+
+        <!-- Seção Passeios (oculta por padrão) -->
+        <div id="admin-sec-passeios" class="admin-secao" style="display:none;">
+            <div class="admin-card-form">
+                <div style="text-align:center; margin-bottom:1.2rem;">
+                    <img src="img/identidade_visual/Icone-TereVerde2.svg"
+                         alt="Logo" style="width:60px; height:60px;">
+                    <h3 style="color:var(--secundary); margin-top:.5rem;">Adicionar Novo Passeio</h3>
+                </div>
+                <div class="admin-form-grid">
+                    <input id="ps-titulo" type="text" placeholder="Título do passeio *" class="admin-input">
+                    <select id="ps-dificuldade" class="admin-input">
+                        <option value="">-- Dificuldade *--</option>
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média">Média</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                    <input id="ps-local" type="text" placeholder="Local *" class="admin-input">
+                    <label style="color:#ccc; font-size:.85rem;">Imagem — URL ou carregue um arquivo:</label>
+                    <input id="ps-imagem" type="text" placeholder="URL da imagem (opcional)" class="admin-input">
+                    <input id="ps-foto" type="file" accept="image/*" class="admin-input"
+                           onchange="processarFotoPasseio(this)">
+                    <div id="ps-foto-preview" class="foto-preview"></div>
+                    <input id="ps-link" type="text" placeholder="Link externo (opcional)" class="admin-input">
+                    <textarea id="ps-descricao" placeholder="Descrição do passeio *"
+                              class="admin-input admin-textarea" style="min-height:120px; resize:vertical;"></textarea>
+                </div>
+                <button class="btn-admin-acao" onclick="criarPasseio()">✚ Criar Passeio</button>
+            </div>
+            <h3 style="margin:1.5rem 0 0.75rem; color:var(--secundary);">Passeios Cadastrados</h3>
+            <div id="admin-lista-passeios" class="admin-lista">
+                <p style="color:#ccc;">Carregando passeios...</p>
+            </div>
+        </div>
+
         <!-- Seção Sugestões (oculta por padrão) -->
         <div id="admin-sec-sugestoes" class="admin-secao" style="display:none;">
             <!-- Filtros por status -->
@@ -88,7 +145,29 @@ function renderizarPainelAdmin() {
     </div>`;
     // Carrega dados de ambas as seções ao abrir o painel
     carregarEventosAdmin();
-   carregarSugestoesAdmin('pendente');
+    carregarPasseiosAdmin();
+    carregarSugestoesAdmin('pendente');
+}
+/** Converte arquivo de imagem do evento em base64 para preview/envio */
+function processarFotoEvento(input) {
+    const preview = document.getElementById('ev-foto-preview');
+    if (!input.files || !input.files[0]) {
+        fotoBase64Evento = '';
+        if (preview) preview.innerHTML = '';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        fotoBase64Evento = e.target.result;
+        if (preview) {
+            preview.innerHTML = `<img src="${fotoBase64Evento}"
+                alt="Preview" class="foto-preview-img">`;
+        }
+        // Limpa o campo URL ao usar arquivo
+        const urlInput = document.getElementById('ev-imagem');
+        if (urlInput) urlInput.value = '';
+    };
+    reader.readAsDataURL(input.files[0]);
 }
 
 /**
@@ -157,7 +236,8 @@ async function criarEvento() {
     const data_ev   = document.getElementById('ev-data').value.trim();
     const local     = document.getElementById('ev-local').value.trim();
     const descricao = document.getElementById('ev-descricao').value.trim();
-    const imagem    = document.getElementById('ev-imagem').value.trim();
+    // Usa foto carregada via arquivo; se vazia, usa URL digitada
+    const imagemUrl = fotoBase64Evento || document.getElementById('ev-imagem').value.trim();
     const link      = document.getElementById('ev-link').value.trim();
     // Validação mínima antes de chamar a API
     if (!titulo || !data_ev || !local || !descricao) {
@@ -173,7 +253,7 @@ async function criarEvento() {
                 data_evento: data_ev,
                 local,
                 descricao,
-                imagem_url: imagem,
+                imagem_url: imagemUrl,
                 link
             })
         });
@@ -181,8 +261,11 @@ async function criarEvento() {
         if (data.sucesso) {
             alert('✓ ' + data.mensagem);
             // Limpa os campos do formulário
-            ['ev-titulo','ev-data','ev-local','ev-descricao','ev-imagem','ev-link']
-                .forEach(id => document.getElementById(id).value = '');
+            ['ev-titulo','ev-data','ev-local','ev-descricao','ev-imagem','ev-link','ev-foto']
+                .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+            fotoBase64Evento = '';
+            const prev = document.getElementById('ev-foto-preview');
+            if (prev) prev.innerHTML = '';
             // Atualiza lista no painel admin
             carregarEventosAdmin();
             // Atualiza também a aba pública de Eventos
@@ -268,6 +351,85 @@ async function removerEvento(eventoId) {
         carregarEventosAdmin();
         if (typeof carregarEventosDinamicos === 'function') carregarEventosDinamicos();
     } catch (e) { alert('Erro ao remover evento.'); }
+}
+
+// ── Passeios ──────────────────────────────────────────────────
+let fotoBase64Passeio = '';
+
+function processarFotoPasseio(input) {
+    const preview = document.getElementById('ps-foto-preview');
+    if (!input.files || !input.files[0]) { fotoBase64Passeio = ''; if(preview) preview.innerHTML=''; return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+        fotoBase64Passeio = e.target.result;
+        if(preview) preview.innerHTML = `<img src="${fotoBase64Passeio}" class="foto-preview-img">`;
+        const urlInput = document.getElementById('ps-imagem');
+        if(urlInput) urlInput.value = '';
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+async function carregarPasseiosAdmin() {
+    const lista = document.getElementById('admin-lista-passeios');
+    if (!lista) return;
+    try {
+        const res  = await fetch(`${API_URL}/passeios`);
+        const data = await res.json();
+        if (!data.sucesso || data.passeios.length === 0) {
+            lista.innerHTML = '<p style="color:#ccc;">Nenhum passeio ainda.</p>'; return;
+        }
+        lista.innerHTML = data.passeios.map(p => `
+            <div class="admin-item-card" id="ps-item-${p.id}">
+                <div class="admin-item-info">
+                    <strong>${p.titulo}</strong>
+                    <span class="admin-item-detalhe">🥾 ${p.dificuldade} · 📍 ${p.local}</span>
+                    <p>${p.descricao}</p>
+                </div>
+                <div class="admin-item-acoes">
+                    <button class="btn-admin-remover" onclick="removerPasseio(${p.id})">🗑️ Remover</button>
+                </div>
+            </div>`).join('');
+    } catch(e) { lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar passeios.</p>'; }
+}
+
+async function criarPasseio() {
+    const titulo      = document.getElementById('ps-titulo').value.trim();
+    const dificuldade = document.getElementById('ps-dificuldade').value;
+    const local       = document.getElementById('ps-local').value.trim();
+    const descricao   = document.getElementById('ps-descricao').value.trim();
+    const imagemUrl   = fotoBase64Passeio || document.getElementById('ps-imagem').value.trim();
+    const link        = document.getElementById('ps-link').value.trim();
+    if (!titulo || !dificuldade || !local || !descricao) {
+        alert('⚠️ Preencha: título, dificuldade, local e descrição.'); return;
+    }
+    try {
+        const res  = await fetch(`${API_URL}/passeios`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({titulo, descricao, dificuldade, local, imagem_url: imagemUrl, link})
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+            alert('✓ ' + data.mensagem);
+            ['ps-titulo','ps-dificuldade','ps-local','ps-descricao','ps-imagem','ps-link','ps-foto']
+                .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+            fotoBase64Passeio = '';
+            const prev = document.getElementById('ps-foto-preview');
+            if(prev) prev.innerHTML = '';
+            carregarPasseiosAdmin();
+            if (typeof carregarPasseiosDinamicos === 'function') carregarPasseiosDinamicos();
+        } else { alert('✗ ' + data.mensagem); }
+    } catch(e) { alert('Erro ao conectar ao servidor.'); }
+}
+
+async function removerPasseio(passeioId) {
+    if (!confirm('Remover este passeio?')) return;
+    try {
+        const res  = await fetch(`${API_URL}/passeios/${passeioId}`, {method:'DELETE'});
+        const data = await res.json();
+        alert(data.sucesso ? '✓ ' + data.mensagem : '✗ ' + data.mensagem);
+        carregarPasseiosAdmin();
+        if (typeof carregarPasseiosDinamicos === 'function') carregarPasseiosDinamicos();
+    } catch(e) { alert('Erro ao remover passeio.'); }
 }
 
 // ── Sugestões ─────────────────────────────────────────────────────

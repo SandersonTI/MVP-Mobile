@@ -104,15 +104,28 @@
                             <div style="width: 100%; text-align: left;">
                                 <!-- Tipo de conta: Turista ou Guia -->
 
-                                <label><b>Tipo de conta</b></label>
-
-                                <div style="display:flex; gap:1.5rem; margin:8px 0 14px;">
-                                    <label style="font-weight:normal; cursor:pointer;">
-                                        <input type="radio" name="tipo-cadastro" value="turista" checked> 🧳 Turista
+                                <p style="text-align:center; font-size:.9rem; color:#555;
+                                    margin-bottom:8px; font-style:italic;">
+                                    Escolha seu tipo de usuário
+                                </p>
+                                <div style="display:flex; gap:1rem; margin:0 0 14px;">
+                                    <label class="tipo-cashbox" id="box-turista" style="
+                                        flex:1; display:flex; align-items:center; gap:.5rem;
+                                        border:2px solid #ccc; border-radius:8px; padding:.5rem .8rem;
+                                        cursor:pointer; transition: border-color .2s, background .2s;"
+                                        onclick="selecionarTipo('turista')">
+                                        <input type="radio" name="tipo-cadastro" id="radio-turista"
+                                            value="turista" checked style="display:none">
+                                        🧳 <span>Turista</span>
                                     </label>
-
-                                    <label style="font-weight:normal; cursor:pointer;">
-                                        <input type="radio" name="tipo-cadastro" value="guia"> 🧭 Guia
+                                    <label class="tipo-cashbox" id="box-guia" style="
+                                        flex:1; display:flex; align-items:center; gap:.5rem;
+                                        border:2px solid #ccc; border-radius:8px; padding:.5rem .8rem;
+                                        cursor:pointer; transition: border-color .2s, background .2s;"
+                                        onclick="selecionarTipo('guia')">
+                                        <input type="radio" name="tipo-cadastro" id="radio-guia"
+                                            value="guia" style="display:none">
+                                        🧭 <span>Guia</span>
                                     </label>
                                 </div>
 
@@ -186,7 +199,6 @@
         <button class="tablink" onclick="openPage('Sugestoes', this, '#3d6b1a')">Sugestões</button>        
         <button class="tablink" onclick="openPage('Sobre', this, '#76993D')">Sobre</button> 
         <button class="tablink" id="btn-admin" style="display:none; background:#4a0e0e;"
-+
                 onclick="openPage('Admin', this, '#6b1010')">⚙️ Admin</button>
         </div>       
 
@@ -243,32 +255,38 @@
             </section>
         </div>
 
-        <div id="Passeios" class="tabcontent">
-            <section class="parques-container">
-                <h2 style="color:var(--secundery);">Explore os Passeios</h2>
-                <div id="container-parques-dinamico"></div>
-            </section>
-        </div>
+        <div id="Passeios" class="tabcontent" style="background:var(--primary); min-height:100vh;">
+    <!-- Passeios cadastrados pelo admin -->
+    <section style="padding:1rem;">
+        <h2 style="color:#fff; margin-bottom:1rem;"> Passeios</h2>
+        <div id="passeios-admin-container"></div>
+    </section>
+    <!-- Parques estáticos (trilhas) -->
+    <section class="parques-container">
+        <h2 style="color:#fff;">Explore os Parques</h2>
+        <div id="container-parques-dinamico"></div>
+    </section>
+</div>
 
-        <div id="Guias" class="tabcontent">
+        <div id="Guias" class="tabcontent" style="background:var(--primary); min-height:100vh;">
             <div class="guia-container" id="guia-cards-container">
             </div>
         </div>
 
-        <div id="Sugestoes" class="tabcontent">
+        <div id="Sugestoes" class="tabcontent" style="background:var(--primary); min-height:100vh;">
             <div id="sugestoes-container" style="padding:1rem;"></div>
         </div>
 
-        <div id="Eventos" class="tabcontent">
+        <div id="Eventos" class="tabcontent" style="background:var(--primary); min-height:100vh;">
             <div class="eventos-wrapper">
-                <h2>Calendário de Eventos</h2>
-                <p>Festivais, feiras e o que há de melhor rolando em Teresópolis.</p>
+                <h2 style="color:#fff;">Calendário de Eventos</h2>
+                <p style="color:#cde8a0;">Festivais, feiras e o que há de melhor rolando em Teresópolis.</p>
                 
                 <div id="eventos-container" class="eventos-container"></div>
             </div>
         </div>
 
-        <div id="Sobre" class="tabcontent">
+        <div id="Sobre" class="tabcontent" style="background:var(--primary); min-height:100vh;">
             <div class="sobre-proposta">
                 <h2>Sobre o TerêVerde</h2>
                 <p>

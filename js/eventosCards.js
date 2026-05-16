@@ -74,3 +74,41 @@ async function carregarEventosDinamicos() {
 }
 
 document.addEventListener('DOMContentLoaded', carregarEventosDinamicos);
+
+// ── Passeios dinâmicos (cadastrados pelo admin) ───────────────
+function criarCardPasseio(p) {
+    const imagem = p.imagem_url || 'https://via.placeholder.com/400x250?text=Passeio+TereVerde';
+    const dificuldadeCor = { Baixa:'#27ae60', Média:'#f39c12', Alta:'#c0392b' }[p.dificuldade] || '#888';
+    return `
+        <div class="evento-card">
+            <div class="evento-img-box">
+                <img src="${imagem}" loading="lazy" alt="${p.titulo}">
+                <div class="evento-data-badge"
+                     style="background:${dificuldadeCor};">${p.dificuldade}</div>
+            </div>
+            <div class="evento-info">
+                <h3>${p.titulo}</h3>
+                <p class="evento-local"><i class="fa fa-map-marker"></i> ${p.local}</p>
+                <p class="evento-desc">${p.descricao}</p>
+                ${p.link ? `<a href="${p.link}" class="btn-evento" target="_blank" rel="noopener">Saiba Mais</a>` : ''}
+            </div>
+        </div>`;
+}
+
+async function carregarPasseiosDinamicos() {
+    const container = document.getElementById('passeios-admin-container');
+    if (!container) return;
+    try {
+        const res  = await fetch(`${API_URL}/passeios`);
+        const data = await res.json();
+        if (!data.sucesso || data.passeios.length === 0) {
+            container.innerHTML = '<p style="color:#aaa; padding:1rem;">Nenhum passeio cadastrado ainda.</p>';
+            return;
+        }
+        container.innerHTML = data.passeios.map(criarCardPasseio).join('');
+    } catch(e) {
+        container.innerHTML = '<p style="color:#aaa;">Servidor offline.</p>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', carregarPasseiosDinamicos);

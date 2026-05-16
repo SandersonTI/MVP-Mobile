@@ -60,8 +60,10 @@ function openPage(pageName, elmnt, color) {
     // Ações ao abrir cada aba
     if (pageName === 'Admin'     && typeof renderizarPainelAdmin === 'function') renderizarPainelAdmin();
     if (pageName === 'Sugestoes' && typeof renderizarSugestoes   === 'function') renderizarSugestoes();
-    if (pageName === 'Passeios'  && typeof controlarVisibilidadeBotoesInscricao === 'function')
-        controlarVisibilidadeBotoesInscricao();
+    if (pageName === 'Passeios') {
+        if (typeof controlarVisibilidadeBotoesInscricao === 'function') controlarVisibilidadeBotoesInscricao();
+        if (typeof carregarPasseiosDinamicos === 'function') carregarPasseiosDinamicos();
+    }
 }
 
 // Garante que a Página Inicial abra sozinha quando o site carregar

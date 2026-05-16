@@ -37,11 +37,20 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL, nome_local TEXT NOT NULL,
         descricao TEXT NOT NULL, dificuldade TEXT NOT NULL,
+        local TEXT DEFAULT '',
+        link TEXT DEFAULT '',
         foto_base64 TEXT,
-        status TEXT NOT NULL DEFAULT 'pendente', -- pendente|aprovada|reprovada
+        status TEXT NOT NULL DEFAULT 'pendente',
         justificativa TEXT,
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id))''')
+    # Migração: adicionar colunas se já existir tabela sem elas
+    try:
+        c.execute("ALTER TABLE sugestoes ADD COLUMN local TEXT DEFAULT ''")
+    except: pass
+    try:
+        c.execute("ALTER TABLE sugestoes ADD COLUMN link TEXT DEFAULT ''")
+    except: pass
 
     # Inscrições de guias em trilhas/passeios
     c.execute('''CREATE TABLE IF NOT EXISTS inscricoes (
@@ -57,6 +66,17 @@ def init_db():
         titulo TEXT NOT NULL, data_evento TEXT NOT NULL,
         local TEXT NOT NULL, descricao TEXT NOT NULL,
         imagem_url TEXT, link TEXT,
+        data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
+    # Tabela de passeios gerenciados pelo admin
+    c.execute('''CREATE TABLE IF NOT EXISTS passeios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        descricao TEXT NOT NULL,
+        dificuldade TEXT NOT NULL,
+        local TEXT NOT NULL,
+        imagem_url TEXT,
+        link TEXT,
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
     # Admin padrão — INSERT OR IGNORE evita erro se já existir
@@ -95,6 +115,10 @@ def cadastro():
         username = data.get('username', '').strip()
         senha = data.get('senha', '').strip()
         confirmar_senha = data.get('confirmar_senha', '').strip()
+        tipo = data.get('tipo', 'turista').strip()
+        # Garante que ninguém passe 'admin' via cadastro público
+        if tipo not in ('turista', 'guia'):
+            tipo = 'turista'
         
         # Validações
         if not all([nome, email, telefone, username, senha, confirmar_senha]):
@@ -116,9 +140,9 @@ def cadastro():
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO users (nome, email, telefone, username, senha)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (nome, email, telefone, username, senha_criptografada))
+            INSERT INTO users (nome, email, telefone, username, senha, tipo)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (nome, email, telefone, username, senha_criptografada, tipo))
         
         conn.commit()
         
@@ -217,15 +241,18 @@ def criar_sugestao():
         nome_local  = d.get('nome_local','').strip()
         descricao   = d.get('descricao','').strip()
         dificuldade = d.get('dificuldade','').strip()
-        foto_base64 = d.get('foto_base64','')   # opcional
+        foto_base64 = d.get('foto_base64','')
+        local       = d.get('local','').strip()
+        link        = d.get('link','').strip()
         if not all([user_id, nome_local, descricao, dificuldade]):
             return jsonify({'sucesso':False,'mensagem':'Campos obrigatórios faltando'}), 400
         conn = get_db_connection()
         u = conn.execute('SELECT tipo FROM users WHERE id=?',(user_id,)).fetchone()
         if not u or u['tipo'] == 'admin':
             return jsonify({'sucesso':False,'mensagem':'Apenas turistas/guias podem sugerir'}), 403
-        conn.execute('INSERT INTO sugestoes (user_id,nome_local,descricao,dificuldade,foto_base64) VALUES(?,?,?,?,?)',
-                     (user_id,nome_local,descricao,dificuldade,foto_base64))
+        conn.execute(
+            'INSERT INTO sugestoes (user_id,nome_local,descricao,dificuldade,local,link,foto_base64) VALUES(?,?,?,?,?,?,?)',
+            (user_id,nome_local,descricao,dificuldade,local,link,foto_base64))
         conn.commit()
         return jsonify({'sucesso':True,'mensagem':'Sugestão enviada!'}), 201
     except Exception as e:
@@ -267,6 +294,17 @@ def revisar_sugestao(sid):
         r = conn.execute('UPDATE sugestoes SET status=?,justificativa=? WHERE id=?',(decisao,just,sid))
         conn.commit()
         if r.rowcount == 0: return jsonify({'sucesso':False,'mensagem':'Sugestão não encontrada'}), 404
+        # Se aprovada, copia automaticamente para a tabela passeios
+        if decisao == 'aprovada':
+            sug = conn.execute('SELECT * FROM sugestoes WHERE id=?',(sid,)).fetchone()
+            if sug:
+                conn.execute(
+                    '''INSERT OR IGNORE INTO passeios
+                       (titulo, descricao, dificuldade, local, imagem_url)
+                       VALUES (?, ?, ?, ?, ?)''',
+                    (sug['nome_local'], sug['descricao'], sug['dificuldade'],
+                     'Sugestão da Comunidade', sug['foto_base64'] or ''))
+                conn.commit()
         return jsonify({'sucesso':True,'mensagem':f'Sugestão {decisao}!'}), 200
     except Exception as e:
         return jsonify({'sucesso':False,'mensagem':f'Erro: {e}'}), 500
@@ -408,6 +446,72 @@ def deletar_evento(eid):
     finally:
         if conn: conn.close()
 
+# ── GET /api/passeios ──────────────────────────────────────────
+@app.route('/api/passeios', methods=['GET'])
+def listar_passeios():
+    try:
+        conn = get_db_connection()
+        rows = conn.execute('SELECT * FROM passeios ORDER BY data_criacao DESC').fetchall()
+        conn.close()
+        return jsonify({'sucesso': True, 'passeios': [dict(r) for r in rows]}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
+# ── POST /api/passeios ─────────────────────────────────────────
+@app.route('/api/passeios', methods=['POST'])
+def criar_passeio():
+    conn = None
+    try:
+        d = request.get_json()
+        if not all([d.get('titulo'), d.get('descricao'), d.get('dificuldade'), d.get('local')]):
+            return jsonify({'sucesso': False, 'mensagem': 'Campos obrigatórios faltando'}), 400
+        conn = get_db_connection()
+        cur = conn.execute(
+            'INSERT INTO passeios (titulo,descricao,dificuldade,local,imagem_url,link) VALUES(?,?,?,?,?,?)',
+            (d['titulo'], d['descricao'], d['dificuldade'], d['local'],
+             d.get('imagem_url', ''), d.get('link', '')))
+        conn.commit()
+        return jsonify({'sucesso': True, 'mensagem': 'Passeio criado!', 'id': cur.lastrowid}), 201
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── PUT /api/passeios/<id> ───────────────────────────────────────
+@app.route('/api/passeios/<int:pid>', methods=['PUT'])
+def editar_passeio(pid):
+    conn = None
+    try:
+        d = request.get_json()
+        conn = get_db_connection()
+        r = conn.execute(
+            'UPDATE passeios SET titulo=?,descricao=?,dificuldade=?,local=?,imagem_url=?,link=? WHERE id=?',
+            (d.get('titulo'), d.get('descricao'), d.get('dificuldade'), d.get('local'),
+             d.get('imagem_url', ''), d.get('link', ''), pid))
+        conn.commit()
+        if r.rowcount == 0:
+            return jsonify({'sucesso': False, 'mensagem': 'Passeio não encontrado'}), 404
+        return jsonify({'sucesso': True, 'mensagem': 'Passeio atualizado!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── DELETE /api/passeios/<id> ──────────────────────────────────────
+@app.route('/api/passeios/<int:pid>', methods=['DELETE'])
+def deletar_passeio(pid):
+    conn = None
+    try:
+        conn = get_db_connection()
+        r = conn.execute('DELETE FROM passeios WHERE id=?', (pid,))
+        conn.commit()
+        if r.rowcount == 0:
+            return jsonify({'sucesso': False, 'mensagem': 'Passeio não encontrado'}), 404
+        return jsonify({'sucesso': True, 'mensagem': 'Passeio removido!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'message': 'Servidor rodando'}), 200

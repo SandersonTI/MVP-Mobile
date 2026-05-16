@@ -46,14 +46,19 @@ function renderizarSugestoes() {
                     <option value="Média">Média</option>
                     <option value="Alta">Alta</option>
                 </select>
+                <label>Localização / Como Chegar *</label>
+                <input id="sug-local" type="text" class="admin-input"
+                       placeholder="Ex: Estrada da Granja, km 3">
                 <label>Descrição *</label>
                 <textarea id="sug-descricao" class="admin-input admin-textarea"
-                          placeholder="Descreva o local: acesso, atrativos..."></textarea>
+                          placeholder="Descreva o local: acesso, atrativos..."
+                          style="min-height:100px; resize:vertical;"></textarea>
+                <label>Link externo (opcional)</label>
+                <input id="sug-link" type="text" class="admin-input"
+                       placeholder="https://...">
                 <label>Foto do Local (opcional)</label>
-                <!-- onchange chama processarFotoSugestao para converter em base64 -->
                 <input type="file" id="sug-foto" accept="image/*" class="admin-input"
                        onchange="processarFotoSugestao(this)">
-                <!-- Preview da imagem selecionada -->
                 <div id="sug-preview" class="foto-preview"></div>
             </div>
             <button class="btn-admin-acao" onclick="enviarSugestao()">
@@ -101,9 +106,11 @@ function processarFotoSugestao(input) {
 /** Coleta o formulário e envia POST /api/sugestao. */
 async function enviarSugestao() {
     const usuario     = getUsuarioLogado();
-    const nome_local  = document.getElementById('sug-nome').value.trim();
+  const nome_local  = document.getElementById('sug-nome').value.trim();
     const dificuldade = document.getElementById('sug-dificuldade').value;
     const descricao   = document.getElementById('sug-descricao').value.trim();
+    const local       = document.getElementById('sug-local') ? document.getElementById('sug-local').value.trim() : '';
+    const link        = document.getElementById('sug-link')  ? document.getElementById('sug-link').value.trim()  : '';
     if (!nome_local || !dificuldade || !descricao) {
         alert('⚠️ Preencha todos os campos obrigatórios.');
         return;
@@ -113,11 +120,13 @@ async function enviarSugestao() {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                user_id:     usuario.id,   // ID do turista/guia logado
+                user_id:     usuario.id,
                 nome_local,
                 descricao,
                 dificuldade,
-                foto_base64: fotoBase64Sugestao  // pode ser '' se não enviou foto
+                local,
+                link,
+                foto_base64: fotoBase64Sugestao
             })
         });
         const data = await res.json();
