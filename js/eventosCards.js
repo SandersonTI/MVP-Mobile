@@ -161,7 +161,7 @@ async function verGuiasPasseio(passeioId) {
     }
 }
 
-** Mostra botão Inscrição somente para guias logados */
+/** Mostra botão Inscrição somente para guias logados */
 function ativarBotoesInscricaoPasseio() {
     const usuario = getUsuarioLogado();
     if (!usuario || usuario.tipo !== 'guia') return;
