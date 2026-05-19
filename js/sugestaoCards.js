@@ -188,15 +188,22 @@ async function carregarMinhasSugestoes(userId) {
                 ? `<img src="${s.foto_base64}" alt="${s.nome_local}"
                          class="sugestao-foto-mini">`
                 : '';
+            // Botão de exclusão — só para sugestões pendentes
+            const btnExcluir = s.status === 'pendente' ? `
+                <button onclick="excluirSugestao(${s.id})"
+                    style="margin-top:.6rem; background:#c0392b; color:#fff;
+                           border:none; border-radius:6px; padding:.35rem .9rem;
+                           cursor:pointer; font-size:.82rem;">
+                    🗑️ Excluir
+                </button>` : '';
+
             return `
             <div class="minha-sugestao-card">
                 <div class="minha-sug-header">
                     ${fotoHtml}
                     <div class="minha-sug-meta">
                         <strong>${s.nome_local}</strong>
-                        <span class="badge-dificuldade"
-                              style="margin-left:.5rem;">${s.dificuldade}</span>
-                        <!-- Badge colorido com status + ícone -->
+                        <span class="badge-dificuldade" style="margin-left:.5rem;">${s.dificuldade}</span>
                         <span style="background:${corStatus}; color:#fff;
                                padding:2px 8px; border-radius:12px;
                                font-size:.8em; margin-left:.5rem;">
@@ -205,14 +212,37 @@ async function carregarMinhasSugestoes(userId) {
                     </div>
                 </div>
                 <p class="minha-sug-desc">${s.descricao}</p>
-                <small style="color:#aaa;">
+                <small style="color:#b0d48a;">
                     Enviado em: ${new Date(s.data_criacao).toLocaleDateString('pt-BR')}
                 </small>
-                <!-- Feedback do admin — só aparece se houver justificativa -->
                 ${feedbackHtml}
+                ${btnExcluir}
             </div>`;
         }).join('');
     } catch (e) {
         lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar sugestões.</p>';
+    }
+}
+
+/** Exclui sugestão pendente do usuário logado */
+async function excluirSugestao(sugestaoId) {
+    if (!confirm('Excluir esta sugestão?')) return;
+    const usuario = getUsuarioLogado();
+    if (!usuario) return;
+    try {
+        const res  = await fetch(`${API_URL}/sugestao/${sugestaoId}`, {
+            method:  'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ user_id: usuario.id })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+            alert('✓ ' + data.mensagem);
+            carregarMinhasSugestoes(usuario.id);
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch (e) {
+        alert('Erro ao conectar ao servidor: ' + e.message);
     }
 }

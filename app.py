@@ -324,6 +324,33 @@ def minhas_sugestoes():
     except Exception as e:
         return jsonify({'sucesso':False,'mensagem':f'Erro: {e}'}), 500
 
+# ── DELETE /api/sugestao/<id> — usuário exclui própria sugestão pendente ──
+@app.route('/api/sugestao/<int:sid>', methods=['DELETE'])
+def deletar_sugestao(sid):
+    conn = None
+    try:
+        d = request.get_json(silent=True) or {}
+        user_id = d.get('user_id')
+        if not user_id:
+            return jsonify({'sucesso': False, 'mensagem': 'user_id obrigatório'}), 400
+        conn = get_db_connection()
+        # Verifica se a sugestão pertence ao usuário e ainda está pendente
+        sug = conn.execute(
+            'SELECT id, status FROM sugestoes WHERE id=? AND user_id=?',
+            (sid, user_id)
+        ).fetchone()
+        if not sug:
+            return jsonify({'sucesso': False, 'mensagem': 'Sugestão não encontrada ou sem permissão'}), 404
+        if sug['status'] != 'pendente':
+            return jsonify({'sucesso': False, 'mensagem': 'Só é possível excluir sugestões pendentes'}), 400
+        conn.execute('DELETE FROM sugestoes WHERE id=?', (sid,))
+        conn.commit()
+        return jsonify({'sucesso': True, 'mensagem': 'Sugestão excluída!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
 # ── GET /api/inscricoes/<trilha_id> — guias inscritos em uma trilha ──
 @app.route('/api/inscricoes/<trilha_id>', methods=['GET'])
 def guias_inscritos(trilha_id):
@@ -512,6 +539,24 @@ def deletar_passeio(pid):
         return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
     finally:
         if conn: conn.close()
+
+# ── GET /api/passeios/<id>/guias — guias inscritos num passeio ──
+@app.route('/api/passeios/<int:pid>/guias', methods=['GET'])
+def guias_do_passeio(pid):
+    try:
+        conn = get_db_connection()
+        rows = conn.execute(
+            '''SELECT u.id, u.nome, u.username, u.telefone
+               FROM inscricoes i
+               JOIN users u ON u.id = i.guia_id
+               WHERE i.trilha_id = ?''',
+            (str(pid),)
+        ).fetchall()
+        conn.close()
+        return jsonify({'sucesso': True, 'guias': [dict(r) for r in rows]}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'message': 'Servidor rodando'}), 200

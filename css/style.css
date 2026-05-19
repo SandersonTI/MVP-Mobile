@@ -361,10 +361,11 @@ section.slider {
     width: 100%;
 }
 
-#PaginaInicial { background-color: var(--button-2); }
-#Parques       { background-color: var(--button-3); }
-#Guias         { background-color: var(--button-4); }
-#Sobre         { background-color: var(--button-5); }
+/* Cor de fundos das páginas: */
+#PaginaInicial { background-color: var(--primary); }
+/* #Parques       { background-color: var(--button-3); } */
+/* #Guias         { background-color: var(--button-4); } */
+/* #Sobre         { background-color: var(--button-5); } */
 
 /* ============================================================
    SLIDERS DOS PARQUES (internos)
@@ -722,4 +723,140 @@ header, footer,
 @media (max-width: 768px) {
     .evento-img-box img { height: 160px; }
     .sugestao-foto      { max-height: 120px; }
+}
+
+/* ============================================================
+   SUGESTÕES — cores de texto na aba de fundo verde
+   ============================================================ */
+.sugestao-wrapper,
+.sugestao-form-card,
+.sugestao-form-card h3,
+.sugestao-form-card p,
+.sugestao-form-card label,
+.sugestao-instrucao,
+.minhas-sugestoes-section h3,
+.minha-sugestao-card,
+.minha-sugestao-card strong,
+.minha-sugestao-card p,
+.minha-sug-desc,
+.sugestao-aviso,
+.sugestao-aviso p {
+    color: #fff;
+}
+
+.minha-sugestao-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: .8rem;
+}
+
+/* Data e info secundária */
+.minha-sugestao-card small {
+    color: #b0d48a;
+}
+
+/* Feedback do admin */
+.feedback-admin {
+    background: rgba(255,255,255,.1);
+    border-left: 3px solid #f1c40f;
+    border-radius: 0 6px 6px 0;
+    padding: .6rem .9rem;
+    margin-top: .6rem;
+    color: #fff;
+}
+
+/* ============================================================
+   SUGESTÕES — form-card, select e responsividade mobile
+   ============================================================ */
+.sugestao-form-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    /* Garante que não extrapola a tela */
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Select com cor do ambiente verde */
+.sugestao-form-campos select.admin-input,
+#sug-dificuldade {
+    background: var(--verde2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sugestao-form-campos select.admin-input option,
+#sug-dificuldade option {
+    background: var(--verde2);
+    color: #fff;
+}
+
+/* Container principal de sugestões — sem overflow */
+.sugestao-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Mobile: garante que tudo cabe na tela */
+@media (max-width: 768px) {
+    .sugestao-form-card,
+    .sugestao-wrapper,
+    #sugestoes-container {
+        padding: .8rem;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .admin-input,
+    .admin-textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* ============================================================
+   SUB-ABAS (dentro de Passeios)
+   ============================================================ */
+.sub-tab-bar {
+    display: flex;
+    gap: .4rem;
+    padding: 1rem 1rem .5rem;
+    flex-wrap: wrap;
+}
+
+.sub-tablink {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: .45rem 1.1rem;
+    font-family: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.sub-tablink.active,
+.sub-tablink:hover {
+    background: var(--verde3);
+    border-color: var(--verde3);
+}
+
+@media (max-width: 768px) {
+    .sub-tablink {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: .5rem .5rem;
+        font-size: .82rem;
+    }
 }

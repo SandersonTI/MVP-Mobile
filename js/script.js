@@ -38,7 +38,7 @@ function openPage(pageName, elmnt, color) {
     }
     // Trava: Sugestões → turistas e guias logados
     if (pageName === 'Sugestoes' && (!usuario || tipo === 'admin')) {
-        alert('🔒 Sugestões são exclusivas para turistas e guias cadastrados.');
+        alert('🔒 Sugestões de passeios são exclusivas para turistas e guias cadastrados.');
         if (!usuario && typeof abrirModalLogin === 'function') abrirModalLogin();
         return;
     }
@@ -73,3 +73,14 @@ document.addEventListener("DOMContentLoaded", function() {
         defaultTab.click();
     }
 });
+
+/** Controla sub-abas dentro da aba Passeios */
+function abrirSubAba(subId, btn) {
+    document.querySelectorAll('.sub-tabcontent')
+            .forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.sub-tablink')
+            .forEach(b => b.classList.remove('active'));
+    const alvo = document.getElementById(subId);
+    if (alvo) alvo.style.display = 'block';
+    if (btn)  btn.classList.add('active');
+}

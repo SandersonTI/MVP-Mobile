@@ -192,14 +192,14 @@
 
     <section>
         <div class="tab-bar">
-        <button class="tablink" onclick="openPage('PaginaInicial', this, '#293B14')" id="defaultOpen">Página inicial</button>
-        <button class="tablink" onclick="openPage('Passeios', this, '#344D0E')">Passeios</button>
-        <button class="tablink" onclick="openPage('Eventos', this, 'var(--primary)')">Eventos</button>
-        <button class="tablink" onclick="openPage('Guias', this, '#4d7019')">Guias</button>
-        <button class="tablink" onclick="openPage('Sugestoes', this, '#3d6b1a')">Sugestões</button>        
-        <button class="tablink" onclick="openPage('Sobre', this, '#76993D')">Sobre</button> 
-        <button class="tablink" id="btn-admin" style="display:none; background:#4a0e0e;"
-                onclick="openPage('Admin', this, '#6b1010')">⚙️ Admin</button>
+            <button class="tablink" onclick="openPage('PaginaInicial', this, 'var(--primary)')" id="defaultOpen">Página inicial</button>
+            <button class="tablink" onclick="openPage('Passeios', this, 'var(--primary)')">Passeios</button>
+            <button class="tablink" onclick="openPage('Eventos', this, 'var(--primary)')">Eventos</button>
+            <button class="tablink" onclick="openPage('Guias', this, 'var(--primary)')">Guias</button>
+            <button class="tablink" onclick="openPage('Sugestoes', this, 'var(--primary)')">Sugestões</button>
+            <button class="tablink" onclick="openPage('Sobre', this, 'var(--primary)')">Sobre</button>
+            <button class="tablink" id="btn-admin" style="display:none;"
+                    onclick="openPage('Admin', this, 'var(--primary)')">Admin</button>
         </div>       
 
         <div id="PaginaInicial" class="tabcontent">
@@ -256,17 +256,25 @@
         </div>
 
         <div id="Passeios" class="tabcontent" style="background:var(--primary); min-height:100vh;">
-    <!-- Passeios cadastrados pelo admin -->
-    <section style="padding:1rem;">
-        <h2 style="color:#fff; margin-bottom:1rem;"> Passeios</h2>
-        <div id="passeios-admin-container"></div>
-    </section>
-    <!-- Parques estáticos (trilhas) -->
-    <section class="parques-container">
-        <h2 style="color:#fff;">Explore os Parques</h2>
-        <div id="container-parques-dinamico"></div>
-    </section>
-</div>
+    <!-- Sub-abas da aba Passeios -->
+    <div class="sub-tab-bar">
+        <button class="sub-tablink active" id="sub-passeios-btn"
+                onclick="abrirSubAba('sub-passeios', this)">🥾 Passeios</button>
+        <button class="sub-tablink" id="sub-parques-btn"
+                onclick="abrirSubAba('sub-parques', this)">🌲 Explore os Parques</button>
+        </div>
+        <!-- Conteúdo: Passeios cadastrados -->
+        <div id="sub-passeios" class="sub-tabcontent">
+            <div id="passeios-admin-container" style="padding:1rem;"></div>
+        </div>
+        <!-- Conteúdo: Parques estáticos -->
+        <div id="sub-parques" class="sub-tabcontent" style="display:none;">
+            <section class="parques-container">
+                <h2 style="color:#fff; margin-bottom:1rem;">Explore os Parques</h2>
+                <div id="container-parques-dinamico"></div>
+            </section>
+        </div>
+    </div>
 
         <div id="Guias" class="tabcontent" style="background:var(--primary); min-height:100vh;">
             <div class="guia-container" id="guia-cards-container">

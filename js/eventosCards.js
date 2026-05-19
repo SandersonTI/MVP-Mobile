@@ -83,14 +83,24 @@ function criarCardPasseio(p) {
         <div class="evento-card">
             <div class="evento-img-box">
                 <img src="${imagem}" loading="lazy" alt="${p.titulo}">
-                <div class="evento-data-badge"
-                     style="background:${dificuldadeCor};">${p.dificuldade}</div>
+                <div class="evento-data-badge" style="background:${dificuldadeCor};">${p.dificuldade}</div>
             </div>
             <div class="evento-info">
                 <h3>${p.titulo}</h3>
                 <p class="evento-local"><i class="fa fa-map-marker"></i> ${p.local}</p>
                 <p class="evento-desc">${p.descricao}</p>
-                ${p.link ? `<a href="${p.link}" class="btn-evento" target="_blank" rel="noopener">Saiba Mais</a>` : ''}
+                <div id="guias-passeio-${p.id}" style="display:none; margin-top:.6rem;
+                     background:rgba(0,0,0,.1); border-radius:6px; padding:.6rem;">
+                    <em style="font-size:.85rem; color:#888;">Carregando guias...</em>
+                </div>
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem;">
+                    <button class="btn-evento btn-guias-passeio"
+                            onclick="verGuiasPasseio(${p.id})"
+                            style="background:var(--verde3); border:none; cursor:pointer;">
+                        👥 Guias Disponíveis
+                    </button>
+                    ${p.link ? `<a href="${p.link}" class="btn-evento" target="_blank" rel="noopener">Saiba Mais</a>` : ''}
+                </div>
             </div>
         </div>`;
 }
@@ -112,3 +122,33 @@ async function carregarPasseiosDinamicos() {
 }
 
 document.addEventListener('DOMContentLoaded', carregarPasseiosDinamicos);
+
+/** Alterna visibilidade da lista de guias inscritos num passeio */
+async function verGuiasPasseio(passeioId) {
+    const painel = document.getElementById(`guias-passeio-${passeioId}`);
+    if (!painel) return;
+    // Toggle: se já está visível, oculta
+    if (painel.style.display === 'block') {
+        painel.style.display = 'none';
+        return;
+    }
+    painel.style.display = 'block';
+    painel.innerHTML = '<em style="font-size:.85rem; color:#888;">Carregando guias...</em>';
+    try {
+        const res  = await fetch(`${API_URL}/passeios/${passeioId}/guias`);
+        const data = await res.json();
+        if (!data.sucesso || data.guias.length === 0) {
+            painel.innerHTML = '<p style="color:#aaa; font-size:.85rem;">Nenhum guia inscrito ainda.</p>';
+            return;
+        }
+        painel.innerHTML = data.guias.map(g => `
+            <div style="display:flex; align-items:center; gap:.5rem;
+                        padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.1);">
+                <span>🧭</span>
+                <strong style="color:#fff;">${g.nome}</strong>
+                <span style="color:#aaa; font-size:.82rem;">@${g.username}</span>
+            </div>`).join('');
+    } catch(e) {
+        painel.innerHTML = '<p style="color:#c0392b; font-size:.85rem;">Erro ao carregar guias.</p>';
+    }
+}
