@@ -39,7 +39,13 @@
 .iconesguia {
   text-decoration: none;
   font-size: 22px;
-  color: var(--button-1);
+  color: #ffffff;
+  transition: color .2s, opacity .2s;
+}
+
+.iconesguia:hover {
+  color: var(--primary-hover); /* amarelo-verde do projeto */
+  opacity: 1 !important;
 }
 
 .contatobtn:hover, a:hover {

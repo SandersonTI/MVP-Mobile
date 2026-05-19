@@ -94,10 +94,18 @@ function criarCardPasseio(p) {
                     <em style="font-size:.85rem; color:#888;">Carregando guias...</em>
                 </div>
                 <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem;">
+                    <!-- Botão de inscrição renderizado por JS após o card -->
                     <button class="btn-evento btn-guias-passeio"
                             onclick="verGuiasPasseio(${p.id})"
                             style="background:var(--verde3); border:none; cursor:pointer;">
                         👥 Guias Disponíveis
+                    </button>
+                    <!-- Botão Inscrição — só para guias; gerado dinamicamente -->
+                    <button id="btn-inscricao-${p.id}"
+                            class="btn-evento"
+                            onclick="toggleInscricaoPasseio(${p.id}, this)"
+                            style="display:none; border:none; cursor:pointer;">
+                        ➕ Inscrever-se
                     </button>
                     ${p.link ? `<a href="${p.link}" class="btn-evento" target="_blank" rel="noopener">Saiba Mais</a>` : ''}
                 </div>
@@ -152,3 +160,47 @@ async function verGuiasPasseio(passeioId) {
         painel.innerHTML = '<p style="color:#c0392b; font-size:.85rem;">Erro ao carregar guias.</p>';
     }
 }
+
+** Mostra botão Inscrição somente para guias logados */
+function ativarBotoesInscricaoPasseio() {
+    const usuario = getUsuarioLogado();
+    if (!usuario || usuario.tipo !== 'guia') return;
+    document.querySelectorAll('[id^="btn-inscricao-"]').forEach(btn => {
+        btn.style.display = 'inline-block';
+    });
+}
+
+/** Inscreve ou desincreve guia de um passeio */
+async function toggleInscricaoPasseio(passeioId, btn) {
+    const usuario = getUsuarioLogado();
+    if (!usuario || usuario.tipo !== 'guia') {
+        alert('🔒 Somente guias podem se inscrever.');
+        return;
+    }
+    const jaInscrito = btn.dataset.inscrito === 'true';
+    const method = jaInscrito ? 'DELETE' : 'POST';
+    const url = `${API_URL}/inscricao`;
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guia_id: usuario.id, trilha_id: String(passeioId) })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+            btn.dataset.inscrito = jaInscrito ? 'false' : 'true';
+            btn.textContent = jaInscrito ? '➕ Inscrever-se' : '✅ Inscrito';
+            btn.style.background = jaInscrito ? '' : '#27ae60';
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch(e) {
+        alert('Erro ao conectar: ' + e.message);
+    }
+}
+
+// Ativa botões de inscrição quando a aba Passeios é aberta
+document.addEventListener('DOMContentLoaded', () => {
+    // Será chamado também por openPage() em script.js
+    setTimeout(ativarBotoesInscricaoPasseio, 800);
+});

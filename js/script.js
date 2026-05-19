@@ -60,9 +60,13 @@ function openPage(pageName, elmnt, color) {
     // Ações ao abrir cada aba
     if (pageName === 'Admin'     && typeof renderizarPainelAdmin === 'function') renderizarPainelAdmin();
     if (pageName === 'Sugestoes' && typeof renderizarSugestoes   === 'function') renderizarSugestoes();
-    if (pageName === 'Passeios') {
+     if (pageName === 'Passeios') {
         if (typeof controlarVisibilidadeBotoesInscricao === 'function') controlarVisibilidadeBotoesInscricao();
-        if (typeof carregarPasseiosDinamicos === 'function') carregarPasseiosDinamicos();
+        if (typeof carregarPasseiosDinamicos === 'function') {
+            carregarPasseiosDinamicos().then(() => {
+                if (typeof ativarBotoesInscricaoPasseio === 'function') ativarBotoesInscricaoPasseio();
+            });
+        }
     }
 }
 

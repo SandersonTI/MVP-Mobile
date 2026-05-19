@@ -267,7 +267,6 @@ def listar_sugestoes():
         status = request.args.get('status')   # ?status=pendente|aprovada|reprovada
         conn = get_db_connection()
         q = '''SELECT s.*,u.nome as autor_nome,u.username as autor_username,u.tipo as autor_tipo
-+
                FROM sugestoes s JOIN users u ON u.id=s.user_id'''
         params = ()
         if status: q += ' WHERE s.status=?'; params=(status,)

@@ -627,9 +627,9 @@ header, footer,
 }
 
 .admin-tab-btn {
-    background: rgba(255,255,255,.1);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.2);
+    background: var(--verde2);   /* Verde escuro — nunca branco */
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.25);
     border-radius: 8px;
     padding: .5rem 1.2rem;
     font-family: inherit;
@@ -640,11 +640,21 @@ header, footer,
 .admin-tab-btn.active,
 .admin-tab-btn:hover {
     background: var(--verde3);
-    border-color: var(--verde3);
+    border-color: var(--amarelo, #c8e63b);
+    color: #fff !important;
+}
+
+/* Container das sub-abas */
+.admin-tabs {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
 }
 
 .admin-input {
     width: 100%;
+    max-width: 100%;          /* nunca extrapola o container */
     background: rgba(255,255,255,.08);
     border: 1px solid rgba(255,255,255,.2);
     border-radius: 6px;
@@ -654,6 +664,42 @@ header, footer,
     font-size: .9rem;
     margin-bottom: .6rem;
     box-sizing: border-box;
+}
+
+/* Select dentro do painel admin — garante cor e tamanho */
+select.admin-input {
+    background: var(--verde2);
+    color: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+select.admin-input option {
+    background: var(--verde2);
+    color: #fff;
+}
+
+.admin-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    overflow-x: hidden;    /* evita scroll horizontal */
+}
+
+@media (max-width: 768px) {
+    .admin-painel {
+        padding: .8rem .5rem;
+    }
+    .admin-card-form {
+        padding: 1rem .8rem;
+    }
+    .admin-tab-btn {
+        padding: .4rem .7rem;
+        font-size: .82rem;
+    }
+    .admin-tabs {
+        gap: .3rem;
+    }
 }
 .admin-input::placeholder { color: rgba(255,255,255,.45); }
 .admin-input:focus { outline: none; border-color: var(--amarelo, #c8e63b); }
@@ -859,4 +905,80 @@ header, footer,
         padding: .5rem .5rem;
         font-size: .82rem;
     }
+}
+
+/* ============================================================
+   BOTÕES DE FILTRO — sub-aba Sugestões do Admin
+   ============================================================ */
+.admin-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: 1rem;
+}
+
+.btn-filtro {
+    background: var(--verde2);
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px;
+    padding: .35rem .9rem;
+    font-family: inherit;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+
+.btn-filtro:hover {
+    background: var(--verde3);
+    border-color: var(--verde3);
+}
+
+.btn-filtro.active {
+    background: var(--verde3);
+    border-color: var(--amarelo, #c8e63b);
+    font-weight: 700;
+}
+
+/* Botões de ação nas sugestões */
+.btn-aprovar {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+}
+.btn-aprovar:hover { background: #1e8449; }
+
+.btn-reprovar {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+}
+.btn-reprovar:hover { background: #922b21; }
+
+.admin-textarea-sm {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.revisao-form {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: .7rem;
+}
+
+.reprovar-area {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
 }

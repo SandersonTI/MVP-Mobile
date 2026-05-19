@@ -248,9 +248,17 @@ function fazerLogout() {
     const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
     if (abaAdminBtn)    abaAdminBtn.style.display = 'none';
     if (abaSugestaoBtn) abaSugestaoBtn.style.display = 'inline-block';
+    // ── Restaura menu mobile com Login e Cadastro ──
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu) {
+        mobileMenu.innerHTML = `
+            <a href="#" onclick="abrirModalLogin(); toggleMenuMobile()">Login</a>
+            <a href="#" onclick="abrirModalCadastro(); toggleMenuMobile()">Cadastro</a>`;
+        mobileMenu.style.display = 'none'; // fecha o menu após logout
+    }
     delete document.body.dataset.tipoUsuario;
     delete document.body.dataset.userId;
-    document.getElementById('defaultOpen').click(); // volta à página inicial
+    document.getElementById('defaultOpen').click();
 }
 // ── Helpers exportados ────────────────────────────────────────────
 
