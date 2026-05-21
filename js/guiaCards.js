@@ -112,9 +112,9 @@ function criarCardGuia(guia, index) {
             <p style="color: ${guia.status === 'Ativo' ? 'var(--status-green)' : 'var(--status-red)'}; font-weight: bold;">Status: ${guia.status}</p>
 
             <div style="margin: 24px 0;">
-                <a href="${guia.links.instagram}"><i class="fa fa-instagram iconesguia"></i></a>
-                <a href="${guia.links.linkedin}"><i class="fa fa-linkedin iconesguia"></i></a>
-                <a href="${guia.links.facebook}"><i class="fa fa-facebook iconesguia"></i></a>
+                <a href="${guia.links.instagram}" target="_blank" rel="noopener"><i class="fa fa-instagram iconesguia"></i></a>
+                <a href="${guia.links.linkedin}"  target="_blank" rel="noopener"><i class="fa fa-linkedin  iconesguia"></i></a>
+                <a href="${guia.links.facebook}"  target="_blank" rel="noopener"><i class="fa fa-facebook  iconesguia"></i></a>
             </div>
             <p>
                 <button class="contatobtn" onclick="abrirModalContato('${guia.telefone}')">Entre em contato</button>
@@ -141,12 +141,33 @@ function enviarWhatsapp(event) {
     document.getElementById('modal-contato').style.display = 'none';
 }
 
-function renderizarGuias() {
+async function renderizarGuias() {
     const container = document.getElementById('guia-cards-container');
-    if (container) {
-        // Passamos o index também caso precise no futuro
-        const html = dadosGuias.map((guia, index) => criarCardGuia(guia, index)).join('');
-        container.innerHTML = html;
+    if (!container) return;
+    try {
+        const res  = await fetch(`${API_URL}/guias/aprovados`);
+        const data = await res.json();
+        // Guias do BD aprovados — converte para formato compatível com criarCardGuia
+        const guiasBD = (data.sucesso && data.guias) ? data.guias.map(g => ({
+            nome:     g.nome,
+            tipo:     g.servico || 'Guia',
+            status:   'Ativo',
+            imagens:  g.foto_base64 ? [g.foto_base64] : ['img/guias/placeholder.png'],
+            links: {
+                instagram: g.instagram || '#',
+                linkedin:  g.linkedin  || '#',
+                facebook:  g.facebook  || '#'
+            },
+            telefone:  g.telefone  || '',
+            servico:   g.servico   || '',
+            emailLead: g.email     || ''
+        })) : [];
+        // Fixos + BD
+        const todos = [...dadosGuias, ...guiasBD];
+        container.innerHTML = todos.map((guia, idx) => criarCardGuia(guia, idx)).join('');
+    } catch(e) {
+        // Offline: só estáticos
+        container.innerHTML = dadosGuias.map((g,i) => criarCardGuia(g,i)).join('');
     }
 }
 

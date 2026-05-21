@@ -181,12 +181,25 @@ function dentroDoHorario(inicio, fim) {
 }
 
 // === 3. Gerar HTML Dinamicamente ===
-function renderizarParques() {
+async function renderizarParques() {
   const container = document.getElementById("container-parques-dinamico");
   if (!container) return;
+  // Busca status de trilhas pausadas (admin pode pausar)
+  let trilhasPausadas = {};
+  try {
+    const r = await fetch(`${API_URL}/trilhas/status`);
+    const d = await r.json();
+    if (d.sucesso) trilhasPausadas = d.trilhas;
+  } catch(e) { /* offline: mostra todas */ }
+
+  // Injeta status de pausada em cada trilha
+  dadosParques.forEach(parque => {
+    if (parque.trilhas) {
+      parque.trilhas.forEach(t => { t.pausada = !!trilhasPausadas[t.id]; });
+    }
+  });
 
   let htmlCompleto = "";
-
   dadosParques.forEach(parque => {
       // Slider
       let htmlSlider = "";
@@ -220,41 +233,37 @@ function renderizarParques() {
       // Trilhas
       let listaTrilhasHtml = "";
       if (parque.trilhas) {
-        listaTrilhasHtml = parque.trilhas.map(trilha => {
-            const coresDificuldade = {
-                Baixa: "#27ae60",
-                "MÃ©dia": "#f1c40f",
-                "MÃƒÂ©dia": "#f1c40f",
-                Alta: "#c0392b"
-            };
-            let corDif = coresDificuldade[trilha.dificuldade] || "#777";
-            if ((trilha.dificuldade || "").toLowerCase().includes("dia")) {
-                corDif = "#f1c40f";
-            }
-            /*
-            const extra = trilha.textoExtra ? `<br><small>${trilha.textoExtra}</small>` : "";
-            const infoDificuldade = trilha.dificuldade ? ` <span style="font-weight:normal; font-size:0.9em">(Nível: ${trilha.dificuldade})</span>` : "";
-            const infoLocal = trilha.localizacao || trilha.localização
-                ? `<br><small><strong>Localização:</strong> ${trilha.localizacao || trilha.localização}</small>`
-                : "";
-        
-            */
+        listaTrilhasHtml = parque.trilhas
+          .filter(t => !t.pausada)   // oculta trilhas pausadas
+          .map(trilha => {
+            const coresDif = { Baixa:'#27ae60', Alta:'#c0392b' };
+            let corDif = coresDif[trilha.dificuldade] || '#f39c12';
+            if ((trilha.dificuldade||'').toLowerCase().includes('dia')) corDif = '#f39c12';
             return `
-                <li data-trilha-id="${trilha.id}">
-                    <strong>${trilha.nome}</strong>
-                    <span class="badge-dificuldade" style="background:${corDif}">${trilha.dificuldade}</span>
-                    ${trilha.localizacao ? `<br><small>${trilha.localizacao}</small>` : ''}
-                    <!-- Container de guias: preenchido por renderizarGuiasDaTrilha() -->
-                    <div class="guias-trilha-container" data-guias-trilha="${trilha.id}"></div>
-                    <!-- Botão de inscrição: visível apenas para guias (controlado por JS) -->
-                    <div class="btn-inscricao-container" style="display:none;">
-                        <button class="btn-inscricao-guia" data-trilha-id="${trilha.id}"
-                                onclick="toggleInscricaoGuia('${trilha.id}', this)">
-                            + Inscrever-se neste passeio
-                        </button>
-                    </div>
-                </li>`;
-        }).join("");
+              <div class="trilha-card" data-trilha-id="${trilha.id}">
+                <div class="trilha-card-header">
+                  <strong>${trilha.nome}</strong>
+                  <span class="badge-dificuldade" style="background:${corDif}">${trilha.dificuldade}</span>
+                </div>
+                ${trilha.localizacao ? `<p class="trilha-local">📍 ${trilha.localizacao}</p>` : ''}
+                <!-- Lista de guias disponíveis (toggle) -->
+                <div id="guias-trilha-${trilha.id}" class="guias-trilha-painel" style="display:none;">
+                  <em style="font-size:.82rem;color:#888;">Carregando...</em>
+                </div>
+                <div class="trilha-card-btns">
+                  <button class="btn-evento btn-guias-passeio"
+                          onclick="verGuiasTrilha('${trilha.id}')">
+                    👥 Guias Disponíveis
+                  </button>
+                  <button id="btn-inscricao-trilha-${trilha.id}"
+                          class="btn-evento btn-inscricao-trilha"
+                          style="display:none; background:#27ae60;"
+                          onclick="toggleInscricaoGuia('${trilha.id}', this)">
+                    ➕ Inscrever-se
+                  </button>
+                </div>
+              </div>`;
+          }).join("");
       }
 
       // Card
@@ -269,9 +278,9 @@ function renderizarParques() {
               <div class="horario-trilha" style="color:var(--text-black);">
                   <p><strong>Horário do Parque:</strong> ${parque.horario.inicio} às ${parque.horario.fim}</p>
               </div>
-              <ul class="trail-list" style="color:var(--text-black);">
+              <div class="trilhas-grid">
                   ${listaTrilhasHtml}
-              </ul>
+              </div>
           </div>
       `;
   });
@@ -285,4 +294,35 @@ function renderizarParques() {
 function toggleAccordion(idParque) {
   const card = document.getElementById(`card-${idParque}`);
   if (card) card.classList.toggle("open");
+}
+
+/** Toggle painel de guias de uma trilha */
+async function verGuiasTrilha(trilhaId) {
+    const painel = document.getElementById(`guias-trilha-${trilhaId}`);
+    if (!painel) return;
+    if (painel.style.display === 'block') { painel.style.display = 'none'; return; }
+    painel.style.display = 'block';
+    painel.innerHTML = '<em style="color:#aaa">Carregando guias...</em>';
+    try {
+        const res  = await fetch(`${API_URL}/inscricoes/${trilhaId}`);
+        const data = await res.json();
+        if (!data.sucesso || data.guias.length === 0) {
+            painel.innerHTML = '<p style="color:#aaa">Nenhum guia inscrito ainda.</p>'; return;
+        }
+        painel.innerHTML = data.guias.map(g =>
+            `<div style="padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff">
+                🧭 <strong>${g.nome}</strong> <span style="color:#aaa;font-size:.8rem">@${g.username}</span>
+            </div>`
+        ).join('');
+    } catch(e) {
+        painel.innerHTML = '<p style="color:#c0392b">Erro ao carregar.</p>';
+    }
+}
+
+/** Ativa botões de inscrição somente para guias logados */
+function ativarBotoesInscricaoTrilhas() {
+    const usuario = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+    if (!usuario || usuario.tipo !== 'guia') return;
+    document.querySelectorAll('[id^="btn-inscricao-trilha-"]')
+            .forEach(btn => btn.style.display = 'inline-block');
 }

@@ -31,6 +31,20 @@ def init_db():
     colunas_users = [coluna[1] for coluna in c.execute("PRAGMA table_info(users)").fetchall()]
     if 'tipo' not in colunas_users:
         c.execute("ALTER TABLE users ADD COLUMN tipo TEXT NOT NULL DEFAULT 'turista'")
+    # Novas colunas para guias
+    for col, defval in [
+        ('foto_base64',  'NULL'),
+        ('instagram',    "''"),
+        ('linkedin',     "''"),
+        ('facebook',     "''"),
+        ('status_guia',  "'ativo'"),   # ativo | pendente | reprovado
+        ('justificativa_guia', 'NULL'),
+        ('servico',      "''"),
+    ]:
+        if col not in colunas_users:
+            try:
+                c.execute(f"ALTER TABLE users ADD COLUMN {col} TEXT DEFAULT {defval}")
+            except: pass
         
     # Sugestões de passeios enviadas por turistas/guias
     c.execute('''CREATE TABLE IF NOT EXISTS sugestoes (
@@ -78,6 +92,12 @@ def init_db():
         imagem_url TEXT,
         link TEXT,
         data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # Status das trilhas estáticas (ativo/pausado)
+    c.execute('''CREATE TABLE IF NOT EXISTS trilhas_status (
+        trilha_id TEXT PRIMARY KEY,
+        pausada   INTEGER NOT NULL DEFAULT 0
+    )''')
 
     # Admin padrão — INSERT OR IGNORE evita erro se já existir
     c.execute('''INSERT OR IGNORE INTO users
@@ -116,6 +136,13 @@ def cadastro():
         senha = data.get('senha', '').strip()
         confirmar_senha = data.get('confirmar_senha', '').strip()
         tipo = data.get('tipo', 'turista').strip()
+        foto_base64  = data.get('foto_base64', '')
+        instagram    = data.get('instagram', '').strip()
+        linkedin     = data.get('linkedin', '').strip()
+        facebook     = data.get('facebook', '').strip()
+        servico      = data.get('servico', '').strip()
+        # Guias começam com status pendente até aprovação do admin
+        status_guia  = 'pendente' if tipo == 'guia' else 'ativo'
         # Garante que ninguém passe 'admin' via cadastro público
         if tipo not in ('turista', 'guia'):
             tipo = 'turista'
@@ -140,16 +167,19 @@ def cadastro():
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO users (nome, email, telefone, username, senha, tipo)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (nome, email, telefone, username, senha_criptografada, tipo))
+            INSERT INTO users
+              (nome, email, telefone, username, senha, tipo,
+               foto_base64, instagram, linkedin, facebook, servico, status_guia)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (nome, email, telefone, username, senha_criptografada, tipo,
+              foto_base64, instagram, linkedin, facebook, servico, status_guia))
         
         conn.commit()
         
-        return jsonify({
-            'sucesso': True, 
-            'mensagem': 'Cadastro realizado com sucesso! Agora faça login.'
-        }), 201
+        msg = ('Cadastro enviado! Aguarde aprovação do administrador.' 
+               if tipo == 'guia' else 
+               'Cadastro realizado com sucesso! Agora faça login.')
+        return jsonify({'sucesso': True, 'mensagem': msg}), 201
             
     except sqlite3.IntegrityError as e:
         if 'email' in str(e):
@@ -185,22 +215,42 @@ def login():
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, nome, email, username, tipo FROM users
+            SELECT id, nome, email, username, tipo,
+                   status_guia, justificativa_guia
+            FROM users
             WHERE username = ? AND senha = ?
         ''', (username, senha_criptografada))
         
         user = cursor.fetchone()
         
         if user:
+            # Bloqueia guias não aprovados
+            if user['tipo'] == 'guia':
+                sg = user['status_guia'] or 'ativo'
+                if sg == 'pendente':
+                    return jsonify({
+                        'sucesso': False,
+                        'bloqueado': True,
+                        'motivo': 'pendente',
+                        'mensagem': '⏳ Seu cadastro está aguardando aprovação do administrador. Você será notificado em breve!'
+                    }), 403
+                elif sg == 'reprovado':
+                    just = user['justificativa_guia'] or 'Sem justificativa informada.'
+                    return jsonify({
+                        'sucesso': False,
+                        'bloqueado': True,
+                        'motivo': 'reprovado',
+                        'mensagem': f'❌ Seu cadastro foi reprovado.\n💬 Feedback: {just}'
+                    }), 403
             return jsonify({
                 'sucesso': True,
                 'mensagem': 'Login realizado com sucesso!',
                 'usuario': {
-                    'id': user['id'],
-                    'nome': user['nome'],
-                    'email': user['email'],
+                    'id':       user['id'],
+                    'nome':     user['nome'],
+                    'email':    user['email'],
                     'username': user['username'],
-                    'tipo': user['tipo']
+                    'tipo':     user['tipo']
                 }
             }), 200
         else:
@@ -230,6 +280,63 @@ def listar_usuarios():
         }), 200
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro: {str(e)}'}), 500
+
+# ── GET /api/guias/pendentes — lista guias aguardando aprovação ──
+@app.route('/api/guias/pendentes', methods=['GET'])
+def guias_pendentes():
+    try:
+        conn = get_db_connection()
+        rows = conn.execute(
+            """SELECT id, nome, username, email, telefone, servico,
+                      foto_base64, instagram, linkedin, facebook,
+                      status_guia, justificativa_guia, data_criacao
+               FROM users WHERE tipo='guia'
+               ORDER BY data_criacao DESC"""
+        ).fetchall()
+        conn.close()
+        return jsonify({'sucesso': True, 'guias': [dict(r) for r in rows]}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
+# ── POST /api/guia/<id>/revisar — admin aprova ou reprova guia ──
+@app.route('/api/guia/<int:uid>/revisar', methods=['POST'])
+def revisar_guia(uid):
+    conn = None
+    try:
+        d = request.get_json()
+        decisao = d.get('decisao', '').strip()  # 'ativo' | 'reprovado'
+        just    = d.get('justificativa', '').strip()
+        if decisao not in ('ativo', 'reprovado'):
+            return jsonify({'sucesso': False, 'mensagem': 'decisao deve ser ativo ou reprovado'}), 400
+        conn = get_db_connection()
+        r = conn.execute(
+            'UPDATE users SET status_guia=?, justificativa_guia=? WHERE id=? AND tipo=?',
+            (decisao, just, uid, 'guia')
+        )
+        conn.commit()
+        if r.rowcount == 0:
+            return jsonify({'sucesso': False, 'mensagem': 'Guia não encontrado'}), 404
+        return jsonify({'sucesso': True, 'mensagem': f'Guia {decisao}!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── GET /api/guias/aprovados — lista guias aprovados para a aba pública ──
+@app.route('/api/guias/aprovados', methods=['GET'])
+def guias_aprovados():
+    try:
+        conn = get_db_connection()
+        rows = conn.execute(
+            """SELECT id, nome, username, email, telefone, servico,
+                      foto_base64, instagram, linkedin, facebook
+               FROM users WHERE tipo='guia' AND status_guia='ativo'
+               ORDER BY nome"""
+        ).fetchall()
+        conn.close()
+        return jsonify({'sucesso': True, 'guias': [dict(r) for r in rows]}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
 
 # ── POST /api/sugestao — turista/guia envia sugestão ──────────────
 @app.route('/api/sugestao', methods=['POST'])
@@ -534,6 +641,37 @@ def deletar_passeio(pid):
         if r.rowcount == 0:
             return jsonify({'sucesso': False, 'mensagem': 'Passeio não encontrado'}), 404
         return jsonify({'sucesso': True, 'mensagem': 'Passeio removido!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── GET /api/trilhas/status — retorna quais estão pausadas ──────
+@app.route('/api/trilhas/status', methods=['GET'])
+def status_trilhas():
+    try:
+        conn = get_db_connection()
+        rows = conn.execute('SELECT trilha_id, pausada FROM trilhas_status').fetchall()
+        conn.close()
+        return jsonify({'sucesso': True, 'trilhas': {r['trilha_id']: bool(r['pausada']) for r in rows}}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
+# ── POST /api/trilha/<id>/pausar — admin pausa ou reativa trilha ──
+@app.route('/api/trilha/<trilha_id>/pausar', methods=['POST'])
+def pausar_trilha(trilha_id):
+    conn = None
+    try:
+        d      = request.get_json()
+        pausar = 1 if d.get('pausar') else 0
+        conn   = get_db_connection()
+        conn.execute(
+            'INSERT OR REPLACE INTO trilhas_status (trilha_id, pausada) VALUES (?, ?)',
+            (trilha_id, pausar)
+        )
+        conn.commit()
+        acao = 'pausada' if pausar else 'reativada'
+        return jsonify({'sucesso': True, 'mensagem': f'Trilha {acao}!'}), 200
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
     finally:

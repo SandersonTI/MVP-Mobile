@@ -33,18 +33,11 @@ function renderizarPainelAdmin() {
         </h2>
         <!-- Abas internas: Eventos | Sugestões -->
         <div class="admin-tabs">
-            <button class="admin-tab-btn active"
-                    onclick="mostrarSecaoAdmin('eventos', this)">
-                📅 Eventos
-            </button>
-            <button class="admin-tab-btn"
-                    onclick="mostrarSecaoAdmin('passeios', this)">
-                🥾 Passeios
-            </button>
-            <button class="admin-tab-btn"
-                    onclick="mostrarSecaoAdmin('sugestoes', this)">
-                💡 Sugestões
-            </button>
+            <button class="admin-tab-btn active" onclick="mostrarSecaoAdmin('eventos', this)">📅 Eventos</button>
+            <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('passeios', this)">🥾 Passeios</button>
+            <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('guias', this)">🧭 Guias</button>
+            <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('trilhas', this)">🗺️ Trilhas</button>
+            <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('sugestoes', this)">💡 Sugestões</button>
         </div>
         <!-- Seção Eventos (visível por padrão) -->
         <div id="admin-sec-eventos" class="admin-secao">
@@ -124,6 +117,31 @@ function renderizarPainelAdmin() {
             </div>
         </div>
 
+        <!-- Seção Guias (oculta por padrão) -->
+        <div id="admin-sec-guias" class="admin-secao" style="display:none;">
+            <h3 style="color:var(--secundary); margin-bottom:1rem;">🧭 Guias Cadastrados</h3>
+            <div class="admin-filtros">
+                <button class="btn-filtro active" onclick="filtrarGuias('pendente', this)">⏳ Pendentes</button>
+                <button class="btn-filtro" onclick="filtrarGuias('ativo', this)">✅ Aprovados</button>
+                <button class="btn-filtro" onclick="filtrarGuias('reprovado', this)">❌ Reprovados</button>
+                <button class="btn-filtro" onclick="filtrarGuias('', this)">📋 Todos</button>
+            </div>
+            <div id="admin-lista-guias" class="admin-lista">
+                <p style="color:#ccc;">Carregando guias...</p>
+            </div>
+        </div>
+
+        <!-- Seção Trilhas (oculta por padrão) -->
+        <div id="admin-sec-trilhas" class="admin-secao" style="display:none;">
+            <h3 style="color:var(--secundary); margin-bottom:1rem;">🗺️ Gerenciar Trilhas dos Parques</h3>
+            <p style="color:#ccc; font-size:.88rem; margin-bottom:1rem;">
+                Pausar uma trilha a oculta da aba pública de Parques.
+            </p>
+            <div id="admin-lista-trilhas" class="admin-lista">
+                <p style="color:#ccc;">Carregando trilhas...</p>
+            </div>
+        </div>
+
         <!-- Seção Sugestões (oculta por padrão) -->
         <div id="admin-sec-sugestoes" class="admin-secao" style="display:none;">
             <!-- Filtros por status -->
@@ -146,6 +164,8 @@ function renderizarPainelAdmin() {
     // Carrega dados de ambas as seções ao abrir o painel
     carregarEventosAdmin();
     carregarPasseiosAdmin();
+    carregarGuiasAdmin('pendente');
+    carregarTrilhasAdmin();
     carregarSugestoesAdmin('pendente');
 }
 /** Converte arquivo de imagem do evento em base64 para preview/envio */
@@ -552,4 +572,144 @@ async function reprovarSugestao(sugestaoId) {
         alert(data.sucesso ? '❌ ' + data.mensagem : '✗ ' + data.mensagem);
         carregarSugestoesAdmin('pendente');
     } catch (e) { alert('Erro ao reprovar sugestão.'); }
+}
+
+// ── Gestão de Guias ────────────────────────────────────────────────
+async function carregarGuiasAdmin(statusFiltro = 'pendente') {
+    const lista = document.getElementById('admin-lista-guias');
+    if (!lista) return;
+    lista.innerHTML = '<p style="color:#ccc;">Carregando...</p>';
+    try {
+        const res  = await fetch(`${API_URL}/guias/pendentes`);
+        const data = await res.json();
+        let guias = data.guias || [];
+        if (statusFiltro) guias = guias.filter(g => g.status_guia === statusFiltro);
+        if (guias.length === 0) {
+            lista.innerHTML = '<p style="color:#ccc;">Nenhum guia nesta categoria.</p>'; return;
+        }
+        lista.innerHTML = guias.map(g => {
+            const corStatus = {pendente:'#f39c12', ativo:'#27ae60', reprovado:'#c0392b'}[g.status_guia]||'#aaa';
+            const fotoHtml = g.foto_base64
+                ? `<img src="${g.foto_base64}" style="width:60px;height:60px;object-fit:cover;border-radius:50%;margin-right:.7rem">`
+                : '<span style="font-size:2.5rem;margin-right:.7rem">🧭</span>';
+            const botoesRevisao = g.status_guia === 'pendente' ? `
+                <div class="revisao-form" style="margin-top:.7rem;">
+                    <button class="btn-aprovar" onclick="aprovarGuia(${g.id})">✅ Aprovar</button>
+                    <div class="reprovar-area">
+                        <textarea id="just-guia-${g.id}" class="admin-input admin-textarea-sm"
+                                  placeholder="Justificativa (obrigatória para reprovar)"></textarea>
+                        <button class="btn-reprovar" onclick="reprovarGuia(${g.id})">❌ Reprovar</button>
+                    </div>
+                </div>` : '';
+            const justHtml = g.justificativa_guia
+                ? `<p class="justificativa-admin"><strong>Feedback:</strong> ${g.justificativa_guia}</p>` : '';
+            return `
+            <div class="admin-item-card" id="guia-item-${g.id}">
+                <div style="display:flex; align-items:center; margin-bottom:.5rem">
+                    ${fotoHtml}
+                    <div>
+                        <strong style="display:block">${g.nome}</strong>
+                        <span style="font-size:.82rem;color:#aaa">@${g.username} · ${g.email}</span><br>
+                        <span style="background:${corStatus};color:#fff;padding:2px 8px;border-radius:12px;font-size:.78rem">
+                            ${g.status_guia.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+                <p style="font-size:.85rem;color:#ddd">📞 ${g.telefone} · 🛠️ ${g.servico||'Não informado'}</p>
+                <p style="font-size:.82rem;color:#aaa">
+                    ${g.instagram ? `<a href="${g.instagram}" target="_blank" style="color:#c8e63b">Instagram</a>` : ''}
+                    ${g.linkedin  ? `· <a href="${g.linkedin}" target="_blank" style="color:#c8e63b">LinkedIn</a>` : ''}
+                    ${g.facebook  ? `· <a href="${g.facebook}" target="_blank" style="color:#c8e63b">Facebook</a>` : ''}
+                </p>
+                ${justHtml}
+                ${botoesRevisao}
+            </div>`;
+        }).join('');
+    } catch(e) {
+        lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar guias.</p>';
+    }
+}
+
+function filtrarGuias(status, btn) {
+    document.querySelectorAll('#admin-sec-guias .btn-filtro').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    carregarGuiasAdmin(status);
+}
+
+async function aprovarGuia(uid) {
+    if (!confirm('Aprovar este guia? Ele poderá fazer login e aparecerá na aba Guias.')) return;
+    const res  = await fetch(`${API_URL}/guia/${uid}/revisar`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({decisao:'ativo', justificativa:''})
+    });
+    const data = await res.json();
+    alert(data.sucesso ? '✅ ' + data.mensagem : '✗ ' + data.mensagem);
+    carregarGuiasAdmin('pendente');
+}
+
+async function reprovarGuia(uid) {
+    const justEl = document.getElementById(`just-guia-${uid}`);
+    const just   = justEl ? justEl.value.trim() : '';
+    if (!just) { alert('⚠️ A justificativa é obrigatória para reprovar.'); return; }
+    if (!confirm('Reprovar este guia?')) return;
+    const res  = await fetch(`${API_URL}/guia/${uid}/revisar`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({decisao:'reprovado', justificativa: just})
+    });
+    const data = await res.json();
+    alert(data.sucesso ? '❌ ' + data.mensagem : '✗ ' + data.mensagem);
+    carregarGuiasAdmin('pendente');
+}
+
+// ── Trilhas dos Parques ────────────────────────────────────────────
+async function carregarTrilhasAdmin() {
+    const lista = document.getElementById('admin-lista-trilhas');
+    if (!lista) return;
+    // Busca status atual
+    let pausadas = {};
+    try {
+        const r = await fetch(`${API_URL}/trilhas/status`);
+        const d = await r.json();
+        if (d.sucesso) pausadas = d.trilhas;
+    } catch(e) {}
+    // dadosParques vem de horarioFuncionamento.js
+    if (typeof dadosParques === 'undefined') {
+        lista.innerHTML = '<p style="color:#aaa">dadosParques não carregado.</p>'; return;
+    }
+    let html = '';
+    dadosParques.forEach(parque => {
+        html += `<h4 style="color:var(--secundary);margin:.8rem 0 .4rem">${parque.titulo}</h4>`;
+        if (parque.trilhas) {
+            parque.trilhas.forEach(t => {
+                const isPausada = !!pausadas[t.id];
+                html += `
+                <div class="admin-item-card" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;">
+                    <div>
+                        <strong style="color:#fff">${t.nome}</strong>
+                        <span class="badge-dificuldade" style="margin-left:.4rem;background:${t.dificuldade==='Alta'?'#c0392b':t.dificuldade==='Baixa'?'#27ae60':'#f39c12'}">${t.dificuldade}</span>
+                        <br><small style="color:#aaa">${t.localizacao||''}</small>
+                    </div>
+                    <button onclick="toggleTrilha('${t.id}', ${isPausada})"
+                            style="background:${isPausada?'#27ae60':'#c0392b'};color:#fff;border:none;
+                                   border-radius:8px;padding:.4rem .9rem;cursor:pointer;font-size:.83rem">
+                        ${isPausada ? '▶ Ativar' : '⏸ Pausar'}
+                    </button>
+                </div>`;
+            });
+        }
+    });
+    lista.innerHTML = html;
+}
+
+async function toggleTrilha(trilhaId, estavaPausada) {
+    const pausar = !estavaPausada;
+    const res  = await fetch(`${API_URL}/trilha/${trilhaId}/pausar`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({pausar})
+    });
+    const data = await res.json();
+    if (data.sucesso) {
+        carregarTrilhasAdmin();
+        if (typeof renderizarParques === 'function') renderizarParques();
+    } else { alert('✗ ' + data.mensagem); }
 }

@@ -37,7 +37,7 @@ const dadosEventos = [
 // 2. Função para criar o Card HTML
 function criarCardEvento(evento) {
     // Se não tiver imagem, usa uma cinza padrão
-    const imagem = evento.imagem_url || "https://via.placeholder.com/400x250?text=Evento+TereVerde";
+    const imagem = evento.imagem_url || evento.imagem || "https://via.placeholder.com/400x250?text=Evento+TereVerde";
 
     return `
         <div class="evento-card">
@@ -64,11 +64,12 @@ async function carregarEventosDinamicos() {
     try {
         const res  = await fetch(`${API_URL}/eventos`);
         const data = await res.json();
-        // Usa eventos do BD se houver; senão usa os estáticos
-        const lista = (data.sucesso && data.eventos.length > 0) ? data.eventos : dadosEventos;
+        // Sempre exibe os fixos + os cadastrados pelo admin
+        const dinâmicos = (data.sucesso && data.eventos) ? data.eventos : [];
+        const lista = [...dadosEventos, ...dinâmicos];
         container.innerHTML = lista.map(criarCardEvento).join('');
     } catch (e) {
-        console.warn('Servidor offline. Usando eventos estáticos.');
+        console.warn('Servidor offline. Exibindo apenas eventos fixos.');
         container.innerHTML = dadosEventos.map(criarCardEvento).join('');
     }
 }
@@ -96,8 +97,7 @@ function criarCardPasseio(p) {
                 <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem;">
                     <!-- Botão de inscrição renderizado por JS após o card -->
                     <button class="btn-evento btn-guias-passeio"
-                            onclick="verGuiasPasseio(${p.id})"
-                            style="background:var(--verde3); border:none; cursor:pointer;">
+                            onclick="verGuiasPasseio(${p.id})">
                         👥 Guias Disponíveis
                     </button>
                     <!-- Botão Inscrição — só para guias; gerado dinamicamente -->

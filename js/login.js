@@ -117,6 +117,12 @@ async function enviarDadosGuia() {
     }
 
     try {
+        // Lê campos de guia (vazios se tipo = turista)
+        const instagram = document.getElementById('guia-instagram')?.value.trim() || '';
+        const linkedin  = document.getElementById('guia-linkedin')?.value.trim()  || '';
+        const facebook  = document.getElementById('guia-facebook')?.value.trim()  || '';
+        const servico   = document.getElementById('guia-servico')?.value.trim()   || '';
+
         // 4. Enviar dados para o servidor
         const response = await fetch(`${API_URL}/cadastro`, {
             method: 'POST',
@@ -124,13 +130,9 @@ async function enviarDadosGuia() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                nome: nome,
-                email: email,
-                telefone: telefone,
-                username: username,
-                senha: senha,
-                confirmar_senha: confirmar_senha,
-                tipo: tipo
+                nome, email, telefone, username, senha, confirmar_senha, tipo,
+                foto_base64: fotoBase64Guia,
+                instagram, linkedin, facebook, servico
             })
         });
 
@@ -182,15 +184,15 @@ async function fazerLogin(event) {
         const data = await response.json();
 
         if (data.sucesso) {
-            // 3. Salvar dados do usuário localmente
             localStorage.setItem('usuario', JSON.stringify(data.usuario));
             localStorage.setItem('logado', 'true');
-            
             alert("✓ " + data.mensagem);
             fecharModalAuth();
-            
-            // Atualizar UI para mostrar que o usuário está logado
             atualizarUILogin(data.usuario);
+        } else if (data.bloqueado) {
+            // Cria modal de feedback visual ao invés de alert simples
+            fecharModalAuth();
+            mostrarMensagemBloqueio(data.mensagem, data.motivo);
         } else {
             alert("✗ " + data.mensagem);
         }
@@ -270,17 +272,27 @@ function getUsuarioLogado() {
 /** Destaca visualmente o cashbox selecionado no cadastro */
 function selecionarTipo(tipo) {
     const boxes = document.querySelectorAll('.tipo-cashbox');
-    boxes.forEach(b => {
-        b.style.borderColor = '#ccc';
-        b.style.background  = 'transparent';
-    });
+    boxes.forEach(b => { b.style.borderColor='#ccc'; b.style.background='transparent'; });
     const escolhido = document.getElementById(`box-${tipo}`);
-    if (escolhido) {
-        escolhido.style.borderColor = 'var(--button-3)';
-        escolhido.style.background  = 'rgba(52,77,14,.08)';
-    }
+    if (escolhido) { escolhido.style.borderColor='var(--button-3)'; escolhido.style.background='rgba(52,77,14,.08)'; }
     const radio = document.getElementById(`radio-${tipo}`);
     if (radio) radio.checked = true;
+    // Mostra campos extras somente para guia
+    const camposGuia = document.getElementById('campos-guia');
+    if (camposGuia) camposGuia.style.display = (tipo === 'guia') ? 'block' : 'none';
+}
+
+/** Converte foto do guia para base64 */
+let fotoBase64Guia = '';
+function processarFotoGuia(input) {
+    const prev = document.getElementById('guia-foto-preview');
+    if (!input.files || !input.files[0]) { fotoBase64Guia=''; if(prev) prev.innerHTML=''; return; }
+    const r = new FileReader();
+    r.onload = e => {
+        fotoBase64Guia = e.target.result;
+        if (prev) prev.innerHTML = `<img src="${fotoBase64Guia}" style="max-height:80px;border-radius:6px;margin-top:.3rem">`;
+    };
+    r.readAsDataURL(input.files[0]);
 }
 // Inicia com Turista selecionado visualmente
 document.addEventListener('DOMContentLoaded', () => selecionarTipo('turista'));
@@ -299,3 +311,32 @@ function verificarLoginAoCarregar() {
 
 // Chamar função ao carregar página
 document.addEventListener('DOMContentLoaded', verificarLoginAoCarregar);
+
+/** Exibe um modal de feedback para guias com cadastro pendente ou reprovado */
+function mostrarMensagemBloqueio(mensagem, motivo) {
+    // Verifica se já existe modal; cria se não existir
+    let modal = document.getElementById('modal-bloqueio');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-bloqueio';
+        modal.style.cssText = `
+            position:fixed; inset:0; background:rgba(0,0,0,.7);
+            display:flex; align-items:center; justify-content:center;
+            z-index:9999; padding:1rem;`;
+        document.body.appendChild(modal);
+    }
+    const cor   = motivo === 'pendente' ? '#f39c12' : '#c0392b';
+    const icone = motivo === 'pendente' ? '⏳' : '❌';
+    modal.innerHTML = `
+        <div style="background:var(--primary,#012c18); border:2px solid ${cor};
+                    border-radius:14px; padding:2rem; max-width:380px; text-align:center;">
+            <div style="font-size:3rem">${icone}</div>
+            <p style="color:#fff; font-size:1rem; white-space:pre-line; margin:1rem 0 1.5rem">${mensagem}</p>
+            <button onclick="document.getElementById('modal-bloqueio').style.display='none'"
+                    style="background:${cor}; color:#fff; border:none; border-radius:8px;
+                           padding:.6rem 1.4rem; cursor:pointer; font-size:.95rem;">
+                Entendido
+            </button>
+        </div>`;
+    modal.style.display = 'flex';
+}

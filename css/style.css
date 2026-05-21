@@ -982,3 +982,97 @@ select.admin-input option {
     flex-direction: column;
     gap: .3rem;
 }
+
+/* =====================================================
+   TRILHAS — cards dentro dos parques
+   ===================================================== */
+.trilhas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    padding: 1rem;
+}
+
+.trilha-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: .9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.trilha-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .4rem;
+    flex-wrap: wrap;
+}
+
+.trilha-card-header strong { color: #fff; font-size: .95rem; }
+
+.trilha-local {
+    color: #b0d48a;
+    font-size: .82rem;
+    margin: 0;
+}
+
+.trilha-card-btns {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-top: .3rem;
+}
+
+.guias-trilha-painel {
+    background: rgba(0,0,0,.15);
+    border-radius: 6px;
+    padding: .5rem .7rem;
+    font-size: .83rem;
+}
+
+@media (max-width: 520px) {
+    .trilhas-grid { grid-template-columns: 1fr; }
+}
+
+/* =====================================================
+   BOTÕES EDITAR E REMOVER — painel admin
+   ===================================================== */
+.btn-admin-editar,
+.btn-admin-remover {
+    border: none;
+    border-radius: 8px;
+    padding: .38rem .85rem;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    color: #fff;
+}
+
+.btn-admin-editar {
+    background: var(--verde3, #4d7019);
+}
+.btn-admin-editar:hover {
+    background: var(--verde2, #293B14);
+    transform: scale(1.03);
+}
+
+.btn-admin-remover {
+    background: #c0392b;
+}
+.btn-admin-remover:hover {
+    background: #922b21;
+    transform: scale(1.03);
+}
+
+/* Container dos botões de ação dentro do card */
+.admin-item-acoes {
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+    margin-top: .6rem;
+}

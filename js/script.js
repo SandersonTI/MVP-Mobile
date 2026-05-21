@@ -87,4 +87,10 @@ function abrirSubAba(subId, btn) {
     const alvo = document.getElementById(subId);
     if (alvo) alvo.style.display = 'block';
     if (btn)  btn.classList.add('active');
+    // Ativa botões de inscrição quando sub-aba parques é aberta
+    if (subId === 'sub-parques') {
+        setTimeout(() => {
+            if (typeof ativarBotoesInscricaoTrilhas === 'function') ativarBotoesInscricaoTrilhas();
+        }, 200);
+    }
 }

@@ -144,11 +144,29 @@
                                 <label for="psw-new" style="margin-top: 15px; display: block;"><b>Senha</b></label>
                                 <input id="guia-senha" type="password" placeholder="Crie uma senha" name="psw-new" required style="width: 100%; box-sizing: border-box;">
                                 
-                                <label for="psw-repeat" style="margin-top: 15px; display: block;"><b>Confirme a Senha</b></label>
-                                <input id="guia-confirmar-senha" type="password" placeholder="Repita a senha" name="psw-repeat" required style="width: 100%; box-sizing: border-box;">
+                                <label for="psw-repeat" style="margin-top:15px;display:block"><b>Confirme a Senha</b></label>
+                                <input id="guia-confirmar-senha" type="password" placeholder="Repita a senha" name="psw-repeat" required style="width:100%;box-sizing:border-box">
+
+                                <!-- Campos extras exibidos somente quando tipo = guia -->
+                                <div id="campos-guia" style="display:none">
+                                    <label style="margin-top:15px;display:block"><b>Serviço oferecido</b></label>
+                                    <input id="guia-servico" type="text" placeholder="Ex: Guia de Trilhas e Escalada" style="width:100%;box-sizing:border-box">
+
+                                    <label style="margin-top:12px;display:block"><b>Foto de perfil (opcional)</b></label>
+                                    <input id="guia-foto" type="file" accept="image/*" style="width:100%;box-sizing:border-box" onchange="processarFotoGuia(this)">
+                                    <div id="guia-foto-preview" style="margin-top:.4rem"></div>
+
+                                    <label style="margin-top:12px;display:block"><b>Instagram (opcional)</b></label>
+                                    <input id="guia-instagram" type="url" placeholder="https://instagram.com/seuperfil" style="width:100%;box-sizing:border-box">
+
+                                    <label style="margin-top:10px;display:block"><b>LinkedIn (opcional)</b></label>
+                                    <input id="guia-linkedin" type="url" placeholder="https://linkedin.com/in/seuperfil" style="width:100%;box-sizing:border-box">
+
+                                    <label style="margin-top:10px;display:block"><b>Facebook (opcional)</b></label>
+                                    <input id="guia-facebook" type="url" placeholder="https://facebook.com/seuperfil" style="width:100%;box-sizing:border-box">
+                                </div>
                             </div>
-                            
-                            <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()" style="background-color: var(--button-1);">Cadastrar</button>
+                            <button type="button" class="btn loginbtn btn-solicitar-guia" onclick="enviarDadosGuia()" style="background-color:var(--button-1);">Cadastrar</button>
                             <button type="button" onclick="fecharModalAuth()" class="btn cancelbtn">Cancelar</button>
                     
                             <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
