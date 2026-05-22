@@ -553,7 +553,7 @@ def desinscrever_guia():
 
 # ── GET /api/inscricoes/guia/<id> — inscrições de um guia específico
 @app.route('/api/inscricoes/guia/<int:guia_id>', methods=['GET'])
-def inscricoes_do_guia(guia_id):
+def inscricoes_do_guia_por_rota_antiga(guia_id):
     try:
         conn = get_db_connection()
         rows = conn.execute('SELECT trilha_id FROM inscricoes WHERE guia_id=?',(guia_id,)).fetchall()
