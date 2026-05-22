@@ -240,6 +240,7 @@ def login():
                         'sucesso': False,
                         'bloqueado': True,
                         'motivo': 'reprovado',
+                        'usuario_id': user['id'],
                         'mensagem': f'❌ Seu cadastro foi reprovado.\n💬 Feedback: {just}'
                     }), 403
             return jsonify({
@@ -337,6 +338,30 @@ def guias_aprovados():
         return jsonify({'sucesso': True, 'guias': [dict(r) for r in rows]}), 200
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
+@app.route('/api/usuario/<int:user_id>', methods=['DELETE'])
+def excluir_usuario_reprovado(user_id):
+    """Permite que guia reprovado exclua a própria conta para refazer cadastro."""
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        user = c.execute(
+            "SELECT id, tipo, status_guia FROM users WHERE id=?", (user_id,)
+        ).fetchone()
+        if not user:
+            return jsonify({'sucesso': False, 'mensagem': 'Usuário não encontrado'}), 404
+        # Só permite excluir guias reprovados (segurança)
+        if user['tipo'] != 'guia' or user['status_guia'] != 'reprovado':
+            return jsonify({'sucesso': False, 'mensagem': 'Ação não permitida'}), 403
+        c.execute("DELETE FROM inscricoes WHERE guia_id=?", (user_id,))
+        c.execute("DELETE FROM users WHERE id=?", (user_id,))
+        conn.commit()
+        return jsonify({'sucesso': True, 'mensagem': 'Conta excluída. Você pode refazer o cadastro.'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
+    finally:
+        if conn: conn.close()
 
 # ── POST /api/sugestao — turista/guia envia sugestão ──────────────
 @app.route('/api/sugestao', methods=['POST'])
@@ -470,6 +495,21 @@ def guias_inscritos(trilha_id):
         return jsonify({'sucesso':True,'guias':[dict(r) for r in rows]}), 200
     except Exception as e:
         return jsonify({'sucesso':False,'mensagem':f'Erro: {e}'}), 500
+
+@app.route('/api/guia/<int:guia_id>/inscricoes', methods=['GET'])
+def inscricoes_do_guia(guia_id):
+    """Retorna todas as trilhas/passeios em que o guia está inscrito."""
+    conn = None
+    try:
+        conn = get_db_connection()
+        rows = conn.execute(
+            'SELECT trilha_id FROM inscricoes WHERE guia_id=?', (guia_id,)
+        ).fetchall()
+        return jsonify({'sucesso': True, 'trilhas': [r['trilha_id'] for r in rows]}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
+    finally:
+        if conn: conn.close()
 
 # ── POST /api/inscricao — guia se inscreve em um passeio ──────────
 @app.route('/api/inscricao', methods=['POST'])

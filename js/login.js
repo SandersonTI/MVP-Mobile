@@ -139,12 +139,17 @@ async function enviarDadosGuia() {
         const data = await response.json();
 
         if (data.sucesso) {
-            alert("✓ " + data.mensagem);
-            fecharModalAuth();
-            // Alternar para login automático
-            setTimeout(() => {
-                abrirModalLogin();
-            }, 500);
+    // Distingue guia (pendente) de turista (acesso imediato)
+    if (tipo === 'guia') {
+        alert("✓ Cadastro de guia enviado com sucesso!\n\n⏳ Seu acesso ficará disponível após aprovação do administrador. Você será notificado.");
+        fecharModalAuth();
+    } else {
+        alert("✓ " + data.mensagem);
+        fecharModalAuth();
+        setTimeout(() => {
+            abrirModalLogin();
+        }, 500);
+    }
         } else {
             alert("✗ " + data.mensagem);
         }
@@ -192,7 +197,8 @@ async function fazerLogin(event) {
         } else if (data.bloqueado) {
             // Cria modal de feedback visual ao invés de alert simples
             fecharModalAuth();
-            mostrarMensagemBloqueio(data.mensagem, data.motivo);
+            // Primeiro, busca o id do usuário bloqueado (adicionar ao retorno do backend)
+mostrarMensagemBloqueio(data.mensagem, data.motivo, data.usuario_id);
         } else {
             alert("✗ " + data.mensagem);
         }
@@ -313,7 +319,7 @@ function verificarLoginAoCarregar() {
 document.addEventListener('DOMContentLoaded', verificarLoginAoCarregar);
 
 /** Exibe um modal de feedback para guias com cadastro pendente ou reprovado */
-function mostrarMensagemBloqueio(mensagem, motivo) {
+function mostrarMensagemBloqueio(mensagem, motivo, userId = null) {
     // Verifica se já existe modal; cria se não existir
     let modal = document.getElementById('modal-bloqueio');
     if (!modal) {
@@ -334,9 +340,32 @@ function mostrarMensagemBloqueio(mensagem, motivo) {
             <p style="color:#fff; font-size:1rem; white-space:pre-line; margin:1rem 0 1.5rem">${mensagem}</p>
             <button onclick="document.getElementById('modal-bloqueio').style.display='none'"
                     style="background:${cor}; color:#fff; border:none; border-radius:8px;
-                           padding:.6rem 1.4rem; cursor:pointer; font-size:.95rem;">
-                Entendido
+                           padding:.6rem 1.4rem; cursor:pointer; font-size:.95rem; margin:.3rem;">
+                Fechar
             </button>
+            ${motivo === 'reprovado' && userId ? `
+            <button onclick="refazerCadastroGuia(${userId})"
+                    style="background:#2c3e50; color:#fff; border:1px solid #fff; border-radius:8px;
+                           padding:.6rem 1.4rem; cursor:pointer; font-size:.95rem; margin:.3rem;">
+                🔄 Refazer Cadastro
+            </button>` : ''}
         </div>`;
     modal.style.display = 'flex';
+}
+
+async function refazerCadastroGuia(userId) {
+    if (!confirm('Isso excluirá seu cadastro atual para que você possa se cadastrar novamente. Confirmar?')) return;
+    try {
+        const res  = await fetch(`${API_URL}/usuario/${userId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.sucesso) {
+            document.getElementById('modal-bloqueio').style.display = 'none';
+            alert('✓ Cadastro anterior removido. Agora você pode se cadastrar novamente.');
+            abrirModalCadastro();
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch(e) {
+        alert('Erro ao conectar: ' + e.message);
+    }
 }

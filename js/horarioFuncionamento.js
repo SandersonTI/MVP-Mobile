@@ -29,43 +29,50 @@ const dadosParques = [
               id: 'parnaso_trilha_1',       // ← ID único para buscar guias
               nome: 'Trilha da Pedra do Sino',
               dificuldade: 'Alta',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pedra_do_Sino.jpg/640px-Pedra_do_Sino.jpg'
           },
           {
               id: 'parnaso_trilha_2',       // ← ID único para buscar guias
               nome: 'Trilha Cartão Postal',
               dificuldade: 'Média',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Dedo_de_Deus_-_Serra_dos_%C3%93rg%C3%A3os.jpg/640px-Dedo_de_Deus_-_Serra_dos_%C3%93rg%C3%A3os.jpg'
           },
           {
               id: 'parnaso_trilha_3',       // ← ID único para buscar guias
               nome: 'Caminho das Orquídeas',
               dificuldade: 'Baixa',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Orchids_at_Kew_Gardens.jpg/640px-Orchids_at_Kew_Gardens.jpg'
           },
           {
               id: 'parnaso_trilha_4',       // ← ID único para buscar guias
               nome: 'Trilha suspensa',
               dificuldade: 'Baixa',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Mata_Atlantica.jpg/640px-Mata_Atlantica.jpg'
           },
           {
               id: 'parnaso_trilha_5',       // ← ID único para buscar guias
               nome: 'Trilha Poço Paraíso',
               dificuldade: 'Baixa',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Poco_Paraiso.jpg/640px-Poco_Paraiso.jpg'
           },
           {
               id: 'parnaso_trilha_6',       // ← ID único para buscar guias
               nome: 'Trilha Cachoeira Véu da Noiva',
               dificuldade: 'Média',
-              localizacao: 'PARNASO - Sede Teresópolis'
+              localizacao: 'PARNASO - Sede Teresópolis',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/V%C3%A9u_da_Noiva_waterfall.jpg/640px-V%C3%A9u_da_Noiva_waterfall.jpg'
           },
         {
               id: 'parnaso_trilha_7',       // ← ID único para buscar guias
               nome: 'Trilha Poço Verde',
               dificuldade: 'Média',
-              localizacao: 'PARNASO - Sede Guapimirim'
+              localizacao: 'PARNASO - Sede Guapimirim',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Natural_pool.jpg/640px-Natural_pool.jpg'
           },
 
       ]
@@ -98,25 +105,29 @@ const dadosParques = [
               id: 'tres_picos_1',       // ← ID único para buscar guias
               nome: 'Trilha da Caixa de Fósforo',
               dificuldade: 'Média',
-              localizacao: 'PETP - Vale dos Deuses'
+              localizacao: 'PETP - Vale dos Deuses',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Tres_Picos_trail.jpg/640px-Tres_Picos_trail.jpg'
           },
           {
               id: 'tres_picos_2',       // ← ID único para buscar guias
               nome: 'Trilha Capacete',
               dificuldade: 'Baixa',
-              localizacao: 'PETP - Vale do Toledo'
+              localizacao: 'PETP - Vale do Toledo',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Atlantic_forest_trail.jpg/640px-Atlantic_forest_trail.jpg'
           },
           {
               id: 'tres_picos_3',       // ← ID único para buscar guias
               nome: 'Trilha da Cabeça do Dragão',
               dificuldade: 'Alta',
-              localizacao: 'PETP - Vale dos Deuses'
+              localizacao: 'PETP - Vale dos Deuses',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Rock_formation_Brazil.jpg/640px-Rock_formation_Brazil.jpg'
           },
           {
               id: 'tres_picos_4',       // ← ID único para buscar guias
               nome: 'Trilha Pico dos Três Municípios',
               dificuldade: 'Média',
-              localizacao: 'PETP - Vale do Toledo'
+              localizacao: 'PETP - Vale do Toledo',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Mountain_peak_RJ.jpg/640px-Mountain_peak_RJ.jpg'
           },
       ]
   },
@@ -145,26 +156,30 @@ const dadosParques = [
               id: 'montanhas_1',       // ← ID único para buscar guias
               nome: 'Trilha Pedra Alpina',
               dificuldade: 'Alta',
-              localizacao: 'Sede Santa Rita'
+              localizacao: 'Sede Santa Rita',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pedra_Alpina_Teresopolis.jpg/640px-Pedra_Alpina_Teresopolis.jpg'
           },
           {
               id: 'montanhas_2',       // ← ID único para buscar guias
               nome: 'Trilha Jacu',
               dificuldade: 'Baixa',
-              localizacao: 'Sede Santa Rita'
+              localizacao: 'Sede Santa Rita',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Atlantic_forest_birds.jpg/640px-Atlantic_forest_birds.jpg'
           },
           {
               id: 'montanhas_3',       // ← ID único para buscar guias
               nome: 'Trilha Tangará',
               dificuldade: 'Baixa',
-              localizacao: 'Sede Santa Rita'
+              localizacao: 'Sede Santa Rita',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tanagra.jpg/640px-Tanagra.jpg'
           },
           {
               id: 'montanhas_4',       // ← ID único para buscar guias
               nome: 'Trilha Pedra da Tartaruga',
               dificuldade: 'Baixa',
-              localizacao: 'Entrada pela Granja Florestal'
-          },
+              localizacao: 'Entrada pela Granja Florestal',
+              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Pedra_da_Tartaruga.jpg/640px-Pedra_da_Tartaruga.jpg'
+          }
       ]
   }
 ];
@@ -325,4 +340,127 @@ function ativarBotoesInscricaoTrilhas() {
     if (!usuario || usuario.tipo !== 'guia') return;
     document.querySelectorAll('[id^="btn-inscricao-trilha-"]')
             .forEach(btn => btn.style.display = 'inline-block');
+}
+
+// ── Seleção de parque individual (nova navegação) ──────────────
+function criarCardTrilha(trilha) {
+    const imagem = trilha.imagem || 'https://via.placeholder.com/400x250?text=Trilha';
+    return `
+        <div class="evento-card">
+            <div class="evento-img-box">
+                <img src="${imagem}" loading="lazy" alt="${trilha.nome}"
+                     onerror="this.src='https://via.placeholder.com/400x250?text=Trilha'">
+            </div>
+            <div class="evento-info">
+                <h3>${trilha.nome}</h3>
+                <p class="evento-local"><i class="fa fa-map-marker"></i> ${trilha.localizacao || ''}</p>
+                <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.6rem;">
+                    <button class="btn-evento btn-guias-passeio"
+                            onclick="verGuiasTrilha('${trilha.id}')">
+                        👥 Guias Disponíveis
+                    </button>
+                    <button id="btn-inscricao-trilha-${trilha.id}"
+                            class="btn-evento"
+                            onclick="toggleInscricaoGuia('${trilha.id}', this)"
+                            style="display:none; background:#27ae60;">
+                        ➕ Inscrever-se
+                    </button>
+                </div>
+                <div id="guias-trilha-${trilha.id}" class="guias-trilha-painel" style="display:none;"></div>
+            </div>
+        </div>`;
+}
+
+function selecionarParque(parqueId, btn) {
+    // Atualiza botões ativos
+    document.querySelectorAll('.parque-sel-btn')
+            .forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const parque = dadosParques.find(p => p.id === parqueId);
+    if (!parque) return;
+
+    // Mostra info resumida do parque
+    const infoEl = document.getElementById('parque-info-selecionado');
+    if (infoEl) {
+        infoEl.innerHTML = `
+            <div style="background:rgba(255,255,255,.06); border-radius:10px;
+                        padding:1rem 1.2rem; color:#fff; margin-bottom:.5rem;">
+                <strong style="font-size:1.05rem;">${parque.titulo}</strong>
+                <p style="color:#aaa; font-size:.85rem; margin-top:.3rem;">
+                    📞 ${parque.telefone || 'Sem telefone'}  · 
+                    🕐 ${parque.horario.inicio} às ${parque.horario.fim}
+                </p>
+            </div>`;
+    }
+
+    // Renderiza trilhas como cards
+    const container = document.getElementById('trilhas-parque-container');
+    if (!container || !parque.trilhas) return;
+    container.innerHTML = parque.trilhas.map(criarCardTrilha).join('');
+
+    // Ativa botões de inscrição se for guia logado
+    ativarBotoesInscricaoTrilhas();
+}
+
+// Inicializa com o primeiro parque selecionado ao abrir a sub-aba
+document.addEventListener('DOMContentLoaded', () => {
+    const firstBtn = document.querySelector('.parque-sel-btn');
+    selecionarParque('parnaso', firstBtn);
+});
+
+/** Inscreve ou desincreve um guia de uma trilha de parque */
+async function toggleInscricaoGuia(trilhaId, btn) {
+    const usuario = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+    if (!usuario || usuario.tipo !== 'guia') {
+        alert('🔒 Somente guias podem se inscrever.');
+        return;
+    }
+    const jaInscrito = btn.dataset.inscrito === 'true';
+    const method = jaInscrito ? 'DELETE' : 'POST';
+    try {
+        const res  = await fetch(`${API_URL}/inscricao`, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guia_id: usuario.id, trilha_id: trilhaId })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+            btn.dataset.inscrito = jaInscrito ? 'false' : 'true';
+            btn.textContent      = jaInscrito ? '➕ Inscrever-se' : '✅ Inscrito';
+            btn.style.background = jaInscrito ? '#27ae60' : '#c0392b';
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch(e) {
+        alert('Erro ao conectar: ' + e.message);
+    }
+}
+
+/**
+ * Ao fazer login como guia, carrega as inscrições existentes
+ * e atualiza visual dos botões (Inscrever-se → Inscrito).
+ */
+async function carregarInscricoesDoGuia(guiaId) {
+    try {
+        const res  = await fetch(`${API_URL}/guia/${guiaId}/inscricoes`);
+        const data = await res.json();
+        if (!data.sucesso) return;
+        data.trilhas.forEach(trilhaId => {
+            // Trilhas de parques
+            const btn = document.getElementById(`btn-inscricao-trilha-${trilhaId}`);
+            if (btn) {
+                btn.dataset.inscrito = 'true';
+                btn.textContent      = '✅ Inscrito';
+                btn.style.background = '#c0392b';
+            }
+            // Passeios do admin
+            const btnP = document.getElementById(`btn-inscricao-${trilhaId}`);
+            if (btnP) {
+                btnP.dataset.inscrito = 'true';
+                btnP.textContent      = '✅ Inscrito';
+                btnP.style.background = '#27ae60';
+            }
+        });
+    } catch(e) { /* silencioso */ }
 }

@@ -79,12 +79,10 @@ document.addEventListener('DOMContentLoaded', carregarEventosDinamicos);
 // ── Passeios dinâmicos (cadastrados pelo admin) ───────────────
 function criarCardPasseio(p) {
     const imagem = p.imagem_url || 'https://via.placeholder.com/400x250?text=Passeio+TereVerde';
-    const dificuldadeCor = { Baixa:'#27ae60', Média:'#f39c12', Alta:'#c0392b' }[p.dificuldade] || '#888';
     return `
         <div class="evento-card">
             <div class="evento-img-box">
                 <img src="${imagem}" loading="lazy" alt="${p.titulo}">
-                <div class="evento-data-badge" style="background:${dificuldadeCor};">${p.dificuldade}</div>
             </div>
             <div class="evento-info">
                 <h3>${p.titulo}</h3>

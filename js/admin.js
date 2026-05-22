@@ -93,12 +93,6 @@ function renderizarPainelAdmin() {
                 </div>
                 <div class="admin-form-grid">
                     <input id="ps-titulo" type="text" placeholder="Título do passeio *" class="admin-input">
-                    <select id="ps-dificuldade" class="admin-input">
-                        <option value="">-- Dificuldade *--</option>
-                        <option value="Baixa">Baixa</option>
-                        <option value="Média">Média</option>
-                        <option value="Alta">Alta</option>
-                    </select>
                     <input id="ps-local" type="text" placeholder="Local *" class="admin-input">
                     <label style="color:#ccc; font-size:.85rem;">Imagem — URL ou carregue um arquivo:</label>
                     <input id="ps-imagem" type="text" placeholder="URL da imagem (opcional)" class="admin-input">
@@ -213,42 +207,52 @@ function mostrarSecaoAdmin(secao, btn) {
 async function carregarEventosAdmin() {
     const lista = document.getElementById('admin-lista-eventos');
     if (!lista) return;
+
+    // Carrega overrides de eventos fixos salvos em localStorage
+    const overrides = JSON.parse(localStorage.getItem('eventosFixosOverride') || '{}');
+
+    // Prepara eventos fixos com ids negativos (-1, -2 ...)
+    const fixos = dadosEventos.map((ev, i) => {
+        const id = -(i + 1);
+        return Object.assign({}, ev, overrides[id] || {}, {
+            id,
+            data_evento: ev.data,    // normaliza nome do campo
+            imagem_url: ev.imagem,
+            _fixo: true
+        });
+    });
+
+    // Busca do BD
+    let doBD = [];
     try {
         const res  = await fetch(`${API_URL}/eventos`);
         const data = await res.json();
-        if (!data.sucesso || data.eventos.length === 0) {
-            lista.innerHTML = '<p style="color:#ccc;">Nenhum evento ainda.</p>';
-            return;
-        }
-        // Para cada evento cria um card com botões Editar e Remover
-        lista.innerHTML = data.eventos.map(ev => `
-            <div class="admin-item-card" id="ev-item-${ev.id}">
-                <div class="admin-item-info">
-                    <strong>${ev.titulo}</strong>
-                    <span class="admin-item-detalhe">
-                        📅 ${ev.data_evento} · 📍 ${ev.local}
-                    </span>
-                    <p>${ev.descricao}</p>
-                    ${ev.link
-                        ? `<a href="${ev.link}" target="_blank"
-                              rel="noopener" class="admin-link">🔗 Link</a>`
-                        : ''}
-                </div>
-                <div class="admin-item-acoes">
-                    <button class="btn-admin-editar"
-                            onclick="iniciarEdicaoEvento(${ev.id})">
-                        ✏️ Editar
-                    </button>
-                    <button class="btn-admin-remover"
-                            onclick="removerEvento(${ev.id})">
-                        🗑️ Remover
-                    </button>
-                </div>
-            </div>`
-        ).join('');
-    } catch (e) {
-        lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar eventos.</p>';
+        if (data.sucesso) doBD = data.eventos;
+    } catch(e) { /* offline */ }
+    const todos = [...fixos, ...doBD];
+    if (todos.length === 0) {
+        lista.innerHTML = '<p style="color:#ccc;">Nenhum evento.</p>'; return;
     }
+    lista.innerHTML = todos.map(ev => `
+        <div class="admin-item-card" id="ev-item-${ev.id}">
+            <div class="admin-item-info">
+                <strong>${ev.titulo}</strong>
+                ${ev._fixo ? '<span style="color:#f39c12;font-size:.75rem;"> ⭐ fixo</span>' : ''}
+                <span class="admin-item-detalhe">📅 ${ev.data_evento} · 📍 ${ev.local}</span>
+                <p>${ev.descricao}</p>
+            </div>
+            <div class="admin-item-acoes">
+                <button class="btn-admin-editar"
+                        onclick="iniciarEdicaoEvento(${ev.id}, ${!!ev._fixo})">
+                    ✏️ Editar
+                </button>
+                <button class="btn-admin-remover"
+                        onclick="removerEvento(${ev.id}, ${!!ev._fixo})">
+                    🗑️ Remover
+                </button>
+            </div>
+        </div>`
+    ).join('');
 }
 /** Lê o formulário e envia POST /api/eventos para criar evento. */
 async function criarEvento() {
@@ -301,33 +305,35 @@ async function criarEvento() {
  * Substitui o card do evento por um formulário de edição inline.
  * @param {number} eventoId  ID do evento a editar
  */
-async function iniciarEdicaoEvento(eventoId) {
-    // Busca dados atuais do evento diretamente do backend
-    const res  = await fetch(`${API_URL}/eventos`);
-    const data = await res.json();
-    const ev   = data.eventos.find(e => e.id === eventoId);
+async function iniciarEdicaoEvento(eventoId, isFixo = false) {
+    let ev;
+    if (isFixo) {
+        // Eventos fixos: índice negativo → busca no array local
+        const idx = Math.abs(eventoId) - 1;
+        const overrides = JSON.parse(localStorage.getItem('eventosFixosOverride') || '{}');
+        const base = dadosEventos[idx];
+        ev = Object.assign({}, base, overrides[eventoId] || {}, {
+            id: eventoId, data_evento: base.data, imagem_url: base.imagem
+        });
+    } else {
+        const res  = await fetch(`${API_URL}/eventos`);
+        const data = await res.json();
+        ev = data.eventos.find(e => e.id === eventoId);
+    }
     if (!ev) return;
-    // Referencia o card pelo ID dinâmico: "ev-item-{id}"
     const card = document.getElementById(`ev-item-${eventoId}`);
     if (!card) return;
-    // Substitui o conteúdo do card pelo formulário de edição
     card.innerHTML = `
         <div class="admin-form-edicao">
-            <input id="edit-titulo-${ev.id}" value="${ev.titulo}"
-                   class="admin-input" placeholder="Título">
-            <input id="edit-data-${ev.id}" value="${ev.data_evento}"
-                   class="admin-input" placeholder="Data">
-            <input id="edit-local-${ev.id}" value="${ev.local}"
-                   class="admin-input" placeholder="Local">
-            <input id="edit-imagem-${ev.id}" value="${ev.imagem_url || ''}"
-                   class="admin-input" placeholder="URL imagem">
-            <input id="edit-link-${ev.id}" value="${ev.link || ''}"
-                   class="admin-input" placeholder="Link">
-            <textarea id="edit-desc-${ev.id}"
-                      class="admin-input admin-textarea">${ev.descricao}</textarea>
+            <input id="edit-titulo-${ev.id}" value="${ev.titulo}" class="admin-input" placeholder="Título">
+            <input id="edit-data-${ev.id}" value="${ev.data_evento || ev.data}" class="admin-input" placeholder="Data">
+            <input id="edit-local-${ev.id}" value="${ev.local}" class="admin-input" placeholder="Local">
+            <input id="edit-imagem-${ev.id}" value="${ev.imagem_url || ev.imagem || ''}" class="admin-input" placeholder="URL imagem">
+            <input id="edit-link-${ev.id}" value="${ev.link || ''}" class="admin-input" placeholder="Link">
+            <textarea id="edit-desc-${ev.id}" class="admin-input admin-textarea">${ev.descricao}</textarea>
             <div style="display:flex; gap:.5rem; margin-top:.5rem;">
                 <button class="btn-admin-acao"
-                        onclick="salvarEdicaoEvento(${ev.id})">💾 Salvar</button>
+                        onclick="salvarEdicaoEvento(${ev.id}, ${isFixo})">💾 Salvar</button>
                 <button class="btn-admin-remover"
                         onclick="carregarEventosAdmin()">✕ Cancelar</button>
             </div>
@@ -402,7 +408,7 @@ async function carregarPasseiosAdmin() {
             <div class="admin-item-card" id="ps-item-${p.id}">
                 <div class="admin-item-info">
                     <strong>${p.titulo}</strong>
-                    <span class="admin-item-detalhe">🥾 ${p.dificuldade} · 📍 ${p.local}</span>
+                    <span class="admin-item-detalhe">📍 ${p.local}</span>
                     <p>${p.descricao}</p>
                 </div>
                 <div class="admin-item-acoes">
@@ -414,23 +420,22 @@ async function carregarPasseiosAdmin() {
 
 async function criarPasseio() {
     const titulo      = document.getElementById('ps-titulo').value.trim();
-    const dificuldade = document.getElementById('ps-dificuldade').value;
     const local       = document.getElementById('ps-local').value.trim();
     const descricao   = document.getElementById('ps-descricao').value.trim();
     const imagemUrl   = fotoBase64Passeio || document.getElementById('ps-imagem').value.trim();
     const link        = document.getElementById('ps-link').value.trim();
-    if (!titulo || !dificuldade || !local || !descricao) {
-        alert('⚠️ Preencha: título, dificuldade, local e descrição.'); return;
+    if (!titulo || !local || !descricao) {
+        alert('⚠️ Preencha: título, local e descrição.'); return;
     }
     try {
         const res  = await fetch(`${API_URL}/passeios`, {
             method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({titulo, descricao, dificuldade, local, imagem_url: imagemUrl, link})
+            body: JSON.stringify({titulo, descricao, local, imagem_url: imagemUrl, link})
         });
         const data = await res.json();
         if (data.sucesso) {
             alert('✓ ' + data.mensagem);
-            ['ps-titulo','ps-dificuldade','ps-local','ps-descricao','ps-imagem','ps-link','ps-foto']
+            ['ps-titulo','ps-local','ps-descricao','ps-imagem','ps-link','ps-foto']
                 .forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
             fotoBase64Passeio = '';
             const prev = document.getElementById('ps-foto-preview');

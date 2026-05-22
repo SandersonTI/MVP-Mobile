@@ -285,11 +285,26 @@
         <div id="sub-passeios" class="sub-tabcontent">
             <div id="passeios-admin-container" style="padding:1rem;"></div>
         </div>
-        <!-- Conteúdo: Parques estáticos -->
+        <!-- Conteúdo: Parques — botões individuais -->
         <div id="sub-parques" class="sub-tabcontent" style="display:none;">
             <section class="parques-container">
                 <h2 style="color:#fff; margin-bottom:1rem;">Explore os Parques</h2>
-                <div id="container-parques-dinamico"></div>
+                <!-- Botões de seleção de parque -->
+                <div class="parque-selector-btns">
+                    <button class="parque-sel-btn active" onclick="selecionarParque('parnaso', this)">
+                        🏔️ Parque Nacional da Serra dos Órgãos
+                    </button>
+                    <button class="parque-sel-btn" onclick="selecionarParque('tres_picos', this)">
+                        ⛰️ Parque Estadual dos Três Picos
+                    </button>
+                    <button class="parque-sel-btn" onclick="selecionarParque('montanhas', this)">
+                        🌿 Parque Natural Municipal Montanhas
+                    </button>
+                </div>
+                <!-- Info do parque selecionado -->
+                <div id="parque-info-selecionado" style="margin:1rem 0;"></div>
+                <!-- Grid de trilhas do parque selecionado -->
+                <div id="trilhas-parque-container" class="eventos-container"></div>
             </section>
         </div>
     </div>

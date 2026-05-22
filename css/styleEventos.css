@@ -23,6 +23,7 @@
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 24px;
     justify-items: center;
+    
 }
 
 /* Container de passeios usa o mesmo grid */
@@ -62,6 +63,8 @@
 .evento-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-left: 4px solid var(--primary-hover);
+    border-radius: 8px;
 }
 
 /* Área da Imagem */

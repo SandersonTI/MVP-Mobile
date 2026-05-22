@@ -707,17 +707,23 @@ select.admin-input option {
 .admin-textarea { min-height: 90px; resize: vertical; }
 
 .btn-admin-acao {
-    background: var(--verde3);
+    background: var(--button-1);   /* mesma cor base do Saiba Mais */
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: .6rem 1.4rem;
+    border-radius: 6px;            /* igual ao .btn-evento */
+    padding: .6rem 1.4rem;         /* mantém tamanho atual */
     font-family: inherit;
     font-size: .9rem;
+    font-weight: bold;             /* igual ao .btn-evento */
     cursor: pointer;
-    transition: background .2s;
+    transition: background-color .3s; /* igual ao .btn-evento */
+    text-align: center;
+    display: inline-block;
 }
-.btn-admin-acao:hover { background: var(--verde2); }
+.btn-admin-acao:hover {
+    background-color: var(--primary-hover); /* mesmo hover do .btn-evento */
+    color: #fff;
+}
 
 .admin-item-card {
     background: rgba(255,255,255,.07);
@@ -1075,4 +1081,41 @@ select.admin-input option {
     gap: .4rem;
     flex-wrap: wrap;
     margin-top: .6rem;
+}
+
+/* ── Botões de seleção de parque (sub-aba Explore os Parques) ── */
+.parque-selector-btns {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+
+.parque-sel-btn {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: .55rem 1.1rem;
+    font-family: inherit;
+    font-size: .88rem;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    flex: 1 1 180px;
+    text-align: center;
+}
+
+.parque-sel-btn:hover {
+    background: rgba(255,255,255,.13);
+    border-color: var(--button-1);
+}
+
+.parque-sel-btn.active {
+    background: var(--button-1);
+    border-color: var(--button-1);
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .parque-sel-btn { font-size: .8rem; padding: .5rem .7rem; }
 }
