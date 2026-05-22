@@ -22,7 +22,9 @@ const dadosParques = [
           "img/parques/parque_nacional/PARNASO_2.jpg",
           "img/parques/parque_nacional/PARNASO_3.jpg",
           "img/parques/parque_nacional/PARNASO_4.jpg",
-          "img/parques/parque_nacional/PARNASO_5.jpg"
+          "img/parques/parque_nacional/PARNASO_5.jpg",
+          "img/parques/parque_nacional/PARNASO_6.jpg",
+          "img/parques/parque_nacional/PARNASO_7.jpg"
       ],
       trilhas: [
           {
@@ -30,49 +32,49 @@ const dadosParques = [
               nome: 'Trilha da Pedra do Sino',
               dificuldade: 'Alta',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Pedra_do_Sino.jpg/640px-Pedra_do_Sino.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_1.jpg"
           },
           {
               id: 'parnaso_trilha_2',       // ← ID único para buscar guias
               nome: 'Trilha Cartão Postal',
               dificuldade: 'Média',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Dedo_de_Deus_-_Serra_dos_%C3%93rg%C3%A3os.jpg/640px-Dedo_de_Deus_-_Serra_dos_%C3%93rg%C3%A3os.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_2.jpg"
           },
           {
               id: 'parnaso_trilha_3',       // ← ID único para buscar guias
               nome: 'Caminho das Orquídeas',
               dificuldade: 'Baixa',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Orchids_at_Kew_Gardens.jpg/640px-Orchids_at_Kew_Gardens.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_3.jpg"
           },
           {
               id: 'parnaso_trilha_4',       // ← ID único para buscar guias
               nome: 'Trilha suspensa',
               dificuldade: 'Baixa',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Mata_Atlantica.jpg/640px-Mata_Atlantica.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_4.jpg"
           },
           {
               id: 'parnaso_trilha_5',       // ← ID único para buscar guias
               nome: 'Trilha Poço Paraíso',
               dificuldade: 'Baixa',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Poco_Paraiso.jpg/640px-Poco_Paraiso.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_5.jpg"
           },
           {
               id: 'parnaso_trilha_6',       // ← ID único para buscar guias
               nome: 'Trilha Cachoeira Véu da Noiva',
               dificuldade: 'Média',
               localizacao: 'PARNASO - Sede Teresópolis',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/V%C3%A9u_da_Noiva_waterfall.jpg/640px-V%C3%A9u_da_Noiva_waterfall.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_6.jpg"
           },
         {
               id: 'parnaso_trilha_7',       // ← ID único para buscar guias
               nome: 'Trilha Poço Verde',
               dificuldade: 'Média',
               localizacao: 'PARNASO - Sede Guapimirim',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Natural_pool.jpg/640px-Natural_pool.jpg'
+              imagem: "img/parques/parque_nacional/PARNASO_7.jpg"
           },
 
       ]
@@ -96,9 +98,7 @@ const dadosParques = [
     "img/parques/parque_tres_picos/3PICOS_1.jpg",
     "img/parques/parque_tres_picos/3PICOS_2.jpg",
     "img/parques/parque_tres_picos/3PICOS_3.jpg",
-    "img/parques/parque_tres_picos/3PICOS_4.jpg",
-    "img/parques/parque_tres_picos/3PICOS_5.jpg",
-    "img/parques/parque_tres_picos/3PICOS_6.jpg"
+    "img/parques/parque_tres_picos/3PICOS_4.jpg"
   ],
       trilhas: [
           {
@@ -106,28 +106,28 @@ const dadosParques = [
               nome: 'Trilha da Caixa de Fósforo',
               dificuldade: 'Média',
               localizacao: 'PETP - Vale dos Deuses',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Tres_Picos_trail.jpg/640px-Tres_Picos_trail.jpg'
+              imagem: "img/parques/parque_tres_picos/3PICOS_1.jpg"
           },
           {
               id: 'tres_picos_2',       // ← ID único para buscar guias
               nome: 'Trilha Capacete',
               dificuldade: 'Baixa',
               localizacao: 'PETP - Vale do Toledo',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Atlantic_forest_trail.jpg/640px-Atlantic_forest_trail.jpg'
+              imagem: "img/parques/parque_tres_picos/3PICOS_2.jpg"
           },
           {
               id: 'tres_picos_3',       // ← ID único para buscar guias
               nome: 'Trilha da Cabeça do Dragão',
               dificuldade: 'Alta',
               localizacao: 'PETP - Vale dos Deuses',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Rock_formation_Brazil.jpg/640px-Rock_formation_Brazil.jpg'
+              imagem: "img/parques/parque_tres_picos/3PICOS_3.jpg"
           },
           {
               id: 'tres_picos_4',       // ← ID único para buscar guias
               nome: 'Trilha Pico dos Três Municípios',
               dificuldade: 'Média',
               localizacao: 'PETP - Vale do Toledo',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Mountain_peak_RJ.jpg/640px-Mountain_peak_RJ.jpg'
+              imagem: "img/parques/parque_tres_picos/3PICOS_4.jpg"
           },
       ]
   },
@@ -149,7 +149,8 @@ const dadosParques = [
       imagens: [
           "img/parques/parque_montanhas/MONTANHAS (1).png",
           "img/parques/parque_montanhas/MONTANHAS (2).png",
-          "img/parques/parque_montanhas/MONTANHAS (3).png"
+          "img/parques/parque_montanhas/MONTANHAS (3).png",
+          "img/parques/parque_montanhas/MONTANHAS (4).png",
       ],
       trilhas: [
           {
@@ -157,28 +158,28 @@ const dadosParques = [
               nome: 'Trilha Pedra Alpina',
               dificuldade: 'Alta',
               localizacao: 'Sede Santa Rita',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pedra_Alpina_Teresopolis.jpg/640px-Pedra_Alpina_Teresopolis.jpg'
+              imagem: "img/parques/parque_montanhas/MONTANHAS (1).png"
           },
           {
               id: 'montanhas_2',       // ← ID único para buscar guias
               nome: 'Trilha Jacu',
               dificuldade: 'Baixa',
               localizacao: 'Sede Santa Rita',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Atlantic_forest_birds.jpg/640px-Atlantic_forest_birds.jpg'
+              imagem: "img/parques/parque_montanhas/MONTANHAS (2).png"
           },
           {
               id: 'montanhas_3',       // ← ID único para buscar guias
               nome: 'Trilha Tangará',
               dificuldade: 'Baixa',
               localizacao: 'Sede Santa Rita',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Tanagra.jpg/640px-Tanagra.jpg'
+              imagem: "img/parques/parque_montanhas/MONTANHAS (3).png"
           },
           {
               id: 'montanhas_4',       // ← ID único para buscar guias
               nome: 'Trilha Pedra da Tartaruga',
               dificuldade: 'Baixa',
               localizacao: 'Entrada pela Granja Florestal',
-              imagem: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Pedra_da_Tartaruga.jpg/640px-Pedra_da_Tartaruga.jpg'
+              imagem: "img/parques/parque_montanhas/MONTANHAS (4).png"
           }
       ]
   }
