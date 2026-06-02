@@ -1,4 +1,4 @@
-# Terê Verde — MVP Web Mobile
+# MVP Web Mobile
  
 > Plataforma web mobile para serviços turísticos em Teresópolis — RJ.
  
