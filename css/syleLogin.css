@@ -1,0 +1,250 @@
+/* Campos de entrada de largura total */
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=tel] { 
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    display: block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Define um estilo para todos os botões */
+.btn {    
+    padding: 10px 15px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn.loginbtn {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+.btn.acessobtn {
+    background-color: var(--button-3);
+    color: white;
+}
+
+/* Estilos extras para o botão de cancelar */
+.btn.cancelbtn {
+    color: white;
+    background-color: var(--status-red);
+}
+
+/* Container para posicionar o botão de login fixo */
+.login-fixed-wrapper {
+    position: absolute;
+    margin-right: 0;
+    top: 20px;     
+    right: 20px;   
+    z-index: 1000; 
+}
+
+/* O botão dentro do wrapper, garantindo que ele não herde estilos errados */
+.login-fixed-wrapper button {
+    margin: 0;
+    width: auto;
+}
+
+/* Centraliza a imagem e posiciona o botão de fechar */
+.imgcontainer {
+    text-align: center;
+    margin: 8px 0 12px 0;
+    position: relative;
+}
+
+img.avatar {
+    width: 30%;
+    border-radius: 50%;
+}
+
+.container {
+    padding: 12px;
+}
+
+span.psw {
+    align-items: right;
+}
+
+/* O Modal (fundo escuro) */
+.modal {
+    display: none;     
+    position: fixed;   
+    z-index: 9999;        
+    left: 0;
+    top: 0;
+    width: 100%;       
+    height: 100%;      
+    overflow: auto;    
+    background-color: rgb(0, 0, 0);        
+    background-color: rgba(0, 0, 0, 0.4);  
+    padding-top: 30px;
+    color: var(--button-1);
+}
+
+/* Conteúdo/Caixa do Modal */
+.modal-content {
+    background-color: var(--secundary); 
+    margin: 4% auto; /* Centraliza horizontalmente e dá uma margem no topo */
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 400px; /* Impede de ficar gigante no PC */
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    border-radius: 20px;
+    max-width: 90vh;
+    box-sizing: border-box;    
+}
+
+.modal-content hr {
+    border: 1px solid var(--primary-hover);
+    margin-bottom: 15px;
+}
+
+.modal-content label {
+    color: var(--primary); 
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.modal-content label:first-child {
+    margin-top: 0;
+}
+
+.container-form {
+    padding: 16px; 
+}
+
+/* O Slider que move entre Login e Cadastro */
+.form-slider {
+    display: flex; 
+    width: 200%;   
+    transition: transform 0.6s ease-in-out; 
+    align-items: flex-start; /* alinha do topo — permite logo aparecer */
+}
+
+/* Configuração de cada "tela" (Login ou Cadastro) */
+.form-section {
+    width: 50%; 
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* conteúdo do topo — logo sempre visível */
+    overflow-y: auto;
+    overflow-x: hidden;  
+}
+
+.form-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo para deixar a barra de rolagem (se aparecer) mais elegante */
+.form-section::-webkit-scrollbar {
+    width: 6px;
+}
+.form-section::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.slide-active {
+    transform: translateX(-50%); /* Move o slider para mostrar o Cadastro */
+}
+
+.toggle-link {
+    color: var(--primary-hover);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+.toggle-link:hover {
+    text-decoration: underline;
+}
+
+/* O Botão de Fechar (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 8px;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+    z-index: 10;
+    line-height: 1;
+    display: block;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--status-red);
+    cursor: pointer;
+}
+
+/* Adiciona Animação de Zoom */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+/* Ajuste dos inputs na tela de guia (se houver) */
+.area-exclusiva-guia .input-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.area-exclusiva-guia input {
+    width: 100% !important; 
+    margin: 5px 0;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.area-exclusiva-guia input:focus {
+    background-color: #fff;
+    border-color: var(--primary);
+    outline: none;
+}
+
+@-webkit-keyframes animatezoom {
+    from { -webkit-transform: scale(0) }
+    to { -webkit-transform: scale(1) }
+}
+
+@keyframes animatezoom {
+    from { transform: scale(0) }
+    to { transform: scale(1) }
+}
+
+/* Responsividade para telas muito pequenas */
+@media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+
+    .cancelbtn {
+        width: 100%;
+    }
+}

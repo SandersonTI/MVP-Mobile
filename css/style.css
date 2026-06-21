@@ -1,0 +1,1121 @@
+/* ============================================================
+   VARIÁVEIS DE COR
+   ============================================================ */
+   :root {
+    --primary: #012c18;
+    --primary-60: rgba(34, 48, 11, 0.637);
+    --primary-hover: #87B344;
+    --secundary: #f3f3f3;
+
+    /* Status */
+    --status-green: #28a745;
+    --status-red: #dc3545;
+    --status-yellow: #ffc107;
+
+    /* Textos */
+    --text-black: #0d2721;
+
+    /* Botões */
+    --button-1: #22300B;
+    --button-2: #293B14;
+    --button-3: #344D0E;
+    --button-4: #4d7019;
+    --button-5: #76993D;
+}
+
+/* ============================================================
+   RESET BÁSICO
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--secundary);
+    color: #333;
+    line-height: 1.6;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+    background-color: var(--primary);
+    color: var(--secundary);
+    padding: 2rem 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+header .logo {
+    height: 110px;
+    width: auto;
+    margin-right: 1.5rem;
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* ============================================================
+   ALERTAS
+   ============================================================ */
+.alertas {
+    background-color: #faf4bb;
+    border: 1px solid #ddd;
+    border-left: 5px solid var(--status-yellow);
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.alertas h2 {
+    font-size: 1.2rem;
+    color: var(--text-black);
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   PARQUES — CARDS
+   ============================================================ */
+.parques-container h2 {
+    text-align: center;
+    color: var(--secundary);
+    margin-bottom: 1.5rem;
+}
+
+.park-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+/* Área escondida por padrão */
+.park-card .trail-list,
+.park-card .park-slider {
+    display: none;
+}
+
+/* Mostrar quando ativo */
+.park-card.open .trail-list,
+.park-card.open .park-slider {
+    display: block;
+}
+
+/* Transição suave */
+.park-card .trail-list,
+.park-card .park-slider {
+    transition: opacity .3s ease;
+}
+
+.park-card.open .trail-list,
+.park-card.open .park-slider {
+    opacity: 1;
+}
+
+/* Cabeçalho do card */
+.park-header {
+    background-color: #f9f9f9;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.park-header:hover {
+    background-color: var(--primary-hover);
+}
+
+.park-header h3 {
+    color: var(--text-black);
+}
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+.status {
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.status-aberta {
+    background-color: var(--status-green);
+}
+
+.status-fechada {
+    background-color: var(--status-red);
+}
+
+.status-manutencao {
+    background-color: var(--status-yellow);
+    color: #333;
+}
+
+/* Status das trilhas */
+.status-trilha {
+    margin: 10px 36px;
+    font-weight: bold;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+}
+
+/* Horários */
+.horario-trilha {
+    margin: 15px 36px;
+    padding: 12px 18px;
+    border-left: 6px solid var(--primary);
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.horario-trilha p strong {
+    color: var(--primary);
+}
+
+/* ============================================================
+   LISTA DE TRILHAS
+   ============================================================ */
+.trail-list {
+    list-style: none;
+    padding: 1rem 1.5rem;
+}
+
+.trail-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.trail-list li:last-child {
+    border-bottom: none;
+}
+
+/* ============================================================
+   BANNER PRINCIPAL
+   ============================================================ */
+section.slider {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    width: 100%;
+    display: flex;
+    transition-duration: .6s;
+    transition-property: opacity;
+}
+
+.banner-slide {
+    width: 25%;
+    position: relative;
+}
+
+.banner-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.banner-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.1em;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-align: left;
+}
+
+/* Exibe no hover */
+.banner-slide:hover .banner-caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Botões de navegação */
+.prev,
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 80%;
+    padding: 16px;
+    color: white;
+    font-size: 18px;
+    border-radius: 3px;
+    z-index: 10;
+}
+
+.next {
+    right: 20px;
+}
+
+.prev:hover,
+.next:hover {
+    background-color: rgba(2, 31, 6, 0.8);
+}
+
+/* Indicadores */
+.banner-indicadores {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: var(--primary-60);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.active,
+.banner-indicadores:hover {
+    background-color: rgba(2, 31, 6, 0.8);
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from { opacity: .4 }
+    to   { opacity: 1 }
+}
+
+/* ============================================================
+   TABS (Pagina Inicial, Parques, Guias, Sobre)
+   ============================================================ */
+.tab-bar {
+    display: flex;
+    flex-direction: nowrap;
+    width: 100%;
+    overflow: hidden;
+}
+
+.tablink {
+    background-color: var(--button-1);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tablink:hover {
+    background-color: var(--primary-hover);
+}
+
+.tabcontent {
+    color: white;
+    display: none;
+    padding: 30px 20px;
+    height: 100%;
+    width: 100%;
+}
+
+/* Cor de fundos das páginas: */
+#PaginaInicial { background-color: var(--primary); }
+/* #Parques       { background-color: var(--button-3); } */
+/* #Guias         { background-color: var(--button-4); } */
+/* #Sobre         { background-color: var(--button-5); } */
+
+/* ============================================================
+   SLIDERS DOS PARQUES (internos)
+   ============================================================ */
+.park-slider {
+    margin: 1rem 0;
+    overflow: hidden;
+    border-radius: 6px;
+    position: relative;
+}
+
+.park-slider .slideshow-container {
+    display: flex;
+    width: 100%;
+}
+
+.park-slide {
+    flex: 0 0 100%;
+    position: relative;
+    aspect-ratio: 16/9;
+}
+
+.park-slide img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Botões do slider interno */
+.park-slider .prev,
+.park-slider .next {
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 12px;
+    font-size: 22px;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+/* Indicadores internos */
+.park-slider .park-indicador {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: var(--primary-60);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.park-slider .park-indicador.active,
+.park-slider .park-indicador:hover {
+    background-color: rgba(2,31,6,.8);
+}
+
+/* ============================================================
+   PREVISÃO DO TEMPO
+   ============================================================ */
+.area-previsao-do-tempo {
+    display: flex;
+    justify-content: center;
+    background-color: #f5f5f5;
+    padding: 8px 36px;
+}
+
+.previsao-barra {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.previsao-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.weather-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.temp-max { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
+.temp-min { font-size: .9rem; color:#666; }
+
+.cidade { color: var(--primary); }
+.descricao { color:#444; text-transform: capitalize; }
+
+/* ============================================================
+   MENU HAMBÚRGUER MOBILE
+   ============================================================ */
+
+/* Esconde elementos mobile por padrão (no desktop) */
+.mobile-only, .mobile-menu-content {
+    display: none;
+}
+
+/* Ícone do menu (3 risquinhos) */
+.hamburger-icon {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    font-size: 30px;
+    color: var(--secundary); /* Cor do ícone */
+    z-index: 1001;
+}
+
+/* O menu suspenso (caixa que abre) */
+.mobile-menu-content {
+    display: none; /* Começa fechado */
+    position: absolute;
+    top: 70px; /* Logo abaixo do header */
+    right: 20px;
+    background-color: var(--secundary);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1002;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Links dentro do menu */
+.mobile-menu-content a {
+    color: var(--text-black);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+.mobile-menu-content a:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0.6rem 0.8rem;
+        position: relative;
+        gap: 0.6rem;
+        flex-wrap: nowrap;
+    }
+
+    header .logo {
+        height: 50px;
+        margin: 0;
+    }
+
+    header .row p { display: none; }
+    header .row h1 { font-size: 1.1rem; }
+
+    .tab-bar {
+        flex-wrap: wrap;
+    }
+
+    .tablink {
+        width: 50%;
+        flex: 0 0 50%;
+        font-size: 14px;
+        padding: 12px 8px;
+        min-height: 44px;
+    }
+
+    .tabcontent {
+        padding: 20px 10px;
+    }
+
+    .area-previsao-do-tempo {
+        justify-content: center;
+        padding: 8px 10px;
+    }
+
+    .previsao-barra {
+        width: 95%;
+    }
+
+    .weather-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .temp-max {
+        font-size: 1.3rem;
+    }
+    /* Mostra o ícone no celular */
+    .mobile-only {
+        display: block;
+    }
+
+    /* Esconde os botões normais de login no celular */
+    .desktop-only {
+        display: none;
+    }
+    
+    /* Ajuste para o header não ficar bagunçado */
+    header {
+        position: relative; /* Necessário para o absolute funcionar */
+    }
+}
+
+/* ============================================================
+   PADRONIZAÇÃO DE CORES — texto branco em verde, preto em branco
+   ============================================================ */
+
+/* Fundo verde → texto branco */
+.tab-bar, .tablink,
+.admin-painel, .admin-tabs, .admin-tab-btn,
+header, footer,
+.btn, .btn-admin-acao, .btn-aprovar, .btn-filtro {
+    color: #fff;
+}
+
+/* Fundo branco/claro → texto escuro */
+.park-card, .evento-card, .guia-card,
+.minha-sugestao-card, .admin-item-card,
+.sugestao-form-card, .modal-content .container,
+.previsao-barra {
+    color: #0d2721;
+}
+
+/* Forçar texto branco nos botões de aba ativos */
+.tablink:focus, .tablink.active,
+.admin-tab-btn.active {
+    color: #fff !important;
+}
+
+/* ============================================================
+   PAINEL ADMIN — padronização visual
+   ============================================================ */
+.admin-painel {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    color: var(--secundary);
+}
+
+.admin-painel h2 {
+    color: var(--secundary) !important;
+}
+
+.admin-card-form {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-tab-btn {
+    background: var(--verde2);   /* Verde escuro — nunca branco */
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 8px;
+    padding: .5rem 1.2rem;
+    font-family: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+.admin-tab-btn.active,
+.admin-tab-btn:hover {
+    background: var(--verde3);
+    border-color: var(--amarelo, #c8e63b);
+    color: #fff !important;
+}
+
+/* Container das sub-abas */
+.admin-tabs {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+
+.admin-input {
+    width: 100%;
+    max-width: 100%;          /* nunca extrapola o container */
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 6px;
+    color: #fff;
+    padding: .6rem .9rem;
+    font-family: inherit;
+    font-size: .9rem;
+    margin-bottom: .6rem;
+    box-sizing: border-box;
+}
+
+/* Select dentro do painel admin — garante cor e tamanho */
+select.admin-input {
+    background: var(--verde2);
+    color: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+select.admin-input option {
+    background: var(--verde2);
+    color: #fff;
+}
+
+.admin-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    overflow-x: hidden;    /* evita scroll horizontal */
+}
+
+@media (max-width: 768px) {
+    .admin-painel {
+        padding: .8rem .5rem;
+    }
+    .admin-card-form {
+        padding: 1rem .8rem;
+    }
+    .admin-tab-btn {
+        padding: .4rem .7rem;
+        font-size: .82rem;
+    }
+    .admin-tabs {
+        gap: .3rem;
+    }
+}
+.admin-input::placeholder { color: rgba(255,255,255,.45); }
+.admin-input:focus { outline: none; border-color: var(--amarelo, #c8e63b); }
+
+.admin-textarea { min-height: 90px; resize: vertical; }
+
+.btn-admin-acao {
+    background: var(--button-1);   /* mesma cor base do Saiba Mais */
+    color: #fff;
+    border: none;
+    border-radius: 6px;            /* igual ao .btn-evento */
+    padding: .6rem 1.4rem;         /* mantém tamanho atual */
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: bold;             /* igual ao .btn-evento */
+    cursor: pointer;
+    transition: background-color .3s; /* igual ao .btn-evento */
+    text-align: center;
+    display: inline-block;
+}
+.btn-admin-acao:hover {
+    background-color: var(--primary-hover); /* mesmo hover do .btn-evento */
+    color: #fff;
+}
+
+.admin-item-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: .8rem;
+    color: #fff;
+}
+
+.foto-preview { margin-top: .5rem; }
+.foto-preview-img {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* ============================================================
+   IMAGENS — tamanho padrão em cards de sugestão/passeio
+   ============================================================ */
+.sugestao-foto,
+.sugestao-foto-mini,
+.foto-preview-img {
+    max-width: 100%;
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: .5rem;
+}
+
+/* Thumbnail menor para listas do admin */
+.sugestao-foto {
+    max-height: 140px;
+    width: auto;
+    max-width: 180px;
+}
+
+/* Card de evento — altura fixa */
+.evento-img-box img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+
+@media (max-width: 768px) {
+    .evento-img-box img { height: 160px; }
+    .sugestao-foto      { max-height: 120px; }
+}
+
+/* ============================================================
+   SUGESTÕES — cores de texto na aba de fundo verde
+   ============================================================ */
+.sugestao-wrapper,
+.sugestao-form-card,
+.sugestao-form-card h3,
+.sugestao-form-card p,
+.sugestao-form-card label,
+.sugestao-instrucao,
+.minhas-sugestoes-section h3,
+.minha-sugestao-card,
+.minha-sugestao-card strong,
+.minha-sugestao-card p,
+.minha-sug-desc,
+.sugestao-aviso,
+.sugestao-aviso p {
+    color: #fff;
+}
+
+.minha-sugestao-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: .8rem;
+}
+
+/* Data e info secundária */
+.minha-sugestao-card small {
+    color: #b0d48a;
+}
+
+/* Feedback do admin */
+.feedback-admin {
+    background: rgba(255,255,255,.1);
+    border-left: 3px solid #f1c40f;
+    border-radius: 0 6px 6px 0;
+    padding: .6rem .9rem;
+    margin-top: .6rem;
+    color: #fff;
+}
+
+/* ============================================================
+   SUGESTÕES — form-card, select e responsividade mobile
+   ============================================================ */
+.sugestao-form-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    /* Garante que não extrapola a tela */
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Select com cor do ambiente verde */
+.sugestao-form-campos select.admin-input,
+#sug-dificuldade {
+    background: var(--verde2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sugestao-form-campos select.admin-input option,
+#sug-dificuldade option {
+    background: var(--verde2);
+    color: #fff;
+}
+
+/* Container principal de sugestões — sem overflow */
+.sugestao-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Mobile: garante que tudo cabe na tela */
+@media (max-width: 768px) {
+    .sugestao-form-card,
+    .sugestao-wrapper,
+    #sugestoes-container {
+        padding: .8rem;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .admin-input,
+    .admin-textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* ============================================================
+   SUB-ABAS (dentro de Passeios)
+   ============================================================ */
+.sub-tab-bar {
+    display: flex;
+    gap: .4rem;
+    padding: 1rem 1rem .5rem;
+    flex-wrap: wrap;
+}
+
+.sub-tablink {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: .45rem 1.1rem;
+    font-family: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.sub-tablink.active,
+.sub-tablink:hover {
+    background: var(--verde3);
+    border-color: var(--verde3);
+}
+
+@media (max-width: 768px) {
+    .sub-tablink {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: .5rem .5rem;
+        font-size: .82rem;
+    }
+}
+
+/* ============================================================
+   BOTÕES DE FILTRO — sub-aba Sugestões do Admin
+   ============================================================ */
+.admin-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: 1rem;
+}
+
+.btn-filtro {
+    background: var(--verde2);
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px;
+    padding: .35rem .9rem;
+    font-family: inherit;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+
+.btn-filtro:hover {
+    background: var(--verde3);
+    border-color: var(--verde3);
+}
+
+.btn-filtro.active {
+    background: var(--verde3);
+    border-color: var(--amarelo, #c8e63b);
+    font-weight: 700;
+}
+
+/* Botões de ação nas sugestões */
+.btn-aprovar {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+}
+.btn-aprovar:hover { background: #1e8449; }
+
+.btn-reprovar {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .2s;
+}
+.btn-reprovar:hover { background: #922b21; }
+
+.admin-textarea-sm {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.revisao-form {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: .7rem;
+}
+
+.reprovar-area {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+/* =====================================================
+   TRILHAS — cards dentro dos parques
+   ===================================================== */
+.trilhas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    padding: 1rem;
+}
+
+.trilha-card {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: .9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.trilha-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .4rem;
+    flex-wrap: wrap;
+}
+
+.trilha-card-header strong { color: #fff; font-size: .95rem; }
+
+.trilha-local {
+    color: #b0d48a;
+    font-size: .82rem;
+    margin: 0;
+}
+
+.trilha-card-btns {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-top: .3rem;
+}
+
+.guias-trilha-painel {
+    background: rgba(0,0,0,.15);
+    border-radius: 6px;
+    padding: .5rem .7rem;
+    font-size: .83rem;
+}
+
+@media (max-width: 520px) {
+    .trilhas-grid { grid-template-columns: 1fr; }
+}
+
+/* =====================================================
+   BOTÕES EDITAR E REMOVER — painel admin
+   ===================================================== */
+.btn-admin-editar,
+.btn-admin-remover {
+    border: none;
+    border-radius: 8px;
+    padding: .38rem .85rem;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    color: #fff;
+}
+
+.btn-admin-editar {
+    background: var(--verde3, #4d7019);
+}
+.btn-admin-editar:hover {
+    background: var(--verde2, #293B14);
+    transform: scale(1.03);
+}
+
+.btn-admin-remover {
+    background: #c0392b;
+}
+.btn-admin-remover:hover {
+    background: #922b21;
+    transform: scale(1.03);
+}
+
+/* Container dos botões de ação dentro do card */
+.admin-item-acoes {
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+    margin-top: .6rem;
+}
+
+/* ── Botões de seleção de parque (sub-aba Explore os Parques) ── */
+.parque-selector-btns {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+}
+
+.parque-sel-btn {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: .55rem 1.1rem;
+    font-family: inherit;
+    font-size: .88rem;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    flex: 1 1 180px;
+    text-align: center;
+}
+
+.parque-sel-btn:hover {
+    background: rgba(255,255,255,.13);
+    border-color: var(--button-1);
+}
+
+.parque-sel-btn.active {
+    background: var(--button-1);
+    border-color: var(--button-1);
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .parque-sel-btn { font-size: .8rem; padding: .5rem .7rem; }
+}

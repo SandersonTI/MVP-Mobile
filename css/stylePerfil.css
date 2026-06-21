@@ -1,0 +1,127 @@
+/* Estilos para o dropdown de perfil na Navbar */
+.perfil-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.perfil-btn {
+    background-color: var(--button-1);
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.perfil-btn:hover, .perfil-btn:focus {
+    background-color: var(--primary-hover);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1005;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: var(--text-black);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.perfil-dropdown.show .dropdown-content {
+    display: block;
+    animation: fadeInDropdown 0.3s ease;
+}
+
+@keyframes fadeInDropdown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal de Perfil (reaproveitando classes de modal existentes) */
+#modal-perfil .modal-content {
+    max-width: 500px;
+}
+
+#form-perfil-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#form-perfil-campos label {
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: -8px;
+    font-size: 14px;
+}
+
+#form-perfil-campos input,
+#form-perfil-campos textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.perfil-foto-preview-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.perfil-foto-preview-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.perfil-section-title {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: var(--primary);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.btn-salvar-perfil {
+    background-color: var(--primary-hover);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-salvar-perfil:hover {
+    background-color: var(--primary);
+}
