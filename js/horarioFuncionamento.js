@@ -273,7 +273,7 @@ async function renderizarParques() {
                   </button>
                   <button id="btn-inscricao-trilha-${trilha.id}"
                           class="btn-evento btn-inscricao-trilha"
-                          style="display:none; background:#27ae60;"
+                          style="display:none;"
                           onclick="toggleInscricaoGuia('${trilha.id}', this)">
                     ➕ Inscrever-se
                   </button>
@@ -363,7 +363,7 @@ function criarCardTrilha(trilha) {
                     <button id="btn-inscricao-trilha-${trilha.id}"
                             class="btn-evento"
                             onclick="toggleInscricaoGuia('${trilha.id}', this)"
-                            style="display:none; background:#27ae60;">
+                            style="display:none;">
                         ➕ Inscrever-se
                     </button>
                 </div>
@@ -402,6 +402,8 @@ function selecionarParque(parqueId, btn) {
 
     // Ativa botões de inscrição se for guia logado
     ativarBotoesInscricaoTrilhas();
+    const usuario = typeof getUsuarioLogado === 'function' ? getUsuarioLogado() : null;
+    if (usuario && usuario.tipo === 'guia') carregarInscricoesDoGuia(usuario.id);
 }
 
 // Inicializa com o primeiro parque selecionado ao abrir a sub-aba
@@ -430,7 +432,7 @@ async function toggleInscricaoGuia(trilhaId, btn) {
             btn.dataset.inscrito = jaInscrito ? 'false' : 'true';
             btn.textContent      = jaInscrito ? '➕ Inscrever-se' : '🚪 Sair da Trilha';
             btn.classList.toggle('btn-evento-sair', !jaInscrito);
-            btn.style.background = jaInscrito ? '#27ae60' : '#c0392b';
+            btn.style.background = '';
         } else {
             alert('✗ ' + data.mensagem);
         }
@@ -455,7 +457,7 @@ async function carregarInscricoesDoGuia(guiaId) {
                 btn.dataset.inscrito = 'true';
                 btn.textContent      = '🚪 Sair da Trilha';
                 btn.classList.add('btn-evento-sair');
-                btn.style.background = '#c0392b';
+                btn.style.background = '';
             }
             // Passeios do admin
             const btnP = document.getElementById(`btn-inscricao-${trilhaId}`);
@@ -463,7 +465,7 @@ async function carregarInscricoesDoGuia(guiaId) {
                 btnP.dataset.inscrito = 'true';
                 btnP.textContent      = '🚪 Sair do Passeio';
                 btnP.classList.add('btn-evento-sair');
-                btnP.style.background = '#c0392b';
+                btnP.style.background = '';
             }
         });
     } catch(e) { /* silencioso */ }

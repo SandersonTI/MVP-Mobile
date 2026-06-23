@@ -729,13 +729,14 @@ select.admin-input option {
 
 /* Botão de saída de inscrição: guia inscrito */
 .btn-evento-sair {
-    background: var(--button-danger) !important;
+    background: var(--button-1) !important;
     color: #fff !important;
     border: none;
     border-radius: 6px;
-    padding: .4rem .9rem;
+    padding: 10px;
     cursor: pointer;
-    font-size: .85rem;
+    font-size: inherit;
+    font-weight: bold;
     transition: background .2s;
 }
 .btn-evento-sair:hover {
