@@ -21,8 +21,11 @@ import uuid
 app = Flask(__name__)
 CORS(app)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Caminho do banco de dados
-DATABASE = 'users.db'
+# No Vercel, funções serverless só podem gravar com segurança em /tmp.
+DATABASE = os.path.join('/tmp', 'users.db') if os.environ.get('VERCEL') else os.path.join(BASE_DIR, 'users.db')
 
 # ─── Administrador padrão ──────
 ADMIN_USER = 'Administrador'
@@ -991,10 +994,10 @@ def serve_frontend(path):
     if path.startswith('api'):
         return jsonify({'sucesso': False, 'mensagem': 'Rota API inválida'}), 404
     # Serve actual files from project root if they exist
-    if path and os.path.exists(os.path.join('.', path)):
-        return send_from_directory('.', path)
+    if path and os.path.exists(os.path.join(BASE_DIR, path)):
+        return send_from_directory(BASE_DIR, path)
     # Default to index.html for SPA routes
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
 if __name__ == '__main__':
     init_db()

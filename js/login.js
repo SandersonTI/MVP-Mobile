@@ -1,7 +1,9 @@
 // Variáveis
 var modalAuth = document.getElementById('id_auth');
 var slider = document.getElementById('sliderAuth');
-const API_URL = 'http://localhost:5000/api';
+const API_URL = (window.location.protocol === 'file:' || window.location.port === '8000')
+    ? 'http://localhost:5000/api'
+    : `${window.location.origin}/api`;
 
 // --- Funções de Abertura ---
 
