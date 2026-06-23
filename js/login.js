@@ -255,11 +255,16 @@ function atualizarUILogin(usuario) {
     }
     // Exibe aba Admin somente para o administrador
     const abaAdminBtn    = document.getElementById('btn-admin');
-    const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
+    const abaGuiasBtn    = document.getElementById('btn-guias');
+    const abaSugestaoBtn = document.getElementById('btn-sugestoes');
     if (abaAdminBtn) {
         abaAdminBtn.style.display = (usuario.tipo === 'admin') ? 'inline-block' : 'none';
     }
-    // Oculta Sugestões para admin; mostra para os demais
+    // Guias: visível para turista e guia (não para admin)
+    if (abaGuiasBtn) {
+        abaGuiasBtn.style.display = (usuario.tipo === 'admin') ? 'none' : 'inline-block';
+    }
+    // Sugestões: visível para turista e guia (não para admin)
     if (abaSugestaoBtn) {
         abaSugestaoBtn.style.display = (usuario.tipo === 'admin') ? 'none' : 'inline-block';
     }
@@ -288,9 +293,11 @@ function fazerLogout() {
     }
 
     const abaAdminBtn    = document.getElementById('btn-admin');
-    const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
-    if (abaAdminBtn)    abaAdminBtn.style.display = 'none';
-    if (abaSugestaoBtn) abaSugestaoBtn.style.display = 'inline-block';
+    const abaGuiasBtn    = document.getElementById('btn-guias');
+    const abaSugestaoBtn = document.getElementById('btn-sugestoes');
+    if (abaAdminBtn)    abaAdminBtn.style.display    = 'none';
+    if (abaGuiasBtn)    abaGuiasBtn.style.display    = 'none';
+    if (abaSugestaoBtn) abaSugestaoBtn.style.display = 'none';
     // ── Restaura menu mobile com Login e Cadastro ──
     const mobileMenu = document.getElementById('mobileMenu');
     if (mobileMenu) {

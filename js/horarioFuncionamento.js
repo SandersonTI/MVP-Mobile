@@ -428,7 +428,8 @@ async function toggleInscricaoGuia(trilhaId, btn) {
         const data = await res.json();
         if (data.sucesso) {
             btn.dataset.inscrito = jaInscrito ? 'false' : 'true';
-            btn.textContent      = jaInscrito ? '➕ Inscrever-se' : '✅ Inscrito';
+            btn.textContent      = jaInscrito ? '➕ Inscrever-se' : '🚪 Sair da Trilha';
+            btn.classList.toggle('btn-evento-sair', !jaInscrito);
             btn.style.background = jaInscrito ? '#27ae60' : '#c0392b';
         } else {
             alert('✗ ' + data.mensagem);
@@ -452,15 +453,17 @@ async function carregarInscricoesDoGuia(guiaId) {
             const btn = document.getElementById(`btn-inscricao-trilha-${trilhaId}`);
             if (btn) {
                 btn.dataset.inscrito = 'true';
-                btn.textContent      = '✅ Inscrito';
+                btn.textContent      = '🚪 Sair da Trilha';
+                btn.classList.add('btn-evento-sair');
                 btn.style.background = '#c0392b';
             }
             // Passeios do admin
             const btnP = document.getElementById(`btn-inscricao-${trilhaId}`);
             if (btnP) {
                 btnP.dataset.inscrito = 'true';
-                btnP.textContent      = '✅ Inscrito';
-                btnP.style.background = '#27ae60';
+                btnP.textContent      = '🚪 Sair do Passeio';
+                btnP.classList.add('btn-evento-sair');
+                btnP.style.background = '#c0392b';
             }
         });
     } catch(e) { /* silencioso */ }

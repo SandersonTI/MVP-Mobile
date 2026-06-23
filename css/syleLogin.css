@@ -173,12 +173,12 @@ span.psw {
 
 .toggle-link {
     color: var(--primary-hover);
-    font-weight: bold;
     cursor: pointer;
-    text-decoration: none;
+    text-decoration: underline;
+    font-weight: 600;
 }
 .toggle-link:hover {
-    text-decoration: underline;
+    color: var(--primary);
 }
 
 /* O Botão de Fechar (x) */

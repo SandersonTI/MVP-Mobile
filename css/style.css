@@ -21,6 +21,8 @@
     --button-3: #344D0E;
     --button-4: #4d7019;
     --button-5: #76993D;
+    --button-danger: #c0392b;
+    --button-danger-hover: #a93226;
 }
 
 /* ============================================================
@@ -723,6 +725,21 @@ select.admin-input option {
 .btn-admin-acao:hover {
     background-color: var(--primary-hover); /* mesmo hover do .btn-evento */
     color: #fff;
+}
+
+/* Botão de saída de inscrição: guia inscrito */
+.btn-evento-sair {
+    background: var(--button-danger) !important;
+    color: #fff !important;
+    border: none;
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    cursor: pointer;
+    font-size: .85rem;
+    transition: background .2s;
+}
+.btn-evento-sair:hover {
+    background: var(--button-danger-hover) !important;
 }
 
 .admin-item-card {

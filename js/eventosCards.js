@@ -187,8 +187,9 @@ async function toggleInscricaoPasseio(passeioId, btn) {
         const data = await res.json();
         if (data.sucesso) {
             btn.dataset.inscrito = jaInscrito ? 'false' : 'true';
-            btn.textContent = jaInscrito ? '➕ Inscrever-se' : '✅ Inscrito';
-            btn.style.background = jaInscrito ? '' : '#27ae60';
+            btn.textContent      = jaInscrito ? '➕ Inscrever-se' : '🚪 Sair do Passeio';
+            btn.classList.toggle('btn-evento-sair', !jaInscrito);
+            btn.style.background = jaInscrito ? '' : '#c0392b';
         } else {
             alert('✗ ' + data.mensagem);
         }
