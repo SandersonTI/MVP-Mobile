@@ -1,9 +1,23 @@
 // Variáveis
 var modalAuth = document.getElementById('id_auth');
 var slider = document.getElementById('sliderAuth');
-const API_URL = (window.location.protocol === 'file:' || window.location.port === '8000')
+const isLocalFrontend = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+const API_URL = (window.location.protocol === 'file:' || isLocalFrontend)
     ? 'http://localhost:5000/api'
     : `${window.location.origin}/api`;
+
+async function lerRespostaApi(response) {
+    const text = await response.text();
+    if (!text) {
+        throw new Error(`Servidor respondeu sem dados (HTTP ${response.status})`);
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        throw new Error(`Servidor não retornou JSON válido (HTTP ${response.status})`);
+    }
+}
 
 // --- Funções de Abertura ---
 
@@ -153,7 +167,7 @@ async function enviarDadosGuia() {
             })
         });
 
-        const data = await response.json();
+        const data = await lerRespostaApi(response);
 
         if (data.sucesso) {
     // Distingue guia (pendente) de turista (acesso imediato)
@@ -204,7 +218,7 @@ async function fazerLogin(event) {
             })
         });
 
-        const data = await response.json();
+        const data = await lerRespostaApi(response);
 
         if (data.sucesso) {
             if (lembrar) {
