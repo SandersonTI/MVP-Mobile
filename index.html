@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="css/styleGuia.css">
     <link rel="stylesheet" href="css/styleSobre.css">
     <link rel="stylesheet" href="css/styleEventos.css">
+    <link rel="stylesheet" href="css/stylePerfil.css">
+    <link rel="stylesheet" href="css/styleCalendario.css">
 
     <style>
         /* --- CORREÇÃO RESPONSIVA E ALINHAMENTO DO BANNER --- */
@@ -52,7 +54,7 @@
             <p>Descubra trilhas, parques e aventuras em Teresópolis!</p>
         </div>
 
-        <div class="login-fixed-wrapper desktop-only">
+        <div class="login-fixed-wrapper desktop-only" id="header-user-area">
             <button class="btn loginbtn" onclick="abrirModalLogin()">Login</button>
             <button class="btn acessobtn" onclick="abrirModalCadastro()">Cadastro</button>
         </div>
@@ -86,7 +88,7 @@
                             </div>
 
                             <div style="margin-top: 2px; text-align: center; border-top: 1px solid #eee; padding-top: 2px;">
-                                <span class="psw">Esqueceu a <a href="#" class="toggle-link">senha?</a></span>
+                                <span class="psw">Esqueceu a <a onclick="mostrarEsqueciSenha()" class="toggle-link">senha?</a></span>
                                 <p>Ainda não tem conta? <a onclick="animarParaCadastro()" class="toggle-link">Cadastre-se</a></p>
                             </div>
                         </form>
@@ -176,6 +178,37 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+        
+        <!-- Modal Esqueci Minha Senha -->
+        <div id="modal-esqueci-senha" class="modal">
+            <div class="modal-content animate" style="max-width: 400px; padding: 20px; text-align: center;">
+                <span onclick="document.getElementById('modal-esqueci-senha').style.display='none'" class="close" title="Fechar">&times;</span>
+                <div class="imgcontainer" style="margin-bottom:15px;">
+                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar" style="width: 25%;">
+                    <h2 style="color: var(--primary);">Recuperar Senha</h2>
+                </div>
+                <p style="font-size: 14px; margin-bottom: 15px;">Digite seu email para receber o link de recuperação.</p>
+                <input type="email" id="esqueci-email" placeholder="Seu email cadastrado" required style="width: 100%; box-sizing: border-box;">
+                <button class="btn loginbtn" onclick="enviarRecuperacao()" style="margin-top: 15px;">Enviar Link</button>
+                <button class="btn cancelbtn" onclick="document.getElementById('modal-esqueci-senha').style.display='none'">Cancelar</button>
+                <div id="esqueci-feedback" style="margin-top: 15px; font-size: 14px; color: var(--primary);"></div>
+            </div>
+        </div>
+
+        <!-- Modal Redefinir Senha -->
+        <div id="modal-redefinir-senha" class="modal">
+            <div class="modal-content animate" style="max-width: 400px; padding: 20px; text-align: center;">
+                <span onclick="document.getElementById('modal-redefinir-senha').style.display='none'" class="close" title="Fechar">&times;</span>
+                <div class="imgcontainer" style="margin-bottom:15px;">
+                    <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar" style="width: 25%;">
+                    <h2 style="color: var(--primary);">Nova Senha</h2>
+                </div>
+                <input type="hidden" id="redefinir-token">
+                <input type="password" id="redefinir-senha1" placeholder="Nova senha" required style="width: 100%; box-sizing: border-box;">
+                <input type="password" id="redefinir-senha2" placeholder="Confirmar nova senha" required style="width: 100%; margin-top: 10px; box-sizing: border-box;">
+                <button class="btn loginbtn" onclick="redefinirSenha()" style="margin-top: 15px;">Salvar Senha</button>
             </div>
         </div>
         
@@ -323,6 +356,15 @@
                 <h2 style="color:#fff;">Calendário de Eventos</h2>
                 <p style="color:#cde8a0;">Festivais, feiras e o que há de melhor rolando em Teresópolis.</p>
                 
+                <div class="calendario-container">
+                    <div class="calendario-header">
+                        <button onclick="alterarMes(-1)">&#10094;</button>
+                        <span id="calendario-mes-ano" class="calendario-mes-ano"></span>
+                        <button onclick="alterarMes(1)">&#10095;</button>
+                    </div>
+                    <div id="calendario-grid" class="calendario-grid"></div>
+                </div>
+
                 <div id="eventos-container" class="eventos-container"></div>
             </div>
         </div>
@@ -416,6 +458,23 @@
         <div id="legenda" class="legenda-modal"></div>
     </div>
 
+    <!-- Modal de Perfil -->
+    <div id="modal-perfil" class="modal">
+        <div class="modal-content animate" style="max-width: 500px; padding: 20px;">
+            <span onclick="fecharModalPerfil()" class="close" title="Fechar">&times;</span>
+            <div style="text-align:center; margin-bottom: 20px;">
+                <img src="img/identidade_visual/Icone-TereVerde2.svg" alt="Avatar" class="avatar" style="width:60px; height:60px;">
+                <h2 style="color: var(--primary);">Meu Perfil</h2>
+            </div>
+            
+            <div id="form-perfil-campos">
+                <!-- Preenchido via JS -->
+            </div>
+            
+            <button class="btn-salvar-perfil" onclick="salvarPerfil()">Salvar Alterações</button>
+        </div>
+    </div>
+
     <script src="js/colorirTela.js"></script> 
     <script src="js/script.js"></script> 
     <script src="js/animacaoBanner.js"></script> 
@@ -427,6 +486,7 @@
     <script src="js/carouselGuias.js"></script>
     <script src="js/sobreCards.js"></script>
     <script src="js/eventosCards.js"></script>
+    <script src="js/calendario.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/sugestaoCards.js"></script>
 </body>

@@ -1,9 +1,22 @@
-from flask import Flask, request, jsonify
+import pkgutil
+import importlib.util
+import importlib.machinery
+
+if not hasattr(pkgutil, 'get_loader'):
+    def _get_loader(name):
+        if name == '__main__':
+            return importlib.machinery.SourceFileLoader(name, __file__)
+        spec = importlib.util.find_spec(name)
+        return spec.loader if spec is not None else None
+    pkgutil.get_loader = _get_loader
+
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sqlite3
 import hashlib
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
+import uuid
 
 app = Flask(__name__)
 CORS(app)
@@ -97,6 +110,16 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS trilhas_status (
         trilha_id TEXT PRIMARY KEY,
         pausada   INTEGER NOT NULL DEFAULT 0
+    )''')
+
+    # Tabela para reset de senhas
+    c.execute('''CREATE TABLE IF NOT EXISTS password_resets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT NOT NULL,
+        expira_em TIMESTAMP NOT NULL,
+        usado BOOLEAN NOT NULL DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
 
     # Admin padrão — INSERT OR IGNORE evita erro se já existir
@@ -264,13 +287,96 @@ def login():
         if conn:
             conn.close()
 
+# ── POST /api/esqueci-senha ──
+@app.route('/api/esqueci-senha', methods=['POST'])
+def esqueci_senha():
+    conn = None
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip()
+        
+        if not email:
+            return jsonify({'sucesso': False, 'mensagem': 'Email é obrigatório'}), 400
+            
+        conn = get_db_connection()
+        user = conn.execute('SELECT id FROM users WHERE email=?', (email,)).fetchone()
+        
+        if not user:
+            # Não revelar que o email não existe por segurança, retorna sucesso mas não faz nada
+            return jsonify({'sucesso': True, 'mensagem': 'Se o email existir, um link foi gerado.'}), 200
+            
+        token = str(uuid.uuid4())
+        # Expira em 1 hora
+        expira_em = (datetime.now() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+        
+        conn.execute(
+            'INSERT INTO password_resets (user_id, token, expira_em) VALUES (?, ?, ?)',
+            (user['id'], token, expira_em)
+        )
+        conn.commit()
+        
+        # Em produção, aqui enviaria um email. 
+        # Como é MVP, retornamos o token diretamente na resposta.
+        return jsonify({
+            'sucesso': True, 
+            'mensagem': 'Link de recuperação gerado!',
+            'token': token  # Remova isso em produção!
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── POST /api/redefinir-senha ──
+@app.route('/api/redefinir-senha', methods=['POST'])
+def redefinir_senha():
+    conn = None
+    try:
+        data = request.get_json()
+        token = data.get('token', '').strip()
+        nova_senha = data.get('nova_senha', '').strip()
+        
+        if not token or not nova_senha:
+            return jsonify({'sucesso': False, 'mensagem': 'Token e nova senha são obrigatórios'}), 400
+            
+        if len(nova_senha) < 6:
+            return jsonify({'sucesso': False, 'mensagem': 'A senha deve ter no mínimo 6 caracteres'}), 400
+            
+        conn = get_db_connection()
+        agora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        reset_req = conn.execute(
+            'SELECT * FROM password_resets WHERE token=? AND usado=0 AND expira_em > ?',
+            (token, agora)
+        ).fetchone()
+        
+        if not reset_req:
+            return jsonify({'sucesso': False, 'mensagem': 'Link inválido ou expirado.'}), 400
+            
+        # Atualiza a senha
+        senha_cripto = hash_password(nova_senha)
+        conn.execute('UPDATE users SET senha=? WHERE id=?', (senha_cripto, reset_req['user_id']))
+        
+        # Marca token como usado
+        conn.execute('UPDATE password_resets SET usado=1 WHERE id=?', (reset_req['id'],))
+        
+        conn.commit()
+        return jsonify({'sucesso': True, 'mensagem': 'Senha redefinida com sucesso! Faça login.'}), 200
+        
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+
 @app.route('/api/usuarios', methods=['GET'])
 def listar_usuarios():
-    """Endpoint para debugging - listar todos os usuários (remover em produção)"""
+    """Lista todos os usuários. Idealmente deveria validar se quem chama é admin."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT id, nome, email, username, data_criacao FROM users')
+        cursor.execute('SELECT id, nome, email, telefone, username, tipo, status_guia, data_criacao FROM users ORDER BY data_criacao DESC')
         users = cursor.fetchall()
         conn.close()
         
@@ -281,6 +387,144 @@ def listar_usuarios():
         }), 200
     except Exception as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro: {str(e)}'}), 500
+
+# ── PUT /api/admin/usuario/<id> — admin edita usuário ──
+@app.route('/api/admin/usuario/<int:user_id>', methods=['PUT'])
+def admin_editar_usuario(user_id):
+    conn = None
+    try:
+        d = request.get_json()
+        nome = d.get('nome', '').strip()
+        email = d.get('email', '').strip()
+        telefone = d.get('telefone', '').strip()
+        tipo = d.get('tipo', '').strip()
+        status_guia = d.get('status_guia', '').strip()
+        
+        if not all([nome, email, telefone, tipo]):
+            return jsonify({'sucesso': False, 'mensagem': 'Campos obrigatórios faltando'}), 400
+            
+        conn = get_db_connection()
+        
+        # Verificar email duplicado
+        email_existente = conn.execute('SELECT id FROM users WHERE email=? AND id!=?', (email, user_id)).fetchone()
+        if email_existente:
+            return jsonify({'sucesso': False, 'mensagem': 'Email já em uso'}), 400
+            
+        conn.execute('''
+            UPDATE users SET nome=?, email=?, telefone=?, tipo=?, status_guia=?
+            WHERE id=?
+        ''', (nome, email, telefone, tipo, status_guia, user_id))
+        
+        conn.commit()
+        return jsonify({'sucesso': True, 'mensagem': 'Usuário atualizado pelo admin!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── DELETE /api/admin/usuario/<id> — admin exclui usuário ──
+@app.route('/api/admin/usuario/<int:user_id>', methods=['DELETE'])
+def admin_excluir_usuario(user_id):
+    conn = None
+    try:
+        conn = get_db_connection()
+        
+        # Previne excluir o admin padrão
+        user = conn.execute('SELECT username FROM users WHERE id=?', (user_id,)).fetchone()
+        if user and user['username'] == 'Administrador':
+            return jsonify({'sucesso': False, 'mensagem': 'Não é possível excluir o Administrador principal'}), 403
+            
+        conn.execute('DELETE FROM inscricoes WHERE guia_id=?', (user_id,))
+        conn.execute('DELETE FROM sugestoes WHERE user_id=?', (user_id,))
+        conn.execute('DELETE FROM password_resets WHERE user_id=?', (user_id,))
+        conn.execute('DELETE FROM users WHERE id=?', (user_id,))
+        conn.commit()
+        
+        return jsonify({'sucesso': True, 'mensagem': 'Usuário removido!'}), 200
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
+
+# ── GET /api/usuario/<int:user_id> — busca dados de um usuário específico ──
+@app.route('/api/usuario/<int:user_id>', methods=['GET'])
+def buscar_usuario(user_id):
+    try:
+        conn = get_db_connection()
+        user = conn.execute(
+            '''SELECT id, nome, email, telefone, username, tipo,
+                      foto_base64, instagram, linkedin, facebook, servico, status_guia
+               FROM users WHERE id=?''', (user_id,)
+        ).fetchone()
+        conn.close()
+        if user:
+            return jsonify({'sucesso': True, 'usuario': dict(user)}), 200
+        else:
+            return jsonify({'sucesso': False, 'mensagem': 'Usuário não encontrado'}), 404
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+
+# ── PUT /api/usuario/<int:user_id> — atualiza dados do usuário ──
+@app.route('/api/usuario/<int:user_id>', methods=['PUT'])
+def atualizar_usuario(user_id):
+    conn = None
+    try:
+        d = request.get_json()
+        nome = d.get('nome', '').strip()
+        email = d.get('email', '').strip()
+        telefone = d.get('telefone', '').strip()
+        
+        foto_base64 = d.get('foto_base64', '')
+        instagram = d.get('instagram', '').strip()
+        linkedin = d.get('linkedin', '').strip()
+        facebook = d.get('facebook', '').strip()
+        servico = d.get('servico', '').strip()
+        
+        senha_atual = d.get('senha_atual', '').strip()
+        nova_senha = d.get('nova_senha', '').strip()
+
+        if not all([nome, email, telefone]):
+            return jsonify({'sucesso': False, 'mensagem': 'Nome, email e telefone são obrigatórios'}), 400
+            
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        email_existente = cursor.execute('SELECT id FROM users WHERE email=? AND id!=?', (email, user_id)).fetchone()
+        if email_existente:
+            return jsonify({'sucesso': False, 'mensagem': 'Este email já está em uso por outra conta'}), 400
+            
+        senha_atualizada = False
+        if senha_atual and nova_senha:
+            user = cursor.execute('SELECT senha FROM users WHERE id=?', (user_id,)).fetchone()
+            if not user or user['senha'] != hash_password(senha_atual):
+                return jsonify({'sucesso': False, 'mensagem': 'Senha atual incorreta'}), 400
+            if len(nova_senha) < 6:
+                return jsonify({'sucesso': False, 'mensagem': 'A nova senha deve ter no mínimo 6 caracteres'}), 400
+            
+            cursor.execute('UPDATE users SET senha=? WHERE id=?', (hash_password(nova_senha), user_id))
+            senha_atualizada = True
+
+        r = cursor.execute('''
+            UPDATE users SET 
+                nome=?, email=?, telefone=?, foto_base64=?, 
+                instagram=?, linkedin=?, facebook=?, servico=?
+            WHERE id=?
+        ''', (nome, email, telefone, foto_base64, instagram, linkedin, facebook, servico, user_id))
+        
+        conn.commit()
+        
+        if r.rowcount == 0 and not senha_atualizada:
+            return jsonify({'sucesso': False, 'mensagem': 'Usuário não encontrado'}), 404
+            
+        msg = 'Perfil atualizado com sucesso!'
+        if senha_atualizada: msg += ' (Senha alterada)'
+        
+        return jsonify({'sucesso': True, 'mensagem': msg}), 200
+        
+    except Exception as e:
+        return jsonify({'sucesso': False, 'mensagem': f'Erro: {e}'}), 500
+    finally:
+        if conn: conn.close()
 
 # ── GET /api/guias/pendentes — lista guias aguardando aprovação ──
 @app.route('/api/guias/pendentes', methods=['GET'])
@@ -737,6 +981,20 @@ def guias_do_passeio(pid):
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'message': 'Servidor rodando'}), 200
+
+
+# Serve frontend files (index.html and static assets)
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    # Let API routes be handled by existing routes
+    if path.startswith('api'):
+        return jsonify({'sucesso': False, 'mensagem': 'Rota API inválida'}), 404
+    # Serve actual files from project root if they exist
+    if path and os.path.exists(os.path.join('.', path)):
+        return send_from_directory('.', path)
+    # Default to index.html for SPA routes
+    return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
     init_db()

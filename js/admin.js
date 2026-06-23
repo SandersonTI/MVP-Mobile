@@ -38,6 +38,7 @@ function renderizarPainelAdmin() {
             <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('guias', this)">🧭 Guias</button>
             <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('trilhas', this)">🗺️ Trilhas</button>
             <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('sugestoes', this)">💡 Sugestões</button>
+            <button class="admin-tab-btn" onclick="mostrarSecaoAdmin('usuarios', this)">👥 Usuários</button>
         </div>
         <!-- Seção Eventos (visível por padrão) -->
         <div id="admin-sec-eventos" class="admin-secao">
@@ -154,6 +155,15 @@ function renderizarPainelAdmin() {
                 <p style="color:#ccc;">Carregando sugestões...</p>
             </div>
         </div>
+
+        <!-- Seção Usuários (oculta por padrão) -->
+        <div id="admin-sec-usuarios" class="admin-secao" style="display:none;">
+            <h3 style="color:var(--secundary); margin-bottom:1rem;">👥 Gerenciar Todos os Usuários</h3>
+            <div id="admin-lista-usuarios" class="admin-lista">
+                <p style="color:#ccc;">Carregando usuários...</p>
+            </div>
+        </div>
+
     </div>`;
     // Carrega dados de ambas as seções ao abrir o painel
     carregarEventosAdmin();
@@ -161,6 +171,7 @@ function renderizarPainelAdmin() {
     carregarGuiasAdmin('pendente');
     carregarTrilhasAdmin();
     carregarSugestoesAdmin('pendente');
+    carregarUsuariosAdmin();
 }
 /** Converte arquivo de imagem do evento em base64 para preview/envio */
 function processarFotoEvento(input) {
@@ -412,10 +423,59 @@ async function carregarPasseiosAdmin() {
                     <p>${p.descricao}</p>
                 </div>
                 <div class="admin-item-acoes">
+                    <button class="btn-admin-editar" onclick="iniciarEdicaoPasseio(${p.id})">✏️ Editar</button>
                     <button class="btn-admin-remover" onclick="removerPasseio(${p.id})">🗑️ Remover</button>
                 </div>
             </div>`).join('');
     } catch(e) { lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar passeios.</p>'; }
+}
+
+async function iniciarEdicaoPasseio(passeioId) {
+    let p;
+    try {
+        const res = await fetch(`${API_URL}/passeios`);
+        const data = await res.json();
+        p = data.passeios.find(e => e.id === passeioId);
+    } catch (e) {}
+    if (!p) return;
+    
+    const card = document.getElementById(`ps-item-${passeioId}`);
+    if (!card) return;
+    card.innerHTML = `
+        <div class="admin-form-edicao">
+            <input id="edit-ps-titulo-${p.id}" value="${p.titulo}" class="admin-input" placeholder="Título">
+            <input id="edit-ps-local-${p.id}" value="${p.local}" class="admin-input" placeholder="Local">
+            <input id="edit-ps-imagem-${p.id}" value="${p.imagem_url || ''}" class="admin-input" placeholder="URL da imagem ou base64">
+            <input id="edit-ps-link-${p.id}" value="${p.link || ''}" class="admin-input" placeholder="Link">
+            <input id="edit-ps-dif-${p.id}" value="${p.dificuldade || ''}" class="admin-input" placeholder="Dificuldade (Baixa/Média/Alta)">
+            <textarea id="edit-ps-desc-${p.id}" class="admin-input admin-textarea">${p.descricao}</textarea>
+            <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+                <button class="btn-admin-acao" onclick="salvarEdicaoPasseio(${p.id})">💾 Salvar</button>
+                <button class="btn-admin-remover" onclick="carregarPasseiosAdmin()">✕ Cancelar</button>
+            </div>
+        </div>`;
+}
+
+async function salvarEdicaoPasseio(passeioId) {
+    const body = {
+        titulo:      document.getElementById(`edit-ps-titulo-${passeioId}`).value.trim(),
+        local:       document.getElementById(`edit-ps-local-${passeioId}`).value.trim(),
+        descricao:   document.getElementById(`edit-ps-desc-${passeioId}`).value.trim(),
+        imagem_url:  document.getElementById(`edit-ps-imagem-${passeioId}`).value.trim(),
+        link:        document.getElementById(`edit-ps-link-${passeioId}`).value.trim(),
+        dificuldade: document.getElementById(`edit-ps-dif-${passeioId}`).value.trim() || 'Moderada'
+    };
+    try {
+        const res  = await fetch(`${API_URL}/passeios/${passeioId}`, {
+            method:  'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(body)
+        });
+        const data = await res.json();
+        alert(data.sucesso ? '✓ ' + data.mensagem : '✗ ' + data.mensagem);
+        carregarPasseiosAdmin();
+        if (typeof carregarPasseiosDinamicos === 'function') carregarPasseiosDinamicos();
+    } catch (e) { alert('Erro ao salvar passeio.'); }
 }
 
 async function criarPasseio() {
@@ -424,13 +484,16 @@ async function criarPasseio() {
     const descricao   = document.getElementById('ps-descricao').value.trim();
     const imagemUrl   = fotoBase64Passeio || document.getElementById('ps-imagem').value.trim();
     const link        = document.getElementById('ps-link').value.trim();
+    // Passeios não tem o campo de input de dificuldade na interface base. 
+    // Criaremos 'Moderada' como padrão para não quebrar a API.
+    const dificuldade = 'Moderada'; 
     if (!titulo || !local || !descricao) {
         alert('⚠️ Preencha: título, local e descrição.'); return;
     }
     try {
         const res  = await fetch(`${API_URL}/passeios`, {
             method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({titulo, descricao, local, imagem_url: imagemUrl, link})
+            body: JSON.stringify({titulo, descricao, dificuldade, local, imagem_url: imagemUrl, link})
         });
         const data = await res.json();
         if (data.sucesso) {
@@ -717,4 +780,119 @@ async function toggleTrilha(trilhaId, estavaPausada) {
         carregarTrilhasAdmin();
         if (typeof renderizarParques === 'function') renderizarParques();
     } else { alert('✗ ' + data.mensagem); }
+}
+
+// ── Gestão Geral de Usuários ──────────────────────────────────────
+async function carregarUsuariosAdmin() {
+    const lista = document.getElementById('admin-lista-usuarios');
+    if (!lista) return;
+    lista.innerHTML = '<p style="color:#ccc;">Carregando...</p>';
+    try {
+        const res = await fetch(`${API_URL}/usuarios`);
+        const data = await res.json();
+        
+        if (!data.sucesso || data.usuarios.length === 0) {
+            lista.innerHTML = '<p style="color:#ccc;">Nenhum usuário encontrado.</p>';
+            return;
+        }
+        
+        lista.innerHTML = data.usuarios.map(u => `
+            <div class="admin-item-card" id="usr-item-${u.id}">
+                <div class="admin-item-info">
+                    <strong>${u.nome}</strong> (@${u.username})
+                    <span class="admin-item-detalhe">✉️ ${u.email} · 📞 ${u.telefone}</span>
+                    <span style="font-size:.8rem; background: var(--button-1); color:#fff; padding: 2px 6px; border-radius:4px;">Tipo: ${u.tipo}</span>
+                    ${u.tipo === 'guia' ? `<span style="font-size:.8rem; background: var(--status-red); color:#fff; padding: 2px 6px; border-radius:4px;">Status: ${u.status_guia}</span>` : ''}
+                    <div style="font-size:.75rem; color:#aaa; margin-top:4px;">Criado em: ${u.data_criacao}</div>
+                </div>
+                <div class="admin-item-acoes">
+                    <button class="btn-admin-editar" onclick="iniciarEdicaoUsuario(${u.id})">✏️ Editar</button>
+                    ${u.username !== 'Administrador' ? `<button class="btn-admin-remover" onclick="removerUsuario(${u.id})">🗑️ Excluir</button>` : ''}
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        lista.innerHTML = '<p style="color:#c0392b;">Erro ao carregar usuários.</p>';
+    }
+}
+
+async function iniciarEdicaoUsuario(id) {
+    let u;
+    try {
+        const res = await fetch(`${API_URL}/usuario/${id}`);
+        const data = await res.json();
+        if (data.sucesso) {
+            u = data.usuario;
+        } else {
+            alert('Erro: ' + data.mensagem);
+            return;
+        }
+    } catch (e) {
+        alert('Erro de conexão.');
+        return;
+    }
+    
+    const card = document.getElementById(`usr-item-${id}`);
+    if (!card) return;
+    
+    card.innerHTML = `
+        <div class="admin-form-edicao">
+            <label>Nome</label>
+            <input id="edit-usr-nome-${id}" value="${u.nome}" class="admin-input">
+            
+            <label>Email</label>
+            <input id="edit-usr-email-${id}" type="email" value="${u.email}" class="admin-input">
+            
+            <label>Telefone</label>
+            <input id="edit-usr-tel-${id}" value="${u.telefone}" class="admin-input">
+            
+            <label>Tipo (turista, guia, admin)</label>
+            <input id="edit-usr-tipo-${id}" value="${u.tipo}" class="admin-input">
+            
+            <label>Status Guia (ativo, pendente, reprovado)</label>
+            <input id="edit-usr-status-${id}" value="${u.status_guia || ''}" class="admin-input" ${u.tipo !== 'guia' ? 'disabled' : ''}>
+            
+            <div style="display:flex; gap:.5rem; margin-top:1rem;">
+                <button class="btn-admin-acao" onclick="salvarEdicaoUsuario(${id})">💾 Salvar</button>
+                <button class="btn-admin-remover" onclick="carregarUsuariosAdmin()">✕ Cancelar</button>
+            </div>
+        </div>
+    `;
+}
+
+async function salvarEdicaoUsuario(id) {
+    const nome = document.getElementById(`edit-usr-nome-${id}`).value.trim();
+    const email = document.getElementById(`edit-usr-email-${id}`).value.trim();
+    const telefone = document.getElementById(`edit-usr-tel-${id}`).value.trim();
+    const tipo = document.getElementById(`edit-usr-tipo-${id}`).value.trim();
+    const status_guia = document.getElementById(`edit-usr-status-${id}`).value.trim();
+    
+    try {
+        const res = await fetch(`${API_URL}/admin/usuario/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, telefone, tipo, status_guia })
+        });
+        const data = await res.json();
+        if (data.sucesso) {
+            alert('✓ ' + data.mensagem);
+            carregarUsuariosAdmin();
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch (e) {
+        alert('Erro ao salvar usuário.');
+    }
+}
+
+async function removerUsuario(id) {
+    if (!confirm('Deseja realmente excluir este usuário permanentemente? ISSO NÃO PODE SER DESFEITO.')) return;
+    try {
+        const res = await fetch(`${API_URL}/admin/usuario/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        alert(data.sucesso ? '✓ ' + data.mensagem : '✗ ' + data.mensagem);
+        carregarUsuariosAdmin();
+    } catch (e) {
+        alert('Erro ao remover usuário.');
+    }
 }

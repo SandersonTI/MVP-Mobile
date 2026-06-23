@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Requisitos — Terê Verde MVP
+=======
+# Requisitos — MVP Mobile
+>>>>>>> 535f544196ec56839ef3c86c13b8fe6983e1865f
  
 ---
  

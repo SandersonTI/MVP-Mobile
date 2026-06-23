@@ -58,7 +58,7 @@ function toggleMenuMobile() {
     }
 }
 
-// Fechar o menu se clicar fora dele
+// Fechar o menu e dropdowns se clicar fora dele
 window.onclick = function(event) {
     if (!event.target.matches('.hamburger-icon') && !event.target.matches('.fa-bars')) {
         var dropdowns = document.getElementsByClassName("mobile-menu-content");
@@ -69,9 +69,24 @@ window.onclick = function(event) {
             }
         }
     }
-    // Mantém a lógica do modal de login existente
+    
+    // Fechar dropdown de perfil
+    if (!event.target.matches('.perfil-btn') && !event.target.closest('.perfil-dropdown')) {
+        const dd = document.getElementById('dropdownPerfil');
+        if (dd && dd.parentElement.classList.contains('show')) {
+            dd.parentElement.classList.remove('show');
+        }
+    }
+
+    // Mantém a lógica dos modais
     if (event.target == document.getElementById('id_auth')) {
         document.getElementById('id_auth').style.display = "none";
+    }
+    if (event.target == document.getElementById('modal-esqueci-senha')) {
+        document.getElementById('modal-esqueci-senha').style.display = "none";
+    }
+    if (event.target == document.getElementById('modal-redefinir-senha')) {
+        document.getElementById('modal-redefinir-senha').style.display = "none";
     }
 }
 
@@ -167,6 +182,7 @@ async function fazerLogin(event) {
     // 1. Pega os valores do formulário de login
     const username = document.querySelector('.login-section input[name="uname"]').value;
     const senha = document.querySelector('.login-section input[name="psw"]').value;
+    const lembrar = document.querySelector('.login-section input[name="remember"]').checked;
 
     if (username === "" || senha === "") {
         alert("Por favor, preencha usuário e senha!");
@@ -189,8 +205,13 @@ async function fazerLogin(event) {
         const data = await response.json();
 
         if (data.sucesso) {
-            localStorage.setItem('usuario', JSON.stringify(data.usuario));
-            localStorage.setItem('logado', 'true');
+            if (lembrar) {
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                localStorage.setItem('logado', 'true');
+            } else {
+                sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
+                sessionStorage.setItem('logado', 'true');
+            }
             alert("✓ " + data.mensagem);
             fecharModalAuth();
             atualizarUILogin(data.usuario);
@@ -210,12 +231,19 @@ mostrarMensagemBloqueio(data.mensagem, data.motivo, data.usuario_id);
 
 // Adapta a interface após login (botões, aba admin, tipo do usuário)
 function atualizarUILogin(usuario) {
-    const loginBtn    = document.querySelector('.loginbtn');
-    const cadastroBtn = document.querySelector('.acessobtn');
-    if (loginBtn && cadastroBtn) {
-        loginBtn.textContent = `${usuario.nome} (Sair)`;
-        loginBtn.onclick = fazerLogout;
-        cadastroBtn.style.display = 'none';
+    const userArea = document.getElementById('header-user-area');
+    if (userArea) {
+        userArea.innerHTML = `
+            <div class="perfil-dropdown">
+                <button class="perfil-btn" onclick="toggleDropdownPerfil()">
+                    👤 ${usuario.nome} ▾
+                </button>
+                <div id="dropdownPerfil" class="dropdown-content">
+                    <a onclick="abrirModalPerfil()">Meu Perfil</a>
+                    <a onclick="fazerLogout()">Sair</a>
+                </div>
+            </div>
+        `;
     }
     // ── NOVO: atualiza o menu mobile ──
     const mobileMenu = document.getElementById('mobileMenu');
@@ -248,10 +276,17 @@ function atualizarUILogin(usuario) {
 function fazerLogout() {
     localStorage.removeItem('usuario');
     localStorage.removeItem('logado');
-    const loginBtn    = document.querySelector('.loginbtn');
-    const cadastroBtn = document.querySelector('.acessobtn');
-    if (loginBtn)    { loginBtn.textContent = 'Login'; loginBtn.onclick = abrirModalLogin; }
-    if (cadastroBtn) cadastroBtn.style.display = 'inline-block';
+    sessionStorage.removeItem('usuario');
+    sessionStorage.removeItem('logado');
+    
+    const userArea = document.getElementById('header-user-area');
+    if (userArea) {
+        userArea.innerHTML = `
+            <button class="btn loginbtn" onclick="abrirModalLogin()">Login</button>
+            <button class="btn acessobtn" onclick="abrirModalCadastro()">Cadastro</button>
+        `;
+    }
+
     const abaAdminBtn    = document.getElementById('btn-admin');
     const abaSugestaoBtn = document.querySelector('.tablink[onclick*="Sugestoes"]');
     if (abaAdminBtn)    abaAdminBtn.style.display = 'none';
@@ -272,8 +307,13 @@ function fazerLogout() {
 
 /** Retorna objeto do usuário logado ou null se não estiver logado. */
 function getUsuarioLogado() {
-    if (localStorage.getItem('logado') !== 'true') return null;
-    return JSON.parse(localStorage.getItem('usuario'));
+    if (localStorage.getItem('logado') === 'true') {
+        return JSON.parse(localStorage.getItem('usuario'));
+    }
+    if (sessionStorage.getItem('logado') === 'true') {
+        return JSON.parse(sessionStorage.getItem('usuario'));
+    }
+    return null;
 }
 /** Destaca visualmente o cashbox selecionado no cadastro */
 function selecionarTipo(tipo) {
@@ -309,9 +349,9 @@ function isUsuarioTipo(tipo) {
 }
 // Verificar se usuário já está logado ao carregar página
 function verificarLoginAoCarregar() {
-    if (localStorage.getItem('logado') === 'true') {
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        atualizarUILogin(usuario);
+    const usuarioLogado = getUsuarioLogado();
+    if (usuarioLogado) {
+        atualizarUILogin(usuarioLogado);
     }
 }
 
@@ -366,6 +406,233 @@ async function refazerCadastroGuia(userId) {
             alert('✗ ' + data.mensagem);
         }
     } catch(e) {
+        alert('Erro ao conectar: ' + e.message);
+    }
+}
+
+// --- FUNÇÕES DE PERFIL ---
+
+function toggleDropdownPerfil() {
+    const dd = document.querySelector('.perfil-dropdown');
+    if (dd) dd.classList.toggle('show');
+}
+
+let fotoBase64Perfil = '';
+
+async function abrirModalPerfil() {
+    // Esconde dropdown
+    const dd = document.querySelector('.perfil-dropdown');
+    if (dd) dd.classList.remove('show');
+    
+    const usuarioLogado = getUsuarioLogado();
+    if (!usuarioLogado) return;
+    
+    try {
+        const res = await fetch(`${API_URL}/usuario/${usuarioLogado.id}`);
+        const data = await res.json();
+        
+        if (data.sucesso) {
+            const u = data.usuario;
+            fotoBase64Perfil = u.foto_base64 || '';
+            
+            let htmlCampos = `
+                <div class="perfil-section-title">Dados Básicos</div>
+                <label>Nome</label>
+                <input type="text" id="perfil-nome" value="${u.nome}">
+                
+                <label>Email</label>
+                <input type="email" id="perfil-email" value="${u.email}">
+                
+                <label>Telefone</label>
+                <input type="tel" id="perfil-telefone" value="${u.telefone}">
+            `;
+            
+            if (u.tipo === 'guia') {
+                htmlCampos += `
+                    <div class="perfil-section-title">Perfil de Guia</div>
+                    
+                    <div class="perfil-foto-preview-container">
+                        <img id="perfil-foto-img" src="${fotoBase64Perfil || 'img/identidade_visual/Icone-TereVerde2.svg'}" alt="Foto de perfil">
+                    </div>
+                    <input type="file" accept="image/*" onchange="processarNovaFotoPerfil(this)">
+                    
+                    <label>Serviço oferecido</label>
+                    <input type="text" id="perfil-servico" value="${u.servico || ''}">
+                    
+                    <label>Instagram</label>
+                    <input type="url" id="perfil-instagram" value="${u.instagram || ''}">
+                    
+                    <label>LinkedIn</label>
+                    <input type="url" id="perfil-linkedin" value="${u.linkedin || ''}">
+                    
+                    <label>Facebook</label>
+                    <input type="url" id="perfil-facebook" value="${u.facebook || ''}">
+                `;
+            }
+            
+            htmlCampos += `
+                <div class="perfil-section-title">Alterar Senha (Opcional)</div>
+                <label>Senha Atual</label>
+                <input type="password" id="perfil-senha-atual" placeholder="Digite para confirmar alterações">
+                
+                <label>Nova Senha</label>
+                <input type="password" id="perfil-nova-senha" placeholder="Apenas se quiser alterar">
+            `;
+            
+            document.getElementById('form-perfil-campos').innerHTML = htmlCampos;
+            document.getElementById('modal-perfil').style.display = 'block';
+            
+        } else {
+            alert('Erro ao carregar perfil: ' + data.mensagem);
+        }
+    } catch (e) {
+        alert('Erro de conexão: ' + e.message);
+    }
+}
+
+function processarNovaFotoPerfil(input) {
+    if (!input.files || !input.files[0]) return;
+    const r = new FileReader();
+    r.onload = e => {
+        fotoBase64Perfil = e.target.result;
+        const img = document.getElementById('perfil-foto-img');
+        if (img) img.src = fotoBase64Perfil;
+    };
+    r.readAsDataURL(input.files[0]);
+}
+
+function fecharModalPerfil() {
+    document.getElementById('modal-perfil').style.display = 'none';
+}
+
+async function salvarPerfil() {
+    const usuarioLogado = getUsuarioLogado();
+    if (!usuarioLogado) return;
+    
+    const payload = {
+        nome: document.getElementById('perfil-nome').value,
+        email: document.getElementById('perfil-email').value,
+        telefone: document.getElementById('perfil-telefone').value,
+        senha_atual: document.getElementById('perfil-senha-atual').value,
+        nova_senha: document.getElementById('perfil-nova-senha').value
+    };
+    
+    if (usuarioLogado.tipo === 'guia') {
+        payload.foto_base64 = fotoBase64Perfil;
+        payload.servico = document.getElementById('perfil-servico').value;
+        payload.instagram = document.getElementById('perfil-instagram').value;
+        payload.linkedin = document.getElementById('perfil-linkedin').value;
+        payload.facebook = document.getElementById('perfil-facebook').value;
+    }
+    
+    try {
+        const res = await fetch(`${API_URL}/usuario/${usuarioLogado.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        if (data.sucesso) {
+            alert('✓ ' + data.mensagem);
+            
+            // Atualiza localstorage
+            usuarioLogado.nome = payload.nome;
+            usuarioLogado.email = payload.email;
+            localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+            
+            // Atualiza UI
+            atualizarUILogin(usuarioLogado);
+            fecharModalPerfil();
+            
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch (e) {
+        alert('Erro ao salvar perfil: ' + e.message);
+    }
+}
+
+// --- FUNÇÕES DE RECUPERAÇÃO DE SENHA ---
+
+function mostrarEsqueciSenha() {
+    fecharModalAuth();
+    document.getElementById('esqueci-email').value = '';
+    document.getElementById('esqueci-feedback').innerHTML = '';
+    document.getElementById('modal-esqueci-senha').style.display = 'block';
+}
+
+async function enviarRecuperacao() {
+    const email = document.getElementById('esqueci-email').value;
+    if (!email) {
+        alert("Por favor, informe seu email.");
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_URL}/esqueci-senha`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        
+        const feedback = document.getElementById('esqueci-feedback');
+        if (data.sucesso) {
+            // Em produção seria enviado por email. Para o MVP, mostramos na tela.
+            if (data.token) {
+                feedback.innerHTML = `✅ Link gerado! (Simulação de Email)<br>
+                <a href="#" onclick="mostrarRedefinirSenha('${data.token}')" style="color:var(--primary-hover); text-decoration:underline;">Clique aqui para redefinir</a>`;
+            } else {
+                feedback.innerHTML = `✅ Se o email existir em nossa base, um link foi enviado.`;
+            }
+        } else {
+            alert('✗ ' + data.mensagem);
+        }
+    } catch (e) {
+        alert('Erro ao conectar: ' + e.message);
+    }
+}
+
+function mostrarRedefinirSenha(token) {
+    document.getElementById('modal-esqueci-senha').style.display = 'none';
+    document.getElementById('redefinir-token').value = token;
+    document.getElementById('redefinir-senha1').value = '';
+    document.getElementById('redefinir-senha2').value = '';
+    document.getElementById('modal-redefinir-senha').style.display = 'block';
+}
+
+async function redefinirSenha() {
+    const token = document.getElementById('redefinir-token').value;
+    const s1 = document.getElementById('redefinir-senha1').value;
+    const s2 = document.getElementById('redefinir-senha2').value;
+    
+    if (s1 !== s2) {
+        alert("As senhas não coincidem.");
+        return;
+    }
+    
+    if (s1.length < 6) {
+        alert("A senha deve ter no mínimo 6 caracteres.");
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_URL}/redefinir-senha`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, nova_senha: s1 })
+        });
+        const data = await res.json();
+        
+        if (data.sucesso) {
+            alert("✓ " + data.mensagem);
+            document.getElementById('modal-redefinir-senha').style.display = 'none';
+            abrirModalLogin();
+        } else {
+            alert("✗ " + data.mensagem);
+        }
+    } catch (e) {
         alert('Erro ao conectar: ' + e.message);
     }
 }

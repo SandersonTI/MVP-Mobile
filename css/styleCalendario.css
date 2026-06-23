@@ -1,0 +1,109 @@
+/* Estilos do Calendário de Eventos */
+.calendario-container {
+    background-color: var(--secundary);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendario-header button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+.calendario-header button:hover {
+    color: var(--primary-hover);
+}
+
+.calendario-mes-ano {
+    font-size: 1.2rem;
+    color: var(--primary);
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendario-dia-semana {
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-black, #333);
+    padding: 5px 0;
+    font-size: 0.9rem;
+}
+
+.calendario-dia {
+    text-align: center;
+    padding: 10px 5px;
+    border-radius: 6px;
+    color: var(--text-black, #333);
+    background-color: #f9f9f9;
+    cursor: default;
+    position: relative;
+    font-size: 0.95rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendario-dia.vazio {
+    background-color: transparent;
+}
+
+.calendario-dia.tem-evento {
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.calendario-dia.tem-evento:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+.calendario-dia.hoje {
+    border: 2px solid var(--button-3);
+}
+
+.tooltip-evento {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.calendario-dia.tem-evento:hover .tooltip-evento {
+    opacity: 1;
+    visibility: visible;
+}

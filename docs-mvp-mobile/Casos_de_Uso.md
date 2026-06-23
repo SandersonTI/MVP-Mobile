@@ -18,7 +18,11 @@
 
 ---
 
+<<<<<<< HEAD
 ## Sequências de Casos de Uso — Projeto MVP Mobile
+=======
+## Sequências de Casos de Uso — MVP Mobile
+>>>>>>> 535f544196ec56839ef3c86c13b8fe6983e1865f
 
 Abaixo estão alguns fluxos completos que exploram as **principais funcionalidades** do sistema: Turista, Guia e Admin.
 
