@@ -92,4 +92,4 @@ O **Circuito Terê Verde** busca promover essas atrações, conectando turistas 
  
 ## Apresentação
  
-[🔗 Ver apresentação no Canva](https://www.canva.com/design/DAG5puRIO3g/ghCVxSekcsXhM3QeOTCGwg/edit)
+[🔗 Ver apresentação no Canva](https://canva.link/e5yqx7m01inkqb1)
